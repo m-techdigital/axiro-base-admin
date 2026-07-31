@@ -1,0 +1,7 @@
+:root {
+    --bp-phone-max: 575px;
+    --bp-tablet-min: 576px;
+    --bp-tablet-max: 1023px;
+    --bp-desktop-min: 1024px;
+    --bp-wide-desktop-min: 1366px;
+}

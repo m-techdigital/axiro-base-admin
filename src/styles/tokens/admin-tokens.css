@@ -1,0 +1,13 @@
+:root {
+    --axiro-color-primary: #5b5bd6;
+    --axiro-color-primary-hover: #6f6fe8;
+    --axiro-bg-app: #f4f6fa;
+    --axiro-bg-surface: #ffffff;
+    --axiro-border: #e7eaf0;
+    --axiro-text: #20242c;
+    --axiro-text-muted: #6b7280;
+    --axiro-radius: 12px;
+    --axiro-shadow: 0 8px 24px rgba(23, 31, 56, 0.06);
+    --axiro-content-max: 1600px;
+    --axiro-content-gutter: clamp(16px, 2vw, 28px);
+}

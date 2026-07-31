@@ -1,1 +1,21 @@
-export const ROUTE_PATHS={HOME:'/',ACTION_CENTER:'/action-center',CUSTOMERS:'/customers',PRODUCTS:'/products',LISTINGS:'/listings',TRANSACTIONS:'/transactions',PAYMENTS:'/payments',WALLET_DEPOSITS:'/wallet-deposits',CONTRACTS:'/contracts',DISPUTES:'/disputes',MARKETPLACE_OPERATIONS:'/marketplace-operations',MARKETPLACE_TRUST:'/marketplace-trust',AUDIT_LOGS:'/audit-logs'};
+export const ROUTE_PATHS = {
+    HOME: '/',
+    LOGIN: '/login',
+    ACTION_CENTER: '/action-center',
+    CUSTOMERS: '/customers',
+    PRODUCTS: '/products',
+    LISTINGS: '/listings',
+    TRANSACTIONS: '/transactions',
+    PAYMENTS: '/payments',
+    WALLETS: '/wallets',
+    WALLET_DEPOSITS: '/wallet-deposits',
+    PAYOUTS: '/payouts',
+    PAYMENT_SETTINGS: '/payment-settings',
+    CONTRACTS: '/contracts',
+    DISPUTES: '/disputes',
+    MARKETPLACE_OPERATIONS: '/marketplace-operations',
+    MARKETPLACE_TRUST: '/marketplace-trust',
+    AUDIT_LOGS: '/audit-logs',
+    DOCUMENT_TEMPLATES: '/document-templates',
+    GENERATED_DOCUMENTS: '/generated-documents',
+}

@@ -1,0 +1,8 @@
+{
+  "source": "mylands-admin-develop-20260801-a4871708",
+  "strategy": "bounded-subset-mirror",
+  "canonical_roots": ["src/app/router", "src/configs", "src/layouts", "src/middleware", "src/hooks", "src/components/base", "src/services", "src/routes", "src/utils"],
+  "base_hooks": ["useAsyncAction", "useAuth", "useBaseFilters", "useDetail", "useFormActionModal", "useIsMobile", "useList", "useModulePageData", "usePageHeaderActions", "useRelationOptions", "useRouteMeta", "useServiceOverview", "useStatistics", "useTimeline"],
+  "excluded_parent_domains": ["accounting", "crm", "hr", "payroll", "reports", "projects", "system-configuration"],
+  "compatibility_aliases": {"src/config/adminMenu.jsx": "src/configs/adminMenu.jsx"}
+}

@@ -1,15 +1,21 @@
-import {ROUTE_PATHS} from './paths';
-export const ROUTE_META={
- [ROUTE_PATHS.HOME]:{title:'Tổng quan'},
- [ROUTE_PATHS.ACTION_CENTER]:{title:'Trung tâm xử lý'},
- [ROUTE_PATHS.CUSTOMERS]:{title:'Khách hàng'},
- [ROUTE_PATHS.PRODUCTS]:{title:'Sản phẩm'},
- [ROUTE_PATHS.LISTINGS]:{title:'Tin đăng'},
- [ROUTE_PATHS.TRANSACTIONS]:{title:'Giao dịch'},
- [ROUTE_PATHS.PAYMENTS]:{title:'Thanh toán giao dịch'},
- [ROUTE_PATHS.WALLET_DEPOSITS]:{title:'Nạp tiền'},
- [ROUTE_PATHS.CONTRACTS]:{title:'Hợp đồng'},
- [ROUTE_PATHS.DISPUTES]:{title:'Tranh chấp'},
- [ROUTE_PATHS.MARKETPLACE_OPERATIONS]:{title:'Vận hành Marketplace'},
- [ROUTE_PATHS.MARKETPLACE_TRUST]:{title:'Niềm tin và nội dung'},
-};
+import { ROUTE_PATHS } from './paths'
+export const ROUTE_META = {
+    [ROUTE_PATHS.HOME]: { title: 'Tổng quan' },
+    [ROUTE_PATHS.ACTION_CENTER]: { title: 'Trung tâm xử lý' },
+    [ROUTE_PATHS.CUSTOMERS]: { title: 'Khách hàng' },
+    [ROUTE_PATHS.PRODUCTS]: { title: 'Sản phẩm' },
+    [ROUTE_PATHS.LISTINGS]: { title: 'Tin đăng' },
+    [ROUTE_PATHS.TRANSACTIONS]: { title: 'Giao dịch' },
+    [ROUTE_PATHS.PAYMENTS]: { title: 'Thanh toán giao dịch' },
+    [ROUTE_PATHS.WALLETS]: { title: 'Ví và dòng tiền' },
+    [ROUTE_PATHS.WALLET_DEPOSITS]: { title: 'Yêu cầu nạp tiền' },
+    [ROUTE_PATHS.PAYOUTS]: { title: 'Xác minh và chi trả' },
+    [ROUTE_PATHS.PAYMENT_SETTINGS]: { title: 'Thông tin ngân hàng' },
+    [ROUTE_PATHS.CONTRACTS]: { title: 'Hợp đồng' },
+    [ROUTE_PATHS.DISPUTES]: { title: 'Tranh chấp' },
+    [ROUTE_PATHS.MARKETPLACE_OPERATIONS]: { title: 'Vận hành Marketplace' },
+    [ROUTE_PATHS.MARKETPLACE_TRUST]: { title: 'Niềm tin và nội dung' },
+    [ROUTE_PATHS.AUDIT_LOGS]: { title: 'Nhật ký hệ thống' },
+    [ROUTE_PATHS.DOCUMENT_TEMPLATES]: { title: 'Mẫu tài liệu' },
+    [ROUTE_PATHS.GENERATED_DOCUMENTS]: { title: 'Tài liệu phát hành' },
+}

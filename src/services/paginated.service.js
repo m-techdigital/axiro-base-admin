@@ -1,21 +1,18 @@
-import api from './axios';
-const normalize = (response) => {
-  const payload = response?.data;
-  if (Array.isArray(payload)) return response;
-  return {
-    data: payload?.data || [],
-    meta: { pagination: {
-      current_page: payload?.current_page || 1,
-      last_page: payload?.last_page || 1,
-      per_page: payload?.per_page || 20,
-      total: payload?.total || 0,
-    } },
-  };
-};
+import { getListData, getPaginationMeta } from '@/utils'
+
+import api from './axios'
+
+const normalize = (response) => ({
+    data: getListData(response),
+    meta: getPaginationMeta(response),
+})
+
 export const createPaginatedService = (resource) => ({
-  list: (params = {}) => api.get(`/${resource}`, { params }).then(normalize),
-  get: (id) => api.get(`/${resource}/${id}`),
-  create: (data) => api.post(`/${resource}`, data),
-  update: (id, data) => api.put(`/${resource}/${id}`, data),
-  delete: (id) => api.delete(`/${resource}/${id}`),
-});
+    list: (params = {}, config = {}) =>
+        api.get(`/${resource}`, { ...config, params }).then(normalize),
+    get: (id, config = {}) => api.get(`/${resource}/${id}`, config),
+    create: (data, config = {}) => api.post(`/${resource}`, data, config),
+    update: (id, data, config = {}) =>
+        api.put(`/${resource}/${id}`, data, config),
+    delete: (id, config = {}) => api.delete(`/${resource}/${id}`, config),
+})

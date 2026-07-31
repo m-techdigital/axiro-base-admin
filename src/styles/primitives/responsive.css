@@ -1,0 +1,34 @@
+.app-page-scroll,
+.app-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+}
+
+.app-table-scroll {
+    scrollbar-gutter: stable;
+}
+
+.app-table-scroll .ant-table-wrapper,
+.app-table-scroll .ant-table,
+.app-table-scroll.ant-table-wrapper .ant-table {
+    min-width: var(--app-table-min-width);
+}
+
+.app-toolbar-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.app-toolbar-responsive > * {
+    min-width: 0;
+}
+
+@media (max-width: 575px) {
+    .app-toolbar-responsive {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

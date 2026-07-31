@@ -1,3 +1,31 @@
-*{box-sizing:border-box}body{margin:0;background:#f5f7fb;font-family:Inter,Arial,sans-serif}.center{min-height:100vh;display:grid;place-items:center}.page{padding:24px}.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.money{font-variant-numeric:tabular-nums}.login{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#111827,#2563eb)}.login-card{width:380px}.ant-layout{min-height:100vh}.logo{height:64px;display:flex;align-items:center;padding:0 20px;color:white;font-size:20px;font-weight:700}.form-card{max-width:850px}.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr)}}.action-center-stats .ant-card{height:100%}.action-center-stats .ant-statistic-title{font-size:13px}.action-center-stats .ant-statistic-content{font-weight:700}.ant-timeline-item-content small{color:#8c8c8c}.ant-timeline-item-content>div{margin:4px 0;color:#595959}
-.document-preview{background:#fff;color:#18141d;padding:28px;max-height:72vh;overflow:auto}.document-preview table{width:100%;border-collapse:collapse}.document-preview td,.document-preview th{border:1px solid #8a7d91;padding:8px}.document-preview h1,.document-preview h2{text-align:center}
-.contract-compatibility-banner{position:sticky;top:0;z-index:1000;padding:10px 16px;background:#fff1f0;border-bottom:1px solid #ffccc7;color:#a8071a;font-weight:600;text-align:center}
+@import './styles/tokens/breakpoints.css';
+@import './styles/tokens/layout.css';
+@import './styles/primitives/responsive.css';
+@import './styles/tokens/admin-tokens.css';
+@import './styles/primitives/admin-foundation.css';
+* {
+    box-sizing: border-box;
+}
+.action-center-stats .ant-card {
+    height: 100%;
+}
+.document-preview {
+    background: #fff;
+    color: #18141d;
+    padding: 28px;
+    max-height: 72vh;
+    overflow: auto;
+}
+.document-preview table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.document-preview td,
+.document-preview th {
+    border: 1px solid #8a7d91;
+    padding: 8px;
+}
+.document-preview h1,
+.document-preview h2 {
+    text-align: center;
+}

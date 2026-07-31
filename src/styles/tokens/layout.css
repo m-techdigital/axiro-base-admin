@@ -1,0 +1,13 @@
+:root {
+    --app-content-max-width: 1680px;
+    --app-page-padding-desktop: 24px;
+    --app-page-padding-mobile: 12px;
+    --app-control-height: 36px;
+    --app-radius-sm: 6px;
+    --app-radius-md: 8px;
+    --app-radius-lg: 12px;
+    --app-table-min-width: 720px;
+    --app-z-header: 900;
+    --app-z-sider: 1001;
+    --app-z-overlay: 1000;
+}

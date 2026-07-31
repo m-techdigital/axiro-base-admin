@@ -1,1 +1,6 @@
-import api from '../../services/axios'; export default {login:d=>api.post('/login',d),me:()=>api.get('/me'),logout:()=>api.post('/logout')};
+import api from '../../services/axios'
+export default {
+    login: (d) => api.post('/login', d),
+    me: () => api.get('/me'),
+    logout: () => api.post('/logout'),
+}

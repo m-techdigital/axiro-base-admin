@@ -1,1 +1,2 @@
-import {createCrudService} from '../../services/base.service'; export default createCrudService('products');
+import { createCrudService } from '../../services/base.service'
+export default createCrudService('products')

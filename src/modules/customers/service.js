@@ -1,2 +1,2 @@
-import {createPaginatedService} from '../../services/paginated.service';
-export default createPaginatedService('customers');
+import { createPaginatedService } from '../../services/paginated.service'
+export default createPaginatedService('customers')
