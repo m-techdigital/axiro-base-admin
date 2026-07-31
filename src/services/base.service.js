@@ -1,0 +1,1 @@
+import api from './axios'; export const createCrudService=r=>({list:(params={})=>api.get(`/${r}`,{params}),get:id=>api.get(`/${r}/${id}`),create:data=>api.post(`/${r}`,data),update:(id,data)=>api.put(`/${r}/${id}`,data),delete:id=>api.delete(`/${r}/${id}`)});

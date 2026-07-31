@@ -1,0 +1,1 @@
+import {useState} from 'react'; export function useAsyncAction(){const[loading,setLoading]=useState(false);const run=async fn=>{setLoading(true);try{return await fn()}finally{setLoading(false)}};return{loading,run}}

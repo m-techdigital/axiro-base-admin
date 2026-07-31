@@ -1,0 +1,1 @@
+import fs from 'node:fs'; const app=fs.readFileSync(new URL('../src/App.jsx',import.meta.url),'utf8'); for(const p of ['products','transactions','contracts'])if(!app.includes(`path='${p}'`))throw new Error(`Missing route ${p}`); console.log('Route metadata OK');

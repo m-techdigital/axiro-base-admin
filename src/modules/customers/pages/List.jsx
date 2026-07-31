@@ -1,0 +1,8 @@
+import {statusColor,statusLabel} from '../../../contracts/marketplaceLabels';
+import {Button,Card,Input,Popconfirm,Tag,message} from 'antd';
+import {useNavigate} from 'react-router-dom';
+import {useList} from '../../../hooks/useList';
+import BaseTable from '../../../components/base/BaseTable';
+import PageHeader from '../../../components/base/PageHeader';
+import service from '../service';
+export default function CustomerList(){const n=useNavigate(),x=useList(service,{per_page:20});const cols=[{title:'Mã',dataIndex:'code'},{title:'Tên đăng nhập',dataIndex:'username'},{title:'Khách hàng',dataIndex:'name'},{title:'Điện thoại',dataIndex:'phone'},{title:'Trạng thái',dataIndex:'status',render:v=><Tag color={statusColor(v)}>{statusLabel(v)}</Tag>},{title:'Số dư',render:(_,r)=>Number(r.wallet?.available_balance||0).toLocaleString('vi-VN')+' ₫'},{title:'',render:(_,r)=><><Button type='link' onClick={()=>n(`/customers/${r.id}/edit`)}>Sửa</Button><Popconfirm title='Xóa khách hàng?' onConfirm={async()=>{try{await service.delete(r.id);message.success('Đã xóa');x.reload()}catch(e){message.error(e.message)}}}><Button danger type='link'>Xóa</Button></Popconfirm></>}];return <div className='page'><PageHeader title='Khách hàng' actions={<Button type='primary' onClick={()=>n('/customers/new')}>Tạo khách hàng</Button>}/><Card><Input.Search placeholder='Tìm tên, tài khoản hoặc điện thoại' allowClear onSearch={keyword=>x.setParams(p=>({...p,keyword,page:1}))} style={{width:360,marginBottom:16}}/><BaseTable data={x.data} columns={cols} loading={x.loading} pagination={{total:x.meta.pagination?.total,current:x.meta.pagination?.current_page,pageSize:x.meta.pagination?.per_page}} onChange={p=>x.setParams(v=>({...v,page:p.current,per_page:p.pageSize}))}/></Card></div>}

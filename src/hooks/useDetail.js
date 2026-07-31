@@ -1,0 +1,1 @@
+import {useEffect,useState} from 'react'; export function useDetail(service,id){const[data,setData]=useState(null),[loading,setLoading]=useState(Boolean(id));useEffect(()=>{if(!id)return;service.get(id).then(r=>setData(r.data)).finally(()=>setLoading(false))},[service,id]);return{data,loading}}

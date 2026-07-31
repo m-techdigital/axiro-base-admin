@@ -1,0 +1,15 @@
+{
+  "name": "AXIRO Field App",
+  "short_name": "Field App",
+  "start_url": "/field-app",
+  "display": "standalone",
+  "background_color": "#f4f7fb",
+  "theme_color": "#0b3a75",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

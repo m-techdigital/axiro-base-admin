@@ -1,0 +1,1 @@
+import {Table} from 'antd'; export default function BaseTable({data,columns,loading,pagination,onChange}){return <Table rowKey='id' dataSource={data} columns={columns} loading={loading} pagination={pagination} onChange={onChange}/> }

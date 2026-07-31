@@ -1,0 +1,1 @@
+export default function Money({value=0}){return <span className='money'>{new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND',maximumFractionDigits:0}).format(Number(value||0))}</span>}

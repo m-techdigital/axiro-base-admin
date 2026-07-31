@@ -1,0 +1,1 @@
+import api from '../../services/axios'; import {createCrudService} from '../../services/base.service'; const service=createCrudService('transactions'); export default {...service,action:(id,data)=>api.post(`/transactions/${id}/actions`,data)};
