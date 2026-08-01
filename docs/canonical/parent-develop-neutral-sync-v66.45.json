@@ -100,7 +100,7 @@
             "target": "src/styles/primitives/parent-develop-neutral.css",
             "source": "src/index.css",
             "source_ranges": ["228-260", "430-470", "673-819"],
-            "sha256": "c807fc23c319a0e44879aa3088c549f128192ca3a191a5246724e9b4f40eb79d"
+            "sha256": "b9beff99f548452d081542c3e99f16cb18b64185f6ab14b449972b9358dddd63"
         }
     ],
     "excluded": [

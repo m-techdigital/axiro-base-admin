@@ -291,19 +291,20 @@ body {
         .ant-picker,
         .ant-select-selector
     ) {
-    min-height: 36px !important;
+    min-height: var(--app-control-height) !important;
+    height: var(--app-control-height) !important;
     border-radius: 8px !important;
 }
 
 .base-filter .ant-select,
 .base-filter .ant-select-single,
 .base-filter .ant-select-multiple {
-    min-height: 36px;
+    min-height: var(--app-control-height);
 }
 
 .base-filter .ant-select-selection-item,
 .base-filter .ant-select-selection-placeholder {
-    line-height: 34px !important;
+    line-height: calc(var(--app-control-height) - 2px) !important;
 }
 
 .base-filter-actions-col {
@@ -314,7 +315,7 @@ body {
 
 .base-filter-actions {
     display: inline-flex;
-    height: 36px;
+    height: var(--app-control-height);
     align-items: center;
     gap: 0;
     margin: 0;
@@ -328,7 +329,7 @@ body {
 .base-filter-action.ant-btn {
     display: inline-flex;
     min-width: 38px;
-    height: 36px;
+    height: var(--app-control-height);
     align-items: center;
     justify-content: center;
     padding: 0;
@@ -577,7 +578,8 @@ body {
 .base-filter .ant-input,
 .base-filter .ant-select-selector,
 .base-filter .ant-picker {
-    min-height: 36px;
+    min-height: var(--app-control-height);
+    height: var(--app-control-height);
 }
 
 .base-table .ant-table-content {

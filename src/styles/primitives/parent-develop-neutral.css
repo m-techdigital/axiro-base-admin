@@ -45,7 +45,8 @@
 .base-header-filter .ant-input-affix-wrapper,
 .base-header-filter .ant-picker {
     width: 100%;
-    height: 40px;
+    height: var(--app-control-height);
+    min-height: var(--app-control-height);
     border: 1px solid var(--axiro-border-strong) !important;
     border-radius: 8px;
     background: var(--axiro-bg-surface);
@@ -61,8 +62,10 @@
 
 .base-header-filter .ant-input,
 .base-header-filter .ant-picker-input > input {
+    height: calc(var(--app-control-height) - 2px);
     color: var(--axiro-text-heading) !important;
     font-weight: 600;
+    line-height: calc(var(--app-control-height) - 2px);
 }
 
 .base-header-filter .ant-input-prefix,
