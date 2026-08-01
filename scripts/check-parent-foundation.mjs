@@ -25,7 +25,7 @@ const layout = fs.readFileSync('src/layouts/AdminLayout.jsx', 'utf8')
 if (
     !layout.includes('AdminSidebar') ||
     !layout.includes('AdminHeader') ||
-    !layout.includes('admin-content__body')
+    !layout.includes('admin-content-body')
 )
     process.exit(1)
 const base = fs.readFileSync('src/components/base/index.js', 'utf8')

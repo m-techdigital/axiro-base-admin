@@ -47,8 +47,8 @@ const css = fs.readFileSync(
     'utf8',
 )
 for (const selector of [
-    '.base-filter__fields',
-    '.base-filter__actions',
+    '.base-filter-row',
+    '.base-filter-actions',
     '.base-action-group',
     '.base-list-view__filters',
 ]) {

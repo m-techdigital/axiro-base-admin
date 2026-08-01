@@ -1,5 +1,6 @@
-import { BaseForm } from '@/components/base'
-import { Button, Card, Input, InputNumber, Select, message } from 'antd'
+import { PRODUCT_STATUS_OPTIONS } from '@/constants/options'
+import { BaseForm, BaseButton } from '@/components/base'
+import { Card, Input, InputNumber, Select, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import service from '../service'
@@ -94,11 +95,7 @@ export default function ProductForm() {
                         label="Trạng thái"
                         rules={[{ required: true }]}
                     >
-                        <Select
-                            options={['draft', 'active', 'inactive'].map(
-                                (x) => ({ value: x, label: x }),
-                            )}
-                        />
+                        <Select options={PRODUCT_STATUS_OPTIONS} />
                     </BaseForm.Item>
                     <BaseForm.Item
                         name="price"
@@ -113,10 +110,14 @@ export default function ProductForm() {
                     <BaseForm.Item name="description" label="Mô tả">
                         <Input.TextArea rows={4} />
                     </BaseForm.Item>
-                    <Button type="primary" htmlType="submit" loading={loading}>
+                    <BaseButton
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                    >
                         Lưu
-                    </Button>{' '}
-                    <Button onClick={() => n('/products')}>Hủy</Button>
+                    </BaseButton>{' '}
+                    <BaseButton onClick={() => n('/products')}>Hủy</BaseButton>
                 </BaseForm>
             </Card>
         </div>

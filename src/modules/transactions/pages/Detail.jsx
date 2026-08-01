@@ -1,4 +1,4 @@
-import { BaseModal } from '@/components/base'
+import { BaseModal, BaseButton } from '@/components/base'
 import {
     statusColor,
     statusLabel,
@@ -6,7 +6,6 @@ import {
 } from '../../../contracts/marketplaceLabels'
 import {
     Alert,
-    Button,
     Card,
     Col,
     Descriptions,
@@ -18,7 +17,7 @@ import {
     Typography,
     message,
 } from 'antd'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
@@ -63,7 +62,7 @@ export default function TransactionDetail() {
         [loading, setLoading] = useState(true),
         [acting, setActing] = useState(''),
         [preview, setPreview] = useState(null)
-    const load = async () => {
+    const load = useCallback(async () => {
         setLoading(true)
         try {
             const r = await service.get(id)
@@ -71,10 +70,10 @@ export default function TransactionDetail() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [id])
     useEffect(() => {
         load()
-    }, [id])
+    }, [load])
     const act = (action, title) =>
         BaseModal.confirm({
             title,
@@ -122,10 +121,10 @@ export default function TransactionDetail() {
                 title={`Giao dịch ${data?.code || ''}`}
                 actions={
                     <Space>
-                        <Button onClick={() => navigate('/transactions')}>
+                        <BaseButton onClick={() => navigate('/transactions')}>
                             Quay lại
-                        </Button>
-                        <Button onClick={load}>Tải lại</Button>
+                        </BaseButton>
+                        <BaseButton onClick={load}>Tải lại</BaseButton>
                     </Space>
                 }
             />
@@ -244,13 +243,13 @@ export default function TransactionDetail() {
                         title="Hồ sơ tài liệu"
                         style={{ marginTop: 16 }}
                         extra={
-                            <Button
+                            <BaseButton
                                 type="primary"
                                 loading={acting === 'documents'}
                                 onClick={ensureDocuments}
                             >
                                 Đồng bộ tài liệu
-                            </Button>
+                            </BaseButton>
                         }
                     >
                         <List
@@ -262,22 +261,22 @@ export default function TransactionDetail() {
                             renderItem={(document) => (
                                 <List.Item
                                     actions={[
-                                        <Button
+                                        <BaseButton
                                             key="view"
                                             onClick={() =>
                                                 viewDocument(document)
                                             }
                                         >
                                             Xem
-                                        </Button>,
-                                        <Button
+                                        </BaseButton>,
+                                        <BaseButton
                                             key="download"
                                             onClick={() =>
                                                 downloadDocument(document)
                                             }
                                         >
                                             Tải PDF
-                                        </Button>,
+                                        </BaseButton>,
                                     ]}
                                 >
                                     <List.Item.Meta
@@ -366,7 +365,7 @@ export default function TransactionDetail() {
                     </Card>
                     <Card title="Can thiệp quản trị" style={{ marginTop: 16 }}>
                         <Space direction="vertical" style={{ width: '100%' }}>
-                            <Button
+                            <BaseButton
                                 block
                                 loading={acting === 'force_handover'}
                                 onClick={() =>
@@ -377,9 +376,9 @@ export default function TransactionDetail() {
                                 }
                             >
                                 Xác nhận bàn giao
-                            </Button>
+                            </BaseButton>
                             {data?.transaction_type === 'rental' && (
-                                <Button
+                                <BaseButton
                                     block
                                     loading={acting === 'force_return'}
                                     onClick={() =>
@@ -390,9 +389,9 @@ export default function TransactionDetail() {
                                     }
                                 >
                                     Xác nhận hoàn trả
-                                </Button>
+                                </BaseButton>
                             )}
-                            <Button
+                            <BaseButton
                                 block
                                 type="primary"
                                 loading={acting === 'complete'}
@@ -401,16 +400,16 @@ export default function TransactionDetail() {
                                 }
                             >
                                 Hoàn tất giao dịch
-                            </Button>
-                            <Button
+                            </BaseButton>
+                            <BaseButton
                                 block
                                 danger
                                 loading={acting === 'cancel'}
                                 onClick={() => act('cancel', 'Hủy giao dịch')}
                             >
                                 Hủy giao dịch
-                            </Button>
-                            <Button
+                            </BaseButton>
+                            <BaseButton
                                 block
                                 loading={acting === 'reopen'}
                                 onClick={() =>
@@ -421,7 +420,7 @@ export default function TransactionDetail() {
                                 }
                             >
                                 Mở lại giao dịch
-                            </Button>
+                            </BaseButton>
                         </Space>
                     </Card>
                 </Col>

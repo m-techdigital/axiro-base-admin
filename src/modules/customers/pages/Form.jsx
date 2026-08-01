@@ -1,5 +1,6 @@
-import { BaseForm } from '@/components/base'
-import { Button, Card, Input, Select, message } from 'antd'
+import { CUSTOMER_STATUS_OPTIONS } from '@/constants/options'
+import { BaseForm, BaseButton } from '@/components/base'
+import { Card, Input, Select, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import PageHeader from '../../../components/base/PageHeader'
@@ -73,16 +74,16 @@ export default function CustomerForm() {
                         <Input.Password />
                     </BaseForm.Item>
                     <BaseForm.Item name="status" label="Trạng thái">
-                        <Select
-                            options={['active', 'inactive', 'blocked'].map(
-                                (v) => ({ value: v, label: v }),
-                            )}
-                        />
+                        <Select options={CUSTOMER_STATUS_OPTIONS} />
                     </BaseForm.Item>
-                    <Button type="primary" htmlType="submit" loading={loading}>
+                    <BaseButton
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                    >
                         Lưu
-                    </Button>{' '}
-                    <Button onClick={() => n('/customers')}>Hủy</Button>
+                    </BaseButton>{' '}
+                    <BaseButton onClick={() => n('/customers')}>Hủy</BaseButton>
                 </BaseForm>
             </Card>
         </div>

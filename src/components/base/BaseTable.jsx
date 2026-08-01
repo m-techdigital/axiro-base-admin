@@ -1,23 +1,76 @@
 import { Empty, Table } from 'antd'
+import { useMemo } from 'react'
+
+function normalizePagination(pagination, meta, onPaginationChange) {
+    if (pagination === false) return false
+    const source = pagination || meta?.pagination || meta || {}
+    return {
+        current: source.current ?? source.current_page ?? 1,
+        pageSize: source.pageSize ?? source.per_page ?? 15,
+        total: source.total ?? 0,
+        hideOnSinglePage: false,
+        showSizeChanger: true,
+        showTotal: (total) => `Tổng ${total} bản ghi`,
+        onChange: onPaginationChange,
+        ...pagination,
+    }
+}
 
 export default function BaseTable({
+    className = '',
+    columns,
     data,
     dataSource,
-    columns,
     loading,
-    pagination,
+    locale,
+    meta,
     onChange,
+    onPaginationChange,
+    pagination,
     rowKey = 'id',
     scroll,
-    className = '',
-    locale,
+    size = 'middle',
+    sticky = false,
     ...props
 }) {
+    const resolvedData = dataSource ?? data ?? []
+    const resolvedRowKey = useMemo(() => {
+        if (typeof rowKey === 'function') return rowKey
+        return (record, index) => {
+            const candidate =
+                record?.[rowKey] ??
+                record?.id ??
+                record?.uuid ??
+                record?.code ??
+                record?.key
+            return candidate !== undefined &&
+                candidate !== null &&
+                candidate !== ''
+                ? String(candidate)
+                : `row-${index}`
+        }
+    }, [rowKey])
+
+    const normalizedColumns = (columns || []).map((column) => {
+        if (column.key === 'actions' || column.dataIndex === 'actions') {
+            return {
+                align: column.align || 'center',
+                width: column.width ?? 1,
+                minWidth: column.minWidth ?? 1,
+                onHeaderCell: () => ({ style: { whiteSpace: 'nowrap' } }),
+                ...column,
+                className:
+                    `base-table__actions ${column.className || ''}`.trim(),
+            }
+        }
+        return column
+    })
+
     return (
         <div className={`base-table app-table-scroll ${className}`.trim()}>
             <Table
-                columns={columns}
-                dataSource={dataSource ?? data ?? []}
+                columns={normalizedColumns}
+                dataSource={resolvedData}
                 loading={loading}
                 locale={{
                     emptyText: (
@@ -29,9 +82,15 @@ export default function BaseTable({
                     ...locale,
                 }}
                 onChange={onChange}
-                pagination={pagination}
-                rowKey={rowKey}
+                pagination={normalizePagination(
+                    pagination,
+                    meta,
+                    onPaginationChange,
+                )}
+                rowKey={resolvedRowKey}
                 scroll={scroll || { x: 'max-content' }}
+                size={size}
+                sticky={sticky}
                 {...props}
             />
         </div>

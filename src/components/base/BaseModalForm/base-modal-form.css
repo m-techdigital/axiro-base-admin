@@ -1,0 +1,82 @@
+.crud-form-modal .base-form {
+    display: flex;
+    min-height: 0;
+    max-height: 80vh;
+    flex-direction: column;
+}
+
+.crud-form-modal .base-form-content {
+    min-height: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.crud-form-modal .base-form .ant-form-item {
+    margin-bottom: 14px;
+}
+
+.base-form-server-errors {
+    margin-bottom: 12px;
+}
+
+.base-form-server-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.base-modal-form-body {
+    min-height: 0;
+    padding: 0;
+}
+
+.base-form-modal-description {
+    margin-bottom: 16px;
+}
+
+.base-form-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.base-form-section {
+    padding: 16px 16px 2px;
+    border: 1px solid #edf2f7;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.base-form-section__head {
+    margin-bottom: 14px;
+}
+
+.base-form-section__head h3 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.base-form-section__head p {
+    margin: 4px 0 0;
+    color: #64748b;
+}
+
+.base-modal-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+    background: #fff;
+}
+
+.base-form-tabs .ant-tabs-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-bottom: 16px;
+    padding-top: 6px;
+    background: #fff;
+}

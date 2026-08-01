@@ -25,3 +25,7 @@ Mini Admin follows the AXIRO parent folder and base-hook conventions. See `docs/
 ## Deep parent foundation
 
 Xem `docs/canonical/DEEP_PARENT_FOUNDATION.md`. Mini dùng cùng query/action/error foundations với AXIRO cha nhưng không port RBAC, company/project hay domain nặng ngoài phạm vi.
+
+## AXIRO parent source alignment
+
+Base code must be selected from the AXIRO parent repository before Mini adds a new owner. Every shared owner is classified in `docs/canonical/parent-base-provenance.json` as an exact source copy, a mechanical toolchain conversion, a thin bounded adapter, or an explicit exclusion. Run `npm run check:parent-dependency-closure` before merging changes to base components or base CSS.

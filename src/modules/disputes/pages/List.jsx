@@ -1,14 +1,49 @@
-import { BaseModal } from '@/components/base'
-import { statusColor, statusLabel } from '../../../contracts/marketplaceLabels'
-import { Button, Card, Tag, message } from 'antd'
+import { EyeOutlined } from '@ant-design/icons'
+import { Tag, message } from 'antd'
 import { useState } from 'react'
-import { useList } from '../../../hooks/useList'
-import BaseTable from '../../../components/base/BaseTable'
-import PageHeader from '../../../components/base/PageHeader'
+
+import {
+    BaseActionGroup,
+    BaseFilter,
+    BaseIconAction,
+    BaseListView,
+    BaseModal,
+    BasePageHeader,
+    BaseButton,
+} from '@/components/base'
+import { useBaseFilters, useList } from '@/hooks'
+
+import { statusColor, statusLabel } from '../../../contracts/marketplaceLabels'
 import service from '../service'
+
+const filterFields = [
+    {
+        name: 'keyword',
+        label: 'Mã hoặc nội dung tranh chấp',
+        type: 'search',
+        placeholder: 'Mã hoặc nội dung tranh chấp',
+    },
+    {
+        name: 'status',
+        label: 'Trạng thái',
+        type: 'select',
+        options: [
+            { value: 'open', label: 'Đang mở' },
+            { value: 'resolved', label: 'Đã giải quyết' },
+            { value: 'rejected', label: 'Đã từ chối' },
+        ],
+    },
+]
+
 export default function DisputeList() {
-    const x = useList(service, { per_page: 20 }),
-        [item, setItem] = useState(null)
+    const list = useList(service, { page: 1, per_page: 20 })
+    const filters = useBaseFilters({
+        defaultParams: { page: 1, per_page: 20 },
+        onSearch: list.setParams,
+        onReset: list.setParams,
+    })
+    const [item, setItem] = useState(null)
+
     const resolve = async (status) => {
         try {
             await service.resolve(item.id, {
@@ -20,78 +55,102 @@ export default function DisputeList() {
                 transaction_status:
                     status === 'resolved' ? 'completed' : 'paid',
             })
-            message.success('Đã xử lý')
+            message.success('Đã xử lý tranh chấp')
             setItem(null)
-            x.reload()
-        } catch (e) {
-            message.error(e.message)
+            await list.reload()
+        } catch (error) {
+            message.error(error.message)
         }
     }
-    const cols = [
+
+    const columns = [
         { title: 'Mã', dataIndex: 'code' },
-        { title: 'Giao dịch', render: (_, r) => r.transaction?.code },
+        { title: 'Giao dịch', render: (_, record) => record.transaction?.code },
         {
             title: 'Người mở',
-            render: (_, r) => r.opened_by?.name || r.openedBy?.name,
+            render: (_, record) =>
+                record.opened_by?.name || record.openedBy?.name,
         },
         { title: 'Lý do', dataIndex: 'reason' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (v) => <Tag color={statusColor(v)}>{statusLabel(v)}</Tag>,
+            render: (value) => (
+                <Tag color={statusColor(value)}>{statusLabel(value)}</Tag>
+            ),
         },
         {
-            title: '',
-            render: (_, r) => (
-                <Button type="link" onClick={() => setItem(r)}>
-                    Xử lý
-                </Button>
+            title: 'Thao tác',
+            key: 'actions',
+            fixed: 'right',
+            render: (_, record) => (
+                <BaseActionGroup>
+                    <BaseIconAction
+                        icon={<EyeOutlined />}
+                        label="Xử lý tranh chấp"
+                        onClick={() => setItem(record)}
+                    />
+                </BaseActionGroup>
             ),
         },
     ]
+
     return (
-        <div className="page">
-            <PageHeader title="Tranh chấp" />
-            <Card>
-                <BaseTable
-                    data={x.data}
-                    columns={cols}
-                    loading={x.loading}
-                    pagination={{
-                        total: x.meta.pagination?.total,
-                        current: x.meta.pagination?.current_page,
-                        pageSize: x.meta.pagination?.per_page,
-                    }}
-                    onChange={(p) =>
-                        x.setParams((v) => ({ ...v, page: p.current }))
-                    }
-                />
-            </Card>
+        <>
+            <BaseListView
+                columns={columns}
+                data={list.data}
+                filters={
+                    <BaseFilter
+                        fields={filterFields}
+                        loading={list.loading}
+                        onReset={filters.reset}
+                        onSearch={filters.search}
+                        values={filters.filters}
+                    />
+                }
+                header={
+                    <BasePageHeader
+                        description="Đối chiếu bằng chứng và xử lý tranh chấp theo giao dịch."
+                        title="Tranh chấp"
+                    />
+                }
+                loading={list.loading}
+                onChange={(pagination) =>
+                    filters.paginate(pagination.current, pagination.pageSize)
+                }
+                pagination={{
+                    total: list.meta.pagination?.total,
+                    current: list.meta.pagination?.current_page,
+                    pageSize: list.meta.pagination?.per_page,
+                    showSizeChanger: true,
+                }}
+            />
             <BaseModal
-                title="Xử lý tranh chấp"
-                open={!!item}
-                onCancel={() => setItem(null)}
                 footer={[
-                    <Button
-                        key="reject"
+                    <BaseButton
                         danger
+                        key="reject"
                         onClick={() => resolve('rejected')}
                     >
                         Từ chối
-                    </Button>,
-                    <Button
+                    </BaseButton>,
+                    <BaseButton
                         key="resolve"
-                        type="primary"
                         onClick={() => resolve('resolved')}
+                        type="primary"
                     >
                         Chấp nhận và hoàn tất
-                    </Button>,
+                    </BaseButton>,
                 ]}
+                onCancel={() => setItem(null)}
+                open={Boolean(item)}
+                title="Xử lý tranh chấp"
             >
                 <p>
                     <b>Mô tả:</b> {item?.description}
                 </p>
             </BaseModal>
-        </div>
+        </>
     )
 }

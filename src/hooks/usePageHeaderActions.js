@@ -1,53 +1,89 @@
 import { useMemo, useState } from 'react'
+
 import { useAsyncAction } from './useAsyncAction'
+
+export const resolvePageHeaderConfig = (source, ...args) =>
+    typeof source === 'function' ? source(...args) : source
+
+const defaultCall = (values, action, context) => {
+    const form = action.form || {}
+    const method = form.method || action.method || 'create'
+    const service = form.service || action.service || context.service
+
+    return service?.[method]?.(values)
+}
 
 export function usePageHeaderActions({ actions = [], context = {} } = {}) {
     const [activeActionKey, setActiveActionKey] = useState(null)
     const { loading, run } = useAsyncAction()
+
     const visibleActions = useMemo(
         () =>
             actions.filter(
-                (item) =>
-                    !(typeof item.hidden === 'function'
-                        ? item.hidden(context)
-                        : item.hidden),
+                (action) => !resolvePageHeaderConfig(action.hidden, context),
             ),
         [actions, context],
     )
+
     const activeAction = visibleActions.find(
-        (item) => item.key === activeActionKey,
+        (action) => action.key === activeActionKey,
     )
-    const openAction = (action) =>
-        action.form ? setActiveActionKey(action.key) : action.onClick?.(context)
+    const activeForm = activeAction?.form
+
+    const formContext = useMemo(
+        () => ({
+            ...context,
+            action: activeAction,
+            close: () => setActiveActionKey(null),
+        }),
+        [activeAction, context],
+    )
+
+    const openAction = (action) => {
+        if (action.form) {
+            setActiveActionKey(action.key)
+            return
+        }
+
+        action.onClick?.(context)
+    }
+
     const closeAction = () => setActiveActionKey(null)
+
     const submitForm = async (values) => {
         if (!activeAction) return null
-        const form = activeAction.form || {}
+
         return run(
             async () => {
-                const payload = form.normalize
-                    ? form.normalize(values, context)
+                const normalized = activeForm?.normalize
+                    ? activeForm.normalize(values, formContext)
                     : values
-                if (form.call) return form.call(payload, context)
-                const service =
-                    form.service || activeAction.service || context.service
-                return service?.[
-                    form.method || activeAction.method || 'create'
-                ]?.(payload)
+
+                if (activeForm?.call) {
+                    return activeForm.call(normalized, formContext)
+                }
+
+                return defaultCall(normalized, activeAction, formContext)
             },
             {
-                successMessage: form.successMessage || 'Đã lưu dữ liệu',
+                successMessage:
+                    activeForm?.successMessage ||
+                    activeForm?.message ||
+                    'Đã lưu dữ liệu',
                 onSuccess: async (response) => {
-                    closeAction()
-                    await form.onSuccess?.(response, context)
+                    setActiveActionKey(null)
+                    await activeForm?.onSuccess?.(response, formContext)
+                    await activeAction?.onSuccess?.(response, formContext)
                 },
             },
         )
     }
+
     return {
         visibleActions,
         activeAction,
-        activeForm: activeAction?.form,
+        activeForm,
+        formContext,
         loading,
         openAction,
         closeAction,

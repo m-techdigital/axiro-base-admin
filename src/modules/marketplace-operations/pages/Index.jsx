@@ -1,6 +1,13 @@
-import { BaseTable, BaseModal, BaseForm } from '@/components/base'
+import { CASE_PRIORITY_OPTIONS, CASE_STATUS_OPTIONS } from '@/constants/options'
+import { EditOutlined, ToolOutlined } from '@ant-design/icons'
 import {
-    Button,
+    BaseForm,
+    BaseIconAction,
+    BaseModal,
+    BaseTable,
+    BaseButton,
+} from '@/components/base'
+import {
     Card,
     Checkbox,
     Input,
@@ -11,7 +18,7 @@ import {
     Tag,
     message,
 } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
 import service from '../service'
@@ -50,7 +57,7 @@ export default function MarketplaceOperationsPage() {
     const [feeOpen, setFeeOpen] = useState(false)
     const [form] = BaseForm.useForm()
 
-    const load = async () => {
+    const load = useCallback(async () => {
         setLoading(true)
         try {
             const response =
@@ -65,10 +72,10 @@ export default function MarketplaceOperationsPage() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [tab])
     useEffect(() => {
         load()
-    }, [tab])
+    }, [load])
 
     const caseColumns = useMemo(
         () => [
@@ -114,9 +121,11 @@ export default function MarketplaceOperationsPage() {
                 fixed: 'right',
                 width: 90,
                 render: (_, row) => (
-                    <Button type="link" onClick={() => setSelected(row)}>
-                        Xử lý
-                    </Button>
+                    <BaseIconAction
+                        icon={<ToolOutlined />}
+                        label="Xử lý"
+                        onClick={() => setSelected(row)}
+                    />
                 ),
             },
         ],
@@ -149,17 +158,17 @@ export default function MarketplaceOperationsPage() {
             ),
         },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button
-                    type="link"
+                <BaseIconAction
+                    icon={<EditOutlined />}
+                    label="Chỉnh sửa"
                     onClick={() => {
                         form.setFieldsValue(r)
                         setFeeOpen(true)
                     }}
-                >
-                    Sửa
-                </Button>
+                />
             ),
         },
     ]
@@ -226,7 +235,7 @@ export default function MarketplaceOperationsPage() {
                     onChange={setTab}
                     tabBarExtraContent={
                         tab === 'fees' ? (
-                            <Button
+                            <BaseButton
                                 type="primary"
                                 onClick={() => {
                                     form.resetFields()
@@ -243,7 +252,7 @@ export default function MarketplaceOperationsPage() {
                                 }}
                             >
                                 Thêm chính sách phí
-                            </Button>
+                            </BaseButton>
                         ) : null
                     }
                     items={[
@@ -353,9 +362,9 @@ export default function MarketplaceOperationsPage() {
                             <Checkbox>Đang áp dụng</Checkbox>
                         </BaseForm.Item>
                     </Space>
-                    <Button type="primary" htmlType="submit">
+                    <BaseButton type="primary" htmlType="submit">
                         Lưu chính sách
-                    </Button>
+                    </BaseButton>
                 </BaseForm>
             </BaseModal>
             <BaseModal
@@ -379,18 +388,13 @@ export default function MarketplaceOperationsPage() {
                         rules={[{ required: true }]}
                     >
                         <Select
-                            options={CASE_STATUSES.map((value) => ({
-                                value,
-                                label: value,
-                            }))}
+                            options={CASE_STATUS_OPTIONS.filter(({ value }) =>
+                                CASE_STATUSES.includes(value),
+                            )}
                         />
                     </BaseForm.Item>
                     <BaseForm.Item name="priority" label="Ưu tiên">
-                        <Select
-                            options={['low', 'normal', 'high', 'urgent'].map(
-                                (value) => ({ value, label: value }),
-                            )}
-                        />
+                        <Select options={CASE_PRIORITY_OPTIONS} />
                     </BaseForm.Item>
                     <BaseForm.Item name="resolution" label="Kết quả xử lý">
                         <Input.TextArea rows={5} />
@@ -413,9 +417,9 @@ export default function MarketplaceOperationsPage() {
                             ]}
                         />
                     </BaseForm.Item>
-                    <Button type="primary" htmlType="submit">
+                    <BaseButton type="primary" htmlType="submit">
                         Cập nhật
-                    </Button>
+                    </BaseButton>
                 </BaseForm>
             </BaseModal>
         </div>

@@ -6,6 +6,7 @@ import {
     BaseActionGroup,
     BaseButton,
     BaseDeleteButton,
+    BaseIconAction,
     BaseFilter,
     BaseListView,
     BasePageHeader,
@@ -71,17 +72,15 @@ export default function ProductList() {
             fixed: 'right',
             render: (_, record) => (
                 <BaseActionGroup>
-                    <BaseButton
+                    <BaseIconAction
                         icon={<EditOutlined />}
+                        label="Chỉnh sửa"
                         onClick={() => navigate(`/products/${record.id}/edit`)}
-                        size="small"
-                        type="link"
-                    >
-                        Sửa
-                    </BaseButton>
+                    />
                     <BaseDeleteButton
                         entityLabel="sản phẩm"
                         onConfirm={() => remove(record)}
+                        tooltip="Xóa"
                     />
                 </BaseActionGroup>
             ),

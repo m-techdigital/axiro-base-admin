@@ -1,4 +1,11 @@
-import { BaseTable, BaseDrawer } from '@/components/base'
+import { AUDIT_RISK_OPTIONS } from '@/constants/options'
+import { EyeOutlined, ReloadOutlined } from '@ant-design/icons'
+import {
+    BaseButton,
+    BaseDrawer,
+    BaseIconAction,
+    BaseTable,
+} from '@/components/base'
 import {
     Button,
     Card,
@@ -128,9 +135,11 @@ export default function AuditLogList() {
                 width: 80,
                 fixed: 'right',
                 render: (_, row) => (
-                    <Button type="link" onClick={() => setSelected(row)}>
-                        Xem
-                    </Button>
+                    <BaseIconAction
+                        icon={<EyeOutlined />}
+                        label="Xem chi tiết"
+                        onClick={() => setSelected(row)}
+                    />
                 ),
             },
         ],
@@ -141,7 +150,11 @@ export default function AuditLogList() {
         <div className="page">
             <PageHeader
                 title="Nhật ký và lịch sử hệ thống"
-                actions={<Button onClick={load}>Tải lại</Button>}
+                actions={
+                    <BaseButton icon={<ReloadOutlined />} onClick={load}>
+                        Tải lại
+                    </BaseButton>
+                }
             />
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
                 <Col xs={12} md={6}>
@@ -202,9 +215,7 @@ export default function AuditLogList() {
                         allowClear
                         placeholder="Mức độ"
                         style={{ width: 150 }}
-                        options={['normal', 'warning', 'high', 'critical'].map(
-                            (value) => ({ value, label: value }),
-                        )}
+                        options={AUDIT_RISK_OPTIONS}
                         onChange={(risk_level) =>
                             setParams((p) => ({ ...p, page: 1, risk_level }))
                         }

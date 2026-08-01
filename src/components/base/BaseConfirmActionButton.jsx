@@ -1,25 +1,54 @@
-import { Popconfirm } from 'antd'
-
-import BaseButton from './BaseButton'
+import { Modal } from 'antd'
+import BaseButton from './BaseButton.jsx'
 
 export default function BaseConfirmActionButton({
-    children,
-    confirmTitle = 'Xác nhận thao tác?',
-    confirmDescription,
+    module,
+    action,
+
+    title = 'Xác nhận',
+    content = 'Bạn có chắc chắn không?',
+
     okText = 'Xác nhận',
-    cancelText = 'Hủy',
+    cancelText = 'Huỷ',
+
     onConfirm,
-    ...buttonProps
+    onClick,
+
+    danger = false,
+    icon,
+    color = 'blue',
+
+    children,
+    ...props
 }) {
+    const handleClick = (e) => {
+        e?.stopPropagation?.()
+
+        onClick?.(e)
+
+        Modal.confirm({
+            title,
+            content,
+            okText,
+            cancelText,
+            okButtonProps: {
+                danger,
+            },
+            onOk: onConfirm,
+        })
+    }
+
     return (
-        <Popconfirm
-            cancelText={cancelText}
-            description={confirmDescription}
-            okText={okText}
-            onConfirm={onConfirm}
-            title={confirmTitle}
+        <BaseButton
+            module={module}
+            action={action}
+            icon={icon}
+            color={color}
+            variant="outlined"
+            onClick={handleClick}
+            {...props}
         >
-            <BaseButton {...buttonProps}>{children}</BaseButton>
-        </Popconfirm>
+            {children}
+        </BaseButton>
     )
 }

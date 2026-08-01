@@ -1,20 +1,32 @@
-import { Modal } from 'antd'
-function BaseModal({ className = '', children, ...props }) {
+import ParentBaseModal from './ParentBaseModal.jsx'
+
+/**
+ * Compatibility adapter around the AXIRO parent BaseModal.
+ *
+ * New Mini code should use the parent contract:
+ *   onSubmit, submitText, loading, submitProps, cancelProps.
+ * Legacy aliases remain temporarily supported so existing modules can be
+ * migrated without maintaining a second modal implementation.
+ */
+export default function BaseModal({
+    onOk,
+    okText,
+    confirmLoading,
+    okButtonProps,
+    cancelButtonProps,
+    destroyOnClose,
+    destroyOnHidden,
+    ...props
+}) {
     return (
-        <Modal
-            destroyOnHidden
-            centered
-            className={`base-modal ${className}`.trim()}
+        <ParentBaseModal
             {...props}
-        >
-            <div className="base-modal__body">{children}</div>
-        </Modal>
+            cancelProps={props.cancelProps ?? cancelButtonProps}
+            destroyOnHidden={destroyOnHidden ?? destroyOnClose}
+            loading={props.loading ?? confirmLoading}
+            onSubmit={props.onSubmit ?? onOk}
+            submitProps={props.submitProps ?? okButtonProps}
+            submitText={props.submitText ?? okText}
+        />
     )
 }
-BaseModal.confirm = Modal.confirm
-BaseModal.info = Modal.info
-BaseModal.success = Modal.success
-BaseModal.error = Modal.error
-BaseModal.warning = Modal.warning
-BaseModal.destroyAll = Modal.destroyAll
-export default BaseModal

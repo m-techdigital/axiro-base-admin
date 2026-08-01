@@ -1,47 +1,95 @@
-import { BaseModal } from '@/components/base'
-import { statusColor, statusLabel } from '../../../contracts/marketplaceLabels'
-import { Button, Card, Input, Space, Tag, message } from 'antd'
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
+import { Input, Tag, message } from 'antd'
 import { useState } from 'react'
-import { useList } from '../../../hooks/useList'
-import BaseTable from '../../../components/base/BaseTable'
-import PageHeader from '../../../components/base/PageHeader'
-import Money from '../../../components/base/Money'
+
+import {
+    BaseActionGroup,
+    BaseConfirmActionButton,
+    BaseFilter,
+    BaseIconAction,
+    BaseListView,
+    BaseModal,
+    BasePageHeader,
+    Money,
+} from '@/components/base'
+import { useBaseFilters, useList } from '@/hooks'
+
+import { statusColor, statusLabel } from '../../../contracts/marketplaceLabels'
 import service from '../service'
+
+const filterFields = [
+    {
+        name: 'keyword',
+        label: 'Mã hoặc tiêu đề',
+        type: 'search',
+        placeholder: 'Mã hoặc tiêu đề tin đăng',
+    },
+    {
+        name: 'status',
+        label: 'Trạng thái',
+        type: 'select',
+        options: [
+            { value: 'pending', label: 'Chờ duyệt' },
+            { value: 'published', label: 'Đang hiển thị' },
+            { value: 'rejected', label: 'Đã từ chối' },
+            { value: 'reserved', label: 'Đã giữ chỗ' },
+        ],
+    },
+    {
+        name: 'listing_type',
+        label: 'Loại tin',
+        type: 'select',
+        options: [
+            { value: 'sale', label: 'Bán' },
+            { value: 'rental', label: 'Cho thuê' },
+        ],
+    },
+]
+
 export default function ListingList() {
-    const x = useList(service, { per_page: 20 }),
-        [rejecting, setRejecting] = useState(null),
-        [reason, setReason] = useState('')
-    const act = async (fn, msg) => {
+    const list = useList(service, { page: 1, per_page: 20 })
+    const filters = useBaseFilters({
+        defaultParams: { page: 1, per_page: 20 },
+        onSearch: list.setParams,
+        onReset: list.setParams,
+    })
+    const [rejecting, setRejecting] = useState(null)
+    const [reason, setReason] = useState('')
+
+    const act = async (fn, successMessage) => {
         try {
             await fn()
-            message.success(msg)
-            x.reload()
-        } catch (e) {
-            message.error(e.message)
+            message.success(successMessage)
+            await list.reload()
+        } catch (error) {
+            message.error(error.message)
         }
     }
-    const cols = [
+
+    const columns = [
         { title: 'Mã', dataIndex: 'code' },
         { title: 'Tin đăng', dataIndex: 'title' },
-        { title: 'Chủ tin', render: (_, r) => r.owner?.name },
+        { title: 'Chủ tin', render: (_, record) => record.owner?.name },
         {
             title: 'Loại',
             dataIndex: 'listing_type',
-            render: (v) => <Tag>{v === 'sale' ? 'Bán' : 'Cho thuê'}</Tag>,
+            render: (value) => (
+                <Tag>{value === 'sale' ? 'Bán' : 'Cho thuê'}</Tag>
+            ),
         },
         {
             title: 'Giá / kỳ hạn',
-            render: (_, r) =>
-                r.listing_type === 'sale' ? (
-                    <Money value={r.sale_price} />
+            render: (_, record) =>
+                record.listing_type === 'sale' ? (
+                    <Money value={record.sale_price} />
                 ) : (
                     <div>
-                        <Money value={r.rental_price} />
+                        <Money value={record.rental_price} />
                         <small style={{ display: 'block' }}>
-                            {(r.rental_rates || r.rentalRates || [])
+                            {(record.rental_rates || record.rentalRates || [])
                                 .map(
-                                    (x) =>
-                                        `${x.label}: ${Number(x.price).toLocaleString('vi-VN')}đ`,
+                                    (rate) =>
+                                        `${rate.label}: ${Number(rate.price).toLocaleString('vi-VN')}đ`,
                                 )
                                 .join(' | ') || 'Chưa khai báo gói thuê'}
                         </small>
@@ -51,79 +99,93 @@ export default function ListingList() {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (v) => <Tag color={statusColor(v)}>{statusLabel(v)}</Tag>,
+            render: (value) => (
+                <Tag color={statusColor(value)}>{statusLabel(value)}</Tag>
+            ),
         },
         {
-            title: '',
-            render: (_, r) => (
-                <Space>
-                    {r.status !== 'published' && (
-                        <Button
-                            type="link"
-                            onClick={() =>
-                                act(() => service.approve(r.id), 'Đã duyệt')
+            title: 'Thao tác',
+            key: 'actions',
+            fixed: 'right',
+            render: (_, record) => (
+                <BaseActionGroup>
+                    {record.status !== 'published' ? (
+                        <BaseConfirmActionButton
+                            icon={<CheckOutlined />}
+                            onConfirm={() =>
+                                act(
+                                    () => service.approve(record.id),
+                                    'Đã duyệt tin đăng',
+                                )
                             }
-                        >
-                            Duyệt
-                        </Button>
-                    )}
-                    <Button
+                            title="Duyệt tin đăng này?"
+                            tooltip="Duyệt"
+                        />
+                    ) : null}
+                    <BaseIconAction
                         danger
-                        type="link"
+                        icon={<CloseOutlined />}
+                        label="Từ chối"
                         onClick={() => {
-                            setRejecting(r)
+                            setRejecting(record)
                             setReason('')
                         }}
-                    >
-                        Từ chối
-                    </Button>
-                </Space>
+                    />
+                </BaseActionGroup>
             ),
         },
     ]
+
     return (
-        <div className="page">
-            <PageHeader title="Tin đăng MBN" />
-            <Card>
-                <Input.Search
-                    placeholder="Tìm mã hoặc tiêu đề"
-                    onSearch={(keyword) =>
-                        x.setParams((p) => ({ ...p, keyword, page: 1 }))
-                    }
-                    style={{ width: 340, marginBottom: 16 }}
-                />
-                <BaseTable
-                    data={x.data}
-                    columns={cols}
-                    loading={x.loading}
-                    pagination={{
-                        total: x.meta.pagination?.total,
-                        current: x.meta.pagination?.current_page,
-                        pageSize: x.meta.pagination?.per_page,
-                    }}
-                    onChange={(p) =>
-                        x.setParams((v) => ({ ...v, page: p.current }))
-                    }
-                />
-            </Card>
+        <>
+            <BaseListView
+                columns={columns}
+                data={list.data}
+                filters={
+                    <BaseFilter
+                        fields={filterFields}
+                        loading={list.loading}
+                        onReset={filters.reset}
+                        onSearch={filters.search}
+                        values={filters.filters}
+                    />
+                }
+                header={
+                    <BasePageHeader
+                        description="Duyệt, từ chối và theo dõi trạng thái tin đăng MBN."
+                        title="Tin đăng MBN"
+                    />
+                }
+                loading={list.loading}
+                onChange={(pagination) =>
+                    filters.paginate(pagination.current, pagination.pageSize)
+                }
+                pagination={{
+                    total: list.meta.pagination?.total,
+                    current: list.meta.pagination?.current_page,
+                    pageSize: list.meta.pagination?.per_page,
+                    showSizeChanger: true,
+                }}
+            />
             <BaseModal
-                title="Từ chối tin đăng"
-                open={!!rejecting}
+                okButtonProps={{ disabled: !reason.trim() }}
                 onCancel={() => setRejecting(null)}
                 onOk={() =>
                     act(
                         () => service.reject(rejecting.id, reason),
-                        'Đã từ chối',
+                        'Đã từ chối tin đăng',
                     ).then(() => setRejecting(null))
                 }
+                open={Boolean(rejecting)}
+                title="Từ chối tin đăng"
             >
                 <Input.TextArea
+                    onChange={(event) => setReason(event.target.value)}
+                    placeholder="Nêu rõ lý do để khách hàng chỉnh sửa"
                     rows={4}
                     value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    placeholder="Nêu rõ lý do để khách hàng chỉnh sửa"
                 />
             </BaseModal>
-        </div>
+        </>
     )
 }

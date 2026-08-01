@@ -1,5 +1,5 @@
-import { BaseForm } from '@/components/base'
-import { Card, Input, Button, Typography, message } from 'antd'
+import { BaseForm, BaseButton } from '@/components/base'
+import { Card, Input, Typography, message } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import service from '../service'
@@ -53,14 +53,14 @@ export default function Login() {
                     >
                         <Input.Password />
                     </BaseForm.Item>
-                    <Button
+                    <BaseButton
                         block
                         type="primary"
                         htmlType="submit"
                         loading={loading}
                     >
                         Đăng nhập
-                    </Button>
+                    </BaseButton>
                 </BaseForm>
             </Card>
         </div>

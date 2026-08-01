@@ -1,5 +1,6 @@
-import { BaseModal } from '@/components/base'
-import { Button, Space, Tag } from 'antd'
+import { BaseActionGroup, BaseIconAction, BaseModal } from '@/components/base'
+import { DownloadOutlined, EyeOutlined } from '@ant-design/icons'
+import { Tag } from 'antd'
 import { useState } from 'react'
 import BaseTable from '../../../components/base/BaseTable'
 import PageHeader from '../../../components/base/PageHeader'
@@ -49,14 +50,21 @@ export default function GeneratedDocumentList() {
             ),
         },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Space>
-                    <Button onClick={() => show(r.id)}>Xem</Button>
-                    <Button type="primary" onClick={() => download(r)}>
-                        Tải PDF
-                    </Button>
-                </Space>
+                <BaseActionGroup>
+                    <BaseIconAction
+                        icon={<EyeOutlined />}
+                        label="Xem tài liệu"
+                        onClick={() => show(r.id)}
+                    />
+                    <BaseIconAction
+                        icon={<DownloadOutlined />}
+                        label="Tải PDF"
+                        onClick={() => download(r)}
+                    />
+                </BaseActionGroup>
             ),
         },
     ]

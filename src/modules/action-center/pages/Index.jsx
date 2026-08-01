@@ -1,15 +1,6 @@
-import { BaseTable } from '@/components/base'
-import {
-    Alert,
-    Button,
-    Card,
-    Col,
-    Empty,
-    Row,
-    Space,
-    Statistic,
-    Tag,
-} from 'antd'
+import { BaseButton, BaseIconAction, BaseTable } from '@/components/base'
+import { ReloadOutlined, RightOutlined, ToolOutlined } from '@ant-design/icons'
+import { Alert, Card, Col, Empty, Row, Space, Statistic, Tag } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../../../components/base/PageHeader'
@@ -67,7 +58,11 @@ export default function ActionCenter() {
             <PageHeader
                 title="Trung tâm xử lý"
                 description="Các việc phát sinh từ MBN cần quản trị viên duyệt, đối soát hoặc can thiệp."
-                actions={<Button onClick={load}>Tải lại</Button>}
+                actions={
+                    <BaseButton icon={<ReloadOutlined />} onClick={load}>
+                        Tải lại
+                    </BaseButton>
+                }
             />
             {error && <Alert type="error" message={error} showIcon />}
             <Row gutter={[16, 16]} className="action-center-stats">
@@ -117,12 +112,13 @@ export default function ActionCenter() {
                     <Card
                         title="Tin đăng chờ duyệt"
                         extra={
-                            <Button
+                            <BaseButton
+                                icon={<RightOutlined />}
                                 type="link"
                                 onClick={() => navigate('/listings')}
                             >
                                 Mở danh sách
-                            </Button>
+                            </BaseButton>
                         }
                     >
                         {compact(data?.listings, [
@@ -146,12 +142,13 @@ export default function ActionCenter() {
                     <Card
                         title="Thanh toán chờ đối soát"
                         extra={
-                            <Button
+                            <BaseButton
+                                icon={<RightOutlined />}
                                 type="link"
                                 onClick={() => navigate('/payments')}
                             >
                                 Mở danh sách
-                            </Button>
+                            </BaseButton>
                         }
                     >
                         {compact(data?.payments, [
@@ -163,7 +160,7 @@ export default function ActionCenter() {
                             {
                                 title: 'Giao dịch',
                                 render: (_, r) => (
-                                    <Button
+                                    <BaseButton
                                         type="link"
                                         onClick={() =>
                                             navigate(
@@ -172,7 +169,7 @@ export default function ActionCenter() {
                                         }
                                     >
                                         {r.transaction?.code}
-                                    </Button>
+                                    </BaseButton>
                                 ),
                             },
                             {
@@ -186,12 +183,13 @@ export default function ActionCenter() {
                     <Card
                         title="Tranh chấp đang mở"
                         extra={
-                            <Button
+                            <BaseButton
+                                icon={<RightOutlined />}
                                 type="link"
                                 onClick={() => navigate('/disputes')}
                             >
                                 Mở danh sách
-                            </Button>
+                            </BaseButton>
                         }
                     >
                         {compact(data?.disputes, [
@@ -203,7 +201,7 @@ export default function ActionCenter() {
                             {
                                 title: 'Giao dịch',
                                 render: (_, r) => (
-                                    <Button
+                                    <BaseButton
                                         type="link"
                                         onClick={() =>
                                             navigate(
@@ -212,7 +210,7 @@ export default function ActionCenter() {
                                         }
                                     >
                                         {r.transaction?.code}
-                                    </Button>
+                                    </BaseButton>
                                 ),
                             },
                             {
@@ -242,14 +240,13 @@ export default function ActionCenter() {
                             {
                                 title: '',
                                 render: (_, r) => (
-                                    <Button
-                                        type="link"
+                                    <BaseIconAction
+                                        icon={<ToolOutlined />}
+                                        label="Xử lý giao dịch"
                                         onClick={() =>
                                             navigate(`/transactions/${r.id}`)
                                         }
-                                    >
-                                        Xử lý
-                                    </Button>
+                                    />
                                 ),
                             },
                         ])}

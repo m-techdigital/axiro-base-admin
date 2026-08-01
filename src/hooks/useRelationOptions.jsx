@@ -1,20 +1,41 @@
-import { useEffect, useState } from 'react'
-export function useRelationOptions(service, label = (x) => x.name || x.code) {
-    const [options, setOptions] = useState([]),
-        [loading, setLoading] = useState(true)
+import { useEffect, useRef, useState } from 'react'
+
+const defaultLabel = (item) => item.name || item.code
+
+export function useRelationOptions(service, label = defaultLabel) {
+    const labelRef = useRef(label)
+    const [options, setOptions] = useState([])
+    const [loading, setLoading] = useState(true)
+
     useEffect(() => {
+        labelRef.current = label
+    }, [label])
+
+    useEffect(() => {
+        let active = true
+
+        setLoading(true)
         service
             .list({ per_page: 100 })
-            .then((r) =>
+            .then((response) => {
+                if (!active) return
+
                 setOptions(
-                    (r.data || []).map((x) => ({
-                        value: x.id,
-                        label: label(x),
-                        record: x,
+                    (response.data || []).map((item) => ({
+                        value: item.id,
+                        label: labelRef.current(item),
+                        record: item,
                     })),
-                ),
-            )
-            .finally(() => setLoading(false))
+                )
+            })
+            .finally(() => {
+                if (active) setLoading(false)
+            })
+
+        return () => {
+            active = false
+        }
     }, [service])
+
     return { options, loading }
 }

@@ -1,6 +1,12 @@
-import { BaseTable, BaseModal } from '@/components/base'
-import { Button, Card, Input, Space, Tabs, Tag, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { ToolOutlined } from '@ant-design/icons'
+import {
+    BaseIconAction,
+    BaseModal,
+    BaseTable,
+    BaseButton,
+} from '@/components/base'
+import { Card, Input, Space, Tabs, Tag, message } from 'antd'
+import { useCallback, useEffect, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
 import service from '../service'
@@ -13,7 +19,7 @@ export default function PayoutCenter() {
         [selected, setSelected] = useState(null),
         [note, setNote] = useState(''),
         [reference, setReference] = useState('')
-    const load = async () => {
+    const load = useCallback(async () => {
         setLoading(true)
         try {
             const r =
@@ -28,10 +34,10 @@ export default function PayoutCenter() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [active])
     useEffect(() => {
         load()
-    }, [active])
+    }, [load])
     const act = async (fn) => {
         try {
             await fn()
@@ -54,11 +60,14 @@ export default function PayoutCenter() {
         { title: 'Trạng thái', dataIndex: 'status', render: status },
         { title: 'Ngày gửi', dataIndex: 'submitted_at' },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button type="link" onClick={() => setSelected(r)}>
-                    Xử lý
-                </Button>
+                <BaseIconAction
+                    icon={<ToolOutlined />}
+                    label="Xử lý"
+                    onClick={() => setSelected(r)}
+                />
             ),
         },
     ]
@@ -69,11 +78,14 @@ export default function PayoutCenter() {
         { title: 'Số tài khoản', dataIndex: 'account_number' },
         { title: 'Trạng thái', dataIndex: 'status', render: status },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button type="link" onClick={() => setSelected(r)}>
-                    Xử lý
-                </Button>
+                <BaseIconAction
+                    icon={<ToolOutlined />}
+                    label="Xử lý"
+                    onClick={() => setSelected(r)}
+                />
             ),
         },
     ]
@@ -92,11 +104,14 @@ export default function PayoutCenter() {
         },
         { title: 'Trạng thái', dataIndex: 'status', render: status },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button type="link" onClick={() => setSelected(r)}>
-                    Xử lý
-                </Button>
+                <BaseIconAction
+                    icon={<ToolOutlined />}
+                    label="Xử lý"
+                    onClick={() => setSelected(r)}
+                />
             ),
         },
     ]
@@ -149,7 +164,7 @@ export default function PayoutCenter() {
                     <Space wrap>
                         {active === 'verifications' && (
                             <>
-                                <Button
+                                <BaseButton
                                     type="primary"
                                     onClick={() =>
                                         act(() =>
@@ -162,8 +177,8 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Xác minh
-                                </Button>
-                                <Button
+                                </BaseButton>
+                                <BaseButton
                                     danger
                                     onClick={() =>
                                         act(() =>
@@ -176,12 +191,12 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Từ chối
-                                </Button>
+                                </BaseButton>
                             </>
                         )}
                         {active === 'accounts' && (
                             <>
-                                <Button
+                                <BaseButton
                                     type="primary"
                                     onClick={() =>
                                         act(() =>
@@ -194,8 +209,8 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Xác minh
-                                </Button>
-                                <Button
+                                </BaseButton>
+                                <BaseButton
                                     danger
                                     onClick={() =>
                                         act(() =>
@@ -208,19 +223,19 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Từ chối
-                                </Button>
+                                </BaseButton>
                             </>
                         )}
                         {active === 'withdrawals' && (
                             <>
-                                <Button
+                                <BaseButton
                                     onClick={() =>
                                         act(() => service.approve(selected.id))
                                     }
                                 >
                                     Duyệt
-                                </Button>
-                                <Button
+                                </BaseButton>
+                                <BaseButton
                                     type="primary"
                                     disabled={!reference}
                                     onClick={() =>
@@ -233,8 +248,8 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Xác nhận đã chi
-                                </Button>
-                                <Button
+                                </BaseButton>
+                                <BaseButton
                                     danger
                                     onClick={() =>
                                         act(() =>
@@ -246,7 +261,7 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Từ chối
-                                </Button>
+                                </BaseButton>
                             </>
                         )}
                     </Space>

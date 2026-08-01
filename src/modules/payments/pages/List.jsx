@@ -1,104 +1,163 @@
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
+import { Tag, message } from 'antd'
+
+import {
+    BaseActionGroup,
+    BaseConfirmActionButton,
+    BaseFilter,
+    BaseIconAction,
+    BaseListView,
+    BasePageHeader,
+    Money,
+} from '@/components/base'
+import { useBaseFilters, useList } from '@/hooks'
+
 import {
     statusColor,
     statusLabel,
     valueLabel,
 } from '../../../contracts/marketplaceLabels'
-import { Button, Card, Input, Space, Tag, message } from 'antd'
-import { useList } from '../../../hooks/useList'
-import BaseTable from '../../../components/base/BaseTable'
-import PageHeader from '../../../components/base/PageHeader'
-import Money from '../../../components/base/Money'
 import service from '../service'
+
+const filterFields = [
+    {
+        name: 'keyword',
+        label: 'Mã giao dịch hoặc thanh toán',
+        type: 'search',
+        placeholder: 'Mã giao dịch hoặc thanh toán',
+    },
+    {
+        name: 'status',
+        label: 'Trạng thái',
+        type: 'select',
+        options: [
+            { value: 'pending', label: 'Chờ xử lý' },
+            { value: 'submitted', label: 'Chờ đối soát' },
+            { value: 'confirmed', label: 'Đã xác nhận' },
+            { value: 'rejected', label: 'Đã từ chối' },
+        ],
+    },
+    {
+        name: 'payment_type',
+        label: 'Loại thanh toán',
+        type: 'select',
+        options: [
+            { value: 'full', label: 'Thanh toán đủ' },
+            { value: 'deposit', label: 'Tiền cọc' },
+            { value: 'installment', label: 'Trả góp' },
+            { value: 'rental', label: 'Thuê' },
+        ],
+    },
+]
+
 export default function PaymentList() {
-    const x = useList(service, { per_page: 20 })
-    const act = async (fn, msg) => {
+    const list = useList(service, { page: 1, per_page: 20 })
+    const filters = useBaseFilters({
+        defaultParams: { page: 1, per_page: 20 },
+        onSearch: list.setParams,
+        onReset: list.setParams,
+    })
+
+    const act = async (fn, successMessage) => {
         try {
             await fn()
-            message.success(msg)
-            x.reload()
-        } catch (e) {
-            message.error(e.message)
+            message.success(successMessage)
+            await list.reload()
+        } catch (error) {
+            message.error(error.message)
         }
     }
-    const cols = [
+
+    const columns = [
         { title: 'Mã', dataIndex: 'code' },
-        { title: 'Giao dịch', render: (_, r) => r.transaction?.code },
-        { title: 'Khách hàng', render: (_, r) => r.customer?.name },
+        { title: 'Giao dịch', render: (_, record) => record.transaction?.code },
+        { title: 'Khách hàng', render: (_, record) => record.customer?.name },
         {
             title: 'Loại',
             dataIndex: 'payment_type',
-            render: (v) => valueLabel(v),
+            render: (value) => valueLabel(value),
         },
         {
             title: 'Số tiền',
             dataIndex: 'amount',
-            render: (v) => <Money value={v} />,
+            render: (value) => <Money value={value} />,
         },
         { title: 'Hạn', dataIndex: 'due_date' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (v) => <Tag color={statusColor(v)}>{statusLabel(v)}</Tag>,
+            render: (value) => (
+                <Tag color={statusColor(value)}>{statusLabel(value)}</Tag>
+            ),
         },
         {
-            title: '',
-            render: (_, r) => (
-                <Space>
-                    {r.status !== 'confirmed' && (
-                        <Button
-                            type="link"
-                            onClick={() =>
-                                act(() => service.confirm(r.id), 'Đã xác nhận')
+            title: 'Thao tác',
+            key: 'actions',
+            fixed: 'right',
+            render: (_, record) => (
+                <BaseActionGroup>
+                    {record.status !== 'confirmed' ? (
+                        <BaseConfirmActionButton
+                            icon={<CheckOutlined />}
+                            onConfirm={() =>
+                                act(
+                                    () => service.confirm(record.id),
+                                    'Đã xác nhận thanh toán',
+                                )
                             }
-                        >
-                            Xác nhận
-                        </Button>
-                    )}
-                    <Button
+                            title="Xác nhận thanh toán?"
+                            tooltip="Xác nhận"
+                        />
+                    ) : null}
+                    <BaseIconAction
                         danger
-                        type="link"
+                        icon={<CloseOutlined />}
+                        label="Từ chối"
                         onClick={() =>
                             act(
                                 () =>
                                     service.reject(
-                                        r.id,
+                                        record.id,
                                         'Thông tin thanh toán chưa hợp lệ.',
                                     ),
-                                'Đã từ chối',
+                                'Đã từ chối thanh toán',
                             )
                         }
-                    >
-                        Từ chối
-                    </Button>
-                </Space>
+                    />
+                </BaseActionGroup>
             ),
         },
     ]
+
     return (
-        <div className="page">
-            <PageHeader title="Thanh toán giao dịch" />
-            <Card>
-                <Input.Search
-                    placeholder="Tìm theo mã giao dịch"
-                    onSearch={(transaction_id) =>
-                        x.setParams((p) => ({ ...p, transaction_id, page: 1 }))
-                    }
-                    style={{ width: 320, marginBottom: 16 }}
+        <BaseListView
+            columns={columns}
+            data={list.data}
+            filters={
+                <BaseFilter
+                    fields={filterFields}
+                    loading={list.loading}
+                    onReset={filters.reset}
+                    onSearch={filters.search}
+                    values={filters.filters}
                 />
-                <BaseTable
-                    data={x.data}
-                    columns={cols}
-                    loading={x.loading}
-                    pagination={{
-                        total: x.meta.pagination?.total,
-                        current: x.meta.pagination?.current_page,
-                        pageSize: x.meta.pagination?.per_page,
-                    }}
-                    onChange={(p) =>
-                        x.setParams((v) => ({ ...v, page: p.current }))
-                    }
+            }
+            header={
+                <BasePageHeader
+                    description="Đối soát và xác nhận các khoản thanh toán theo giao dịch."
+                    title="Thanh toán giao dịch"
                 />
-            </Card>
-        </div>
+            }
+            loading={list.loading}
+            onChange={(pagination) =>
+                filters.paginate(pagination.current, pagination.pageSize)
+            }
+            pagination={{
+                total: list.meta.pagination?.total,
+                current: list.meta.pagination?.current_page,
+                pageSize: list.meta.pagination?.per_page,
+                showSizeChanger: true,
+            }}
+        />
     )
 }

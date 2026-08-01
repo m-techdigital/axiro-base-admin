@@ -32,3 +32,17 @@ Run `npm run check:parent-foundation`, `npm run check:base-ownership`, all remai
 - List pages must use `BaseListView`, `BaseFilter`, `BaseTable` and canonical action owners.
 - Do not add inline `Input.Search`, `Card` list wrappers or `Popconfirm` delete flows when a base owner exists.
 - Run `npm run format`, `npm run check:parent-ui-parity` and `npm run check:all` before handoff.
+
+## Parent-source selection policy
+
+AXIRO cha là nguồn chuẩn trước khi thay đổi base/CSS. Mỗi owner phải được phân loại trong `docs/canonical/parent-base-provenance.json`:
+
+- `exact_source`: copy nguyên source cha tại cùng contract;
+- `bounded_adapter`: adapter mỏng vì Mini có phạm vi một admin, nhiều customer;
+- `excluded`: không port vì lệch domain.
+
+Không được tạo component mới chỉ cùng tên với AXIRO cha rồi gọi là đồng bộ. CSS base không được override trong `src/modules/**`.
+
+## Parent-source rule
+
+Do not create a second implementation merely because a component has the same name. Inspect the AXIRO parent source, its imports, CSS and consumers first. Copy dependency-closed sources exactly, use a thin adapter only for bounded Mini differences, and keep one CSS owner per primitive.

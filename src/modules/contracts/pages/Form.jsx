@@ -1,13 +1,6 @@
-import { BaseForm } from '@/components/base'
-import {
-    Button,
-    Card,
-    DatePicker,
-    Input,
-    InputNumber,
-    Select,
-    message,
-} from 'antd'
+import { CONTRACT_STATUS_OPTIONS } from '@/constants/options'
+import { BaseForm, BaseButton } from '@/components/base'
+import { Card, DatePicker, Input, InputNumber, Select, message } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -35,7 +28,7 @@ export default function ContractForm() {
                     end_date: d.end_date ? dayjs(d.end_date) : null,
                 })
             })
-    }, [id])
+    }, [f, id])
     const save = async (v) => {
         setLoading(true)
         try {
@@ -112,22 +105,19 @@ export default function ContractForm() {
                         <DatePicker style={{ width: '100%' }} />
                     </BaseForm.Item>
                     <BaseForm.Item name="status" label="Trạng thái">
-                        <Select
-                            options={[
-                                'draft',
-                                'active',
-                                'completed',
-                                'cancelled',
-                            ].map((x) => ({ value: x, label: x }))}
-                        />
+                        <Select options={CONTRACT_STATUS_OPTIONS} />
                     </BaseForm.Item>
                     <BaseForm.Item name="note" label="Ghi chú">
                         <Input.TextArea />
                     </BaseForm.Item>
-                    <Button type="primary" htmlType="submit" loading={loading}>
+                    <BaseButton
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                    >
                         Lưu
-                    </Button>{' '}
-                    <Button onClick={() => n('/contracts')}>Hủy</Button>
+                    </BaseButton>{' '}
+                    <BaseButton onClick={() => n('/contracts')}>Hủy</BaseButton>
                 </BaseForm>
             </Card>
         </div>

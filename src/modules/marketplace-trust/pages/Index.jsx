@@ -1,16 +1,23 @@
-import { BaseTable, BaseModal, BaseForm } from '@/components/base'
 import {
-    Button,
-    Card,
-    Checkbox,
-    Input,
-    Select,
-    Space,
-    Tabs,
-    Tag,
-    message,
-} from 'antd'
-import { useEffect, useState } from 'react'
+    CONTENT_TYPE_OPTIONS,
+    DOCUMENT_STATUS_OPTIONS,
+    REVIEW_STATUS_OPTIONS,
+    CASE_STATUS_OPTIONS,
+} from '@/constants/options'
+import {
+    EditOutlined,
+    SafetyCertificateOutlined,
+    ToolOutlined,
+} from '@ant-design/icons'
+import {
+    BaseForm,
+    BaseIconAction,
+    BaseModal,
+    BaseTable,
+    BaseButton,
+} from '@/components/base'
+import { Card, Checkbox, Input, Select, Space, Tabs, Tag, message } from 'antd'
+import { useCallback, useEffect, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
 import service from '../service'
 const unwrap = (response) => response?.data?.data || response?.data || {}
@@ -25,7 +32,7 @@ export default function MarketplaceTrustPage() {
         [selected, setSelected] = useState(null),
         [contentOpen, setContentOpen] = useState(false)
     const [form] = BaseForm.useForm()
-    const load = async () => {
+    const load = useCallback(async () => {
         setLoading(true)
         try {
             const response =
@@ -40,10 +47,10 @@ export default function MarketplaceTrustPage() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [tab])
     useEffect(() => {
         load()
-    }, [tab])
+    }, [load])
     const reviewColumns = [
         { title: 'Giao dịch', render: (_, r) => r.transaction?.code },
         { title: 'Người đánh giá', render: (_, r) => r.reviewer?.name },
@@ -56,11 +63,14 @@ export default function MarketplaceTrustPage() {
             render: (v) => <Tag>{v}</Tag>,
         },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button type="link" onClick={() => setSelected(r)}>
-                    Kiểm duyệt
-                </Button>
+                <BaseIconAction
+                    icon={<SafetyCertificateOutlined />}
+                    label="Kiểm duyệt"
+                    onClick={() => setSelected(r)}
+                />
             ),
         },
     ]
@@ -76,17 +86,17 @@ export default function MarketplaceTrustPage() {
         },
         { title: 'Ngày hiệu lực', dataIndex: 'effective_at' },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button
-                    type="link"
+                <BaseIconAction
+                    icon={<EditOutlined />}
+                    label="Chỉnh sửa"
                     onClick={() => {
                         form.setFieldsValue(r)
                         setContentOpen(true)
                     }}
-                >
-                    Sửa
-                </Button>
+                />
             ),
         },
     ]
@@ -121,11 +131,14 @@ export default function MarketplaceTrustPage() {
             render: (v) => <Tag>{v}</Tag>,
         },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button type="link" onClick={() => setSelected(r)}>
-                    Xử lý
-                </Button>
+                <BaseIconAction
+                    icon={<ToolOutlined />}
+                    label="Xử lý"
+                    onClick={() => setSelected(r)}
+                />
             ),
         },
     ]
@@ -172,7 +185,7 @@ export default function MarketplaceTrustPage() {
                     onChange={setTab}
                     tabBarExtraContent={
                         tab === 'content' ? (
-                            <Button
+                            <BaseButton
                                 type="primary"
                                 onClick={() => {
                                     form.resetFields()
@@ -185,7 +198,7 @@ export default function MarketplaceTrustPage() {
                                 }}
                             >
                                 Thêm nội dung
-                            </Button>
+                            </BaseButton>
                         ) : null
                     }
                     items={[
@@ -228,13 +241,7 @@ export default function MarketplaceTrustPage() {
                         >
                             <Select
                                 style={{ width: 160 }}
-                                options={[
-                                    'topic',
-                                    'guide',
-                                    'policy',
-                                    'announcement',
-                                    'faq',
-                                ].map((value) => ({ value, label: value }))}
+                                options={CONTENT_TYPE_OPTIONS}
                             />
                         </BaseForm.Item>
                         <BaseForm.Item
@@ -244,9 +251,7 @@ export default function MarketplaceTrustPage() {
                         >
                             <Select
                                 style={{ width: 160 }}
-                                options={['draft', 'published', 'archived'].map(
-                                    (value) => ({ value, label: value }),
-                                )}
+                                options={DOCUMENT_STATUS_OPTIONS}
                             />
                         </BaseForm.Item>
                         <BaseForm.Item
@@ -288,9 +293,9 @@ export default function MarketplaceTrustPage() {
                             <Input type="datetime-local" />
                         </BaseForm.Item>
                     </Space>
-                    <Button type="primary" htmlType="submit">
+                    <BaseButton type="primary" htmlType="submit">
                         Lưu nội dung
-                    </Button>
+                    </BaseButton>
                 </BaseForm>
             </BaseModal>
             <BaseModal
@@ -320,10 +325,17 @@ export default function MarketplaceTrustPage() {
                         rules={[{ required: true }]}
                     >
                         <Select
-                            options={(tab === 'reviews'
-                                ? ['published', 'hidden']
-                                : ['reviewing', 'resolved', 'dismissed']
-                            ).map((value) => ({ value, label: value }))}
+                            options={
+                                tab === 'reviews'
+                                    ? REVIEW_STATUS_OPTIONS
+                                    : CASE_STATUS_OPTIONS.filter(({ value }) =>
+                                          [
+                                              'reviewing',
+                                              'resolved',
+                                              'dismissed',
+                                          ].includes(value),
+                                      )
+                            }
                         />
                     </BaseForm.Item>
                     <BaseForm.Item
@@ -337,9 +349,9 @@ export default function MarketplaceTrustPage() {
                     >
                         <Input.TextArea rows={5} />
                     </BaseForm.Item>
-                    <Button type="primary" htmlType="submit">
+                    <BaseButton type="primary" htmlType="submit">
                         Cập nhật
-                    </Button>
+                    </BaseButton>
                 </BaseForm>
             </BaseModal>
         </div>

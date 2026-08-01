@@ -6,6 +6,7 @@ import {
     BaseActionGroup,
     BaseButton,
     BaseDeleteButton,
+    BaseIconAction,
     BaseFilter,
     BaseListView,
     BasePageHeader,
@@ -14,6 +15,7 @@ import {
 import { useBaseFilters, useList } from '@/hooks'
 
 import service from '../service'
+import { statusColor, statusLabel } from '../../../contracts/marketplaceLabels'
 
 const filterFields = [
     {
@@ -61,7 +63,14 @@ export default function TransactionList() {
             title: 'Sản phẩm',
             render: (_, record) => record.product?.name || '—',
         },
-        { title: 'Ngày giao dịch', dataIndex: 'transaction_date' },
+        {
+            title: 'Ngày giao dịch',
+            dataIndex: 'transaction_date',
+            render: (value) =>
+                value
+                    ? new Intl.DateTimeFormat('vi-VN').format(new Date(value))
+                    : '—',
+        },
         {
             title: 'Tổng thanh toán',
             dataIndex: 'total_payable',
@@ -70,7 +79,11 @@ export default function TransactionList() {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (value) => <Tag>{value}</Tag>,
+            render: (value) => (
+                <Tag color={statusColor(value)}>
+                    {statusLabel(value, value || '—')}
+                </Tag>
+            ),
         },
         {
             title: 'Thao tác',
@@ -78,27 +91,22 @@ export default function TransactionList() {
             fixed: 'right',
             render: (_, record) => (
                 <BaseActionGroup>
-                    <BaseButton
+                    <BaseIconAction
                         icon={<EyeOutlined />}
+                        label="Xem chi tiết"
                         onClick={() => navigate(`/transactions/${record.id}`)}
-                        size="small"
-                        type="link"
-                    >
-                        Chi tiết
-                    </BaseButton>
-                    <BaseButton
+                    />
+                    <BaseIconAction
                         icon={<EditOutlined />}
+                        label="Chỉnh sửa"
                         onClick={() =>
                             navigate(`/transactions/${record.id}/edit`)
                         }
-                        size="small"
-                        type="link"
-                    >
-                        Sửa
-                    </BaseButton>
+                    />
                     <BaseDeleteButton
                         entityLabel="giao dịch"
                         onConfirm={() => remove(record)}
+                        tooltip="Xóa"
                     />
                 </BaseActionGroup>
             ),

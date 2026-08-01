@@ -1,0 +1,612 @@
+{
+    "source": {
+        "admin_zip": "mylands-admin-develop-20260801-a4871708.zip"
+    },
+    "policy": "AXIRO parent source first: exact copy when dependency-closed, mechanical conversion when toolchain-only, thin adapter when Mini bounded domain differs, explicit exclusion otherwise.",
+    "entries": [
+        {
+            "mini_path": "src/components/base/ParentBaseModal.jsx",
+            "parent_path": "src/components/base/BaseModal.jsx",
+            "mode": "bounded_adapter",
+            "sha256": "5be99f440f366921445f0b0ed2c387cb9843c6d4052565a19a648d7df3c22002",
+            "note": "AXIRO parent modal implementation with the SCSS side-effect import removed and Mini runtime forceRender compatibility retained; CSS is mechanically converted and owned by parent-base-modal.css."
+        },
+        {
+            "mini_path": "src/components/base/BaseButton.jsx",
+            "parent_path": "src/components/base/BaseButton.jsx",
+            "mode": "exact_source",
+            "sha256": "7c1e950d40b280629f1e8afcea7dd7d93d26c42a68cc305cb27e21852b669aa4"
+        },
+        {
+            "mini_path": "src/components/base/BaseConfirmActionButton.jsx",
+            "parent_path": "src/components/base/BaseConfirmActionButton.jsx",
+            "mode": "exact_source",
+            "sha256": "16c680e344b7208c20e49e4d07bc580631d2a862654fcc3a455d2416e5121e8f"
+        },
+        {
+            "mini_path": "src/components/base/BaseDeleteButton.jsx",
+            "parent_path": "src/components/base/BaseDeleteButton.jsx",
+            "mode": "bounded_adapter",
+            "sha256": "765d3781f3674a610845ae2398e737fe95efa431cc0f9b21cf12af1263b82aa5",
+            "note": "AXIRO parent delete action adapted only to consume entityLabel internally so React-only props never leak to DOM elements."
+        },
+        {
+            "mini_path": "src/components/base/BaseFormFooter.jsx",
+            "parent_path": "src/components/base/BaseFormFooter.jsx",
+            "mode": "exact_source",
+            "sha256": "73dcae9aaf1f331a1a4ceca677db40d295952f2bb29f51cc7750f3ab35c3e9f8"
+        },
+        {
+            "mini_path": "src/styles/tokens/breakpoints.css",
+            "parent_path": "src/styles/tokens/breakpoints.css",
+            "mode": "exact_source",
+            "sha256": "7180c4ac2384427fcb2d9f51110e3340036ab2066ad70b956040260e1c09e1df"
+        },
+        {
+            "mini_path": "src/styles/tokens/layout.css",
+            "parent_path": "src/styles/tokens/layout.css",
+            "mode": "exact_source",
+            "sha256": "ffc62b45d7a0a6635ef4f401622dccc3ec046579c5d6f7248abe6186f96776d4"
+        },
+        {
+            "mini_path": "src/styles/primitives/responsive.css",
+            "parent_path": "src/styles/primitives/responsive.css",
+            "mode": "exact_source",
+            "sha256": "e807a2ef77395da9f8b325bd006be8a6a554c6f912942ce119603709dba1b04b"
+        },
+        {
+            "mini_path": "src/components/base/BaseModal.jsx",
+            "mode": "bounded_adapter",
+            "note": "Adapter giữ alias cũ và delegate toàn bộ render cho ParentBaseModal."
+        },
+        {
+            "mini_path": "src/components/base/BaseFilter.jsx",
+            "mode": "bounded_adapter",
+            "note": "Bounded adapter: giữ field schema đơn giản của Mini; không port relation/cascade/RBAC của cha."
+        },
+        {
+            "mini_path": "src/components/base/BaseForm.jsx",
+            "mode": "bounded_adapter",
+            "note": "Bounded adapter trên Ant Form cho form thủ công hiện tại; chưa tuyên bố parity với dynamic form engine cha."
+        },
+        {
+            "mini_path": "src/components/base/BaseTable.jsx",
+            "mode": "bounded_adapter",
+            "note": "Bounded table runtime cho Mini; không port permission/action/render registry nặng của cha."
+        },
+        {
+            "mini_path": "src/components/base/BasePageHeader.jsx",
+            "mode": "bounded_adapter",
+            "note": "Bounded header; không port canonical hub/header filter theo domain cha."
+        },
+        {
+            "mini_path": "src/hooks/usePermission.jsx",
+            "mode": "bounded_adapter",
+            "note": "Single-admin compatibility adapter; không port RBAC."
+        },
+        {
+            "mini_path": "src/hooks/usePageHeaderActions.js",
+            "parent_path": "src/hooks/usePageHeaderActions.js",
+            "mode": "exact_source",
+            "sha256": "b6c6c63af231df2289136cc902e23c1e8c37f6003592ec29495d51f4e5f7420c",
+            "note": "Copied unchanged from AXIRO parent; action/form lifecycle remains source-owned."
+        },
+        {
+            "mini_path": "src/components/base/BaseModalForm/index.jsx",
+            "parent_path": "src/components/base/BaseModalForm/index.jsx",
+            "mode": "bounded_adapter",
+            "sha256": "0b3cac4cb236e530bc0860c392e683f31b6e8a0e5d3ab2bc17a96780f1470144",
+            "note": "Source-derived from AXIRO parent with formatting/import extension normalized for Mini; render contract is retained."
+        },
+        {
+            "mini_path": "src/components/base/BaseModalForm/base-modal-form.css",
+            "parent_path": "src/components/base/BaseModalForm/base-modal-form.scss",
+            "mode": "mechanical_conversion",
+            "sha256": "1fe35fe876e59771ab9b571ebed2eaaf866391b656eca2ce982ffa223a947e6e",
+            "note": "Declaration-preserving SCSS-to-CSS conversion; no Mini visual redesign."
+        }
+    ],
+    "excluded": [
+        {
+            "component": "BaseKanbanBoard",
+            "reason": "Không thuộc phạm vi Mini hiện tại."
+        },
+        {
+            "component": "BaseCalendarTab",
+            "reason": "Không thuộc phạm vi Mini hiện tại."
+        },
+        {
+            "component": "BaseMapPage",
+            "reason": "Không thuộc phạm vi Mini hiện tại."
+        },
+        {
+            "component": "BaseTaskTab",
+            "reason": "Không thuộc phạm vi Mini hiện tại."
+        },
+        {
+            "component": "CanonicalHubLayout",
+            "reason": "Phụ thuộc hub/domain/permission của AXIRO cha."
+        },
+        {
+            "component": "BaseEditor",
+            "reason": "Chỉ port khi Mini có rich-text nghiệp vụ thật."
+        }
+    ],
+    "full_parent_inventory": [
+        {
+            "parent_path": "src/components/base/BaseAutoFaceCaptureModal.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseBreadcrumb.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseButton.jsx",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/components/base/BaseCalendarTab.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseCanonicalHubLayout.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseCardStatistics.css",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseCardStatistics.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseCheckbox.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseConfirmActionButton.jsx",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/components/base/BaseDeleteButton.jsx",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/components/base/BaseDynamicFormList.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseDynamicFormList.scss",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/ColorPopover.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/CustomImage.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/ImageFloatingEditor.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/extensions.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/index.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/style.css",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/toolbar.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseEditor/useImageSelection.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseFaceCapture.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseFilter.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseForm/formChange.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseForm/formComputed.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseForm/formErrors.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseForm/formSubmit.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseForm/formUtils.js",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseForm.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseFormFooter.jsx",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/components/base/BaseFormModal.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseFormPage.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseHeaderFilters.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseHubInfoCard.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseHubTabs.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseImageUpload.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseInteractionTab.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseKanbanBoard.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseKanbanBoardPage.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseListInput.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseListView.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseLocationForm.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseLocationMap.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseMapPage.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseModal.jsx",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/components/base/BaseModalForm/base-modal-form.scss",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseModalForm/index.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseNumberFormatter.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BasePageHeader.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseStatistics.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseStatusSummaryBar.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseTabHeader.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseTabbedListPage.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseTable.jsx",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/BaseTabs.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseTaskTab.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseTimeline.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseUpload.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseView.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseViewModal.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseViewModeSwitch.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseViewPage.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/BaseVisualRelationTab.css",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseVisualRelationTab.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/BaseWidgetGrid.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/CanonicalHub.css",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/CanonicalHubLayoutContext.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/CanonicalHubSectionCard.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/CrudPage.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/FieldContainer.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/FilePreviewModal.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/ModuleFormModal.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/RelationSelect.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/SavedViewsBar.jsx",
+            "mode": "excluded",
+            "reason": "Depends on parent RBAC or saved-view domain."
+        },
+        {
+            "parent_path": "src/components/base/StatisticsModal.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/index.js",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/map/BaseMap.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/map/BaseMapControls.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/map/BaseMapFitBounds.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/map/BaseMapMarker.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/map/BaseMapView.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/map/MapStyleSwitcher.jsx",
+            "mode": "excluded",
+            "reason": "Domain/capability not owned by Mini."
+        },
+        {
+            "parent_path": "src/components/base/map/index.js",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/renderers/code.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/renderers/identity.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/renderers/index.js",
+            "mode": "bounded_adapter",
+            "reason": "Mini has same owner name but reduced domain contract; not exact parity."
+        },
+        {
+            "parent_path": "src/components/base/renderers/option.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/renderers/statistics.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/components/base/renderers/users.jsx",
+            "mode": "excluded",
+            "reason": "No current Mini consumer; port only when a real second consumer appears."
+        },
+        {
+            "parent_path": "src/styles/base-modal.scss",
+            "mode": "mechanical_conversion",
+            "reason": "Converted declaration-for-declaration to CSS because Mini does not use Sass."
+        },
+        {
+            "parent_path": "src/styles/base-tab-header.css",
+            "mode": "excluded",
+            "reason": "No matching Mini feature owner or would introduce unrelated parent UI surface."
+        },
+        {
+            "parent_path": "src/styles/primitives/responsive.css",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/styles/tokens/breakpoints.css",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/styles/tokens/layout.css",
+            "mode": "exact_source",
+            "reason": "Copied and hash-locked."
+        },
+        {
+            "parent_path": "src/styles/vendor-overrides/antd-tabs.css",
+            "mode": "excluded",
+            "reason": "No matching Mini feature owner or would introduce unrelated parent UI surface."
+        },
+        {
+            "parent_path": "src/styles/view-modal.scss",
+            "mode": "excluded",
+            "reason": "No matching Mini feature owner or would introduce unrelated parent UI surface."
+        }
+    ]
+}

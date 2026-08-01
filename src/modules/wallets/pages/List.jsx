@@ -1,6 +1,13 @@
-import { BaseTable, BaseModal, BaseDrawer, BaseForm } from '@/components/base'
+import { EyeOutlined } from '@ant-design/icons'
 import {
-    Button,
+    BaseDrawer,
+    BaseForm,
+    BaseIconAction,
+    BaseModal,
+    BaseTable,
+    BaseButton,
+} from '@/components/base'
+import {
     Card,
     Col,
     Input,
@@ -12,7 +19,7 @@ import {
     Tag,
     message,
 } from 'antd'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
 import service from '../service'
@@ -36,18 +43,27 @@ export default function WalletList() {
         [ledger, setLedger] = useState(null),
         [drawer, setDrawer] = useState(false),
         [keyword, setKeyword] = useState('')
-    const load = async () => {
+    const keywordRef = useRef(keyword)
+
+    useEffect(() => {
+        keywordRef.current = keyword
+    }, [keyword])
+
+    const load = useCallback(async () => {
         setLoading(true)
         try {
-            const r = await service.list({ keyword, per_page: 100 })
+            const r = await service.list({
+                keyword: keywordRef.current,
+                per_page: 100,
+            })
             setRows(r.data?.data?.data || r.data?.data || [])
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
     useEffect(() => {
         load()
-    }, [])
+    }, [load])
     const open = async (row) => {
         setSelected(row)
         setDrawer(true)
@@ -103,11 +119,14 @@ export default function WalletList() {
             ),
         },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button type="link" onClick={() => open(r)}>
-                    Xem dòng tiền
-                </Button>
+                <BaseIconAction
+                    icon={<EyeOutlined />}
+                    label="Xem dòng tiền"
+                    onClick={() => open(r)}
+                />
             ),
         },
     ]
@@ -123,7 +142,7 @@ export default function WalletList() {
                             onSearch={load}
                             placeholder="Tìm khách hàng"
                         />
-                        <Button onClick={load}>Tải lại</Button>
+                        <BaseButton onClick={load}>Tải lại</BaseButton>
                     </Space>
                 }
             />
@@ -142,9 +161,9 @@ export default function WalletList() {
                 width={900}
                 title={`Ví khách hàng ${selected?.name || ''}`}
                 extra={
-                    <Button type="primary" onClick={adjust}>
+                    <BaseButton type="primary" onClick={adjust}>
                         Điều chỉnh số dư
-                    </Button>
+                    </BaseButton>
                 }
             >
                 <Row gutter={16}>
@@ -295,9 +314,9 @@ function AdjustForm({ onSubmit }) {
             >
                 <Input.TextArea rows={3} />
             </BaseForm.Item>
-            <Button type="primary" htmlType="submit" block>
+            <BaseButton type="primary" htmlType="submit" block>
                 Xác nhận điều chỉnh
-            </Button>
+            </BaseButton>
         </BaseForm>
     )
 }

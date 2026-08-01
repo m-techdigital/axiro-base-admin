@@ -39,7 +39,7 @@ export default function AdminLayout() {
                     title={routeMeta?.title}
                 />
                 <Content className="admin-content">
-                    <div className="admin-content__body">
+                    <div className="admin-content-body">
                         <Outlet />
                     </div>
                 </Content>

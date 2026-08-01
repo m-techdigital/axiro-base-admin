@@ -6,6 +6,7 @@ import {
     BaseActionGroup,
     BaseButton,
     BaseDeleteButton,
+    BaseIconAction,
     BaseFilter,
     BaseListView,
     BasePageHeader,
@@ -77,17 +78,15 @@ export default function ContractList() {
             fixed: 'right',
             render: (_, record) => (
                 <BaseActionGroup>
-                    <BaseButton
+                    <BaseIconAction
                         icon={<EditOutlined />}
+                        label="Chỉnh sửa"
                         onClick={() => navigate(`/contracts/${record.id}/edit`)}
-                        size="small"
-                        type="link"
-                    >
-                        Sửa
-                    </BaseButton>
+                    />
                     <BaseDeleteButton
                         entityLabel="hợp đồng"
                         onConfirm={() => remove(record)}
+                        tooltip="Xóa"
                     />
                 </BaseActionGroup>
             ),

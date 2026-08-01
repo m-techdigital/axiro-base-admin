@@ -28,10 +28,10 @@ export default function AdminHeader({ collapsed, setCollapsed, title }) {
     }
     return (
         <Header className="admin-header">
-            <div className="admin-header__left">
+            <div className="admin-header-left">
                 <Button
                     type="text"
-                    className="admin-header__trigger"
+                    className="admin-trigger"
                     icon={
                         collapsed ? (
                             <MenuUnfoldOutlined />
@@ -41,7 +41,7 @@ export default function AdminHeader({ collapsed, setCollapsed, title }) {
                     }
                     onClick={() => setCollapsed(!collapsed)}
                 />
-                <Typography.Title level={4} className="admin-header__title">
+                <Typography.Title level={4} className="admin-page-title">
                     {title || 'Tổng quan'}
                 </Typography.Title>
             </div>

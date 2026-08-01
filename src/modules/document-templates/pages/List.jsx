@@ -1,5 +1,11 @@
-import { BaseModal, BaseForm } from '@/components/base'
-import { Button, Input, Select, Space, Tag, message } from 'antd'
+import {
+    BaseForm,
+    BaseIconAction,
+    BaseModal,
+    BaseButton,
+} from '@/components/base'
+import { EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { Input, Select, Space, Tag, message } from 'antd'
 import { useState } from 'react'
 import BaseTable from '../../../components/base/BaseTable'
 import PageHeader from '../../../components/base/PageHeader'
@@ -55,9 +61,14 @@ export default function DocumentTemplateList() {
             ),
         },
         {
-            title: '',
+            title: 'Thao tác',
+            key: 'actions',
             render: (_, r) => (
-                <Button onClick={() => edit(r)}>Chỉnh sửa</Button>
+                <BaseIconAction
+                    icon={<EditOutlined />}
+                    label="Chỉnh sửa"
+                    onClick={() => edit(r)}
+                />
             ),
         },
     ]
@@ -66,9 +77,13 @@ export default function DocumentTemplateList() {
             <PageHeader
                 title="Mẫu tài liệu"
                 actions={
-                    <Button type="primary" onClick={() => edit()}>
+                    <BaseButton
+                        icon={<PlusOutlined />}
+                        type="primary"
+                        onClick={() => edit()}
+                    >
                         Tạo mẫu
-                    </Button>
+                    </BaseButton>
                 }
             />
             <BaseTable

@@ -1,13 +1,6 @@
-import { BaseForm } from '@/components/base'
-import {
-    Button,
-    Card,
-    DatePicker,
-    Input,
-    InputNumber,
-    Select,
-    message,
-} from 'antd'
+import { TRANSACTION_STATUS_OPTIONS } from '@/constants/options'
+import { BaseForm, BaseButton } from '@/components/base'
+import { Card, DatePicker, Input, InputNumber, Select, message } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -208,20 +201,7 @@ export default function TransactionForm() {
                         }
                     </BaseForm.Item>
                     <BaseForm.Item name="status" label="Trạng thái">
-                        <Select
-                            options={[
-                                'draft',
-                                'pending_payment',
-                                'partially_paid',
-                                'paid',
-                                'handed_over',
-                                'active',
-                                'returned',
-                                'completed',
-                                'cancelled',
-                                'disputed',
-                            ].map((x) => ({ value: x, label: x }))}
-                        />
+                        <Select options={TRANSACTION_STATUS_OPTIONS} />
                     </BaseForm.Item>
                     <BaseForm.Item
                         name="payment_method"
@@ -232,10 +212,16 @@ export default function TransactionForm() {
                     <BaseForm.Item name="note" label="Ghi chú">
                         <Input.TextArea />
                     </BaseForm.Item>
-                    <Button type="primary" htmlType="submit" loading={loading}>
+                    <BaseButton
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                    >
                         Lưu
-                    </Button>{' '}
-                    <Button onClick={() => n('/transactions')}>Hủy</Button>
+                    </BaseButton>{' '}
+                    <BaseButton onClick={() => n('/transactions')}>
+                        Hủy
+                    </BaseButton>
                 </BaseForm>
             </Card>
         </div>

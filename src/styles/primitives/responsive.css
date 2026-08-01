@@ -1,11 +1,13 @@
-.app-page-scroll,
-.app-table-scroll {
+.app-page-scroll {
     max-width: 100%;
     overflow-x: auto;
     overscroll-behavior-x: contain;
 }
 
 .app-table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
     scrollbar-gutter: stable;
 }
 
