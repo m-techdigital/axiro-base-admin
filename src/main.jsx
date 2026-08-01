@@ -9,20 +9,20 @@ import { AuthProvider } from './hooks/useAuth'
 
 const theme = {
     token: {
-        colorPrimary: '#5b5bd6',
-        colorInfo: '#5b5bd6',
+        colorPrimary: '#1677ff',
+        colorInfo: '#1677ff',
         borderRadius: 10,
-        colorBgLayout: '#f4f6fa',
-        colorText: '#20242c',
+        colorBgLayout: '#eef5ff',
+        colorText: '#071c4d',
         fontFamily:
             'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
     components: {
-        Layout: { headerBg: '#ffffff', siderBg: '#111827' },
+        Layout: { headerBg: '#ffffff', siderBg: '#03122f' },
         Menu: {
-            darkItemBg: '#111827',
-            darkItemSelectedBg: '#3730a3',
-            darkItemHoverBg: '#1f2937',
+            darkItemBg: '#03122f',
+            darkItemSelectedBg: '#0e5eff',
+            darkItemHoverBg: 'rgba(255, 255, 255, 0.1)',
         },
         Table: { headerBg: '#f8f9fc', headerColor: '#4b5563' },
     },

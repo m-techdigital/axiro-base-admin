@@ -232,7 +232,7 @@ export default function ActionCenter() {
                                 title: 'Trạng thái',
                                 dataIndex: 'status',
                                 render: (v) => (
-                                    <Tag color="purple">
+                                    <Tag color="blue">
                                         {statusLabel[v] || v}
                                     </Tag>
                                 ),

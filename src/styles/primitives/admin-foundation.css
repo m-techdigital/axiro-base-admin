@@ -468,7 +468,13 @@ body {
     display: grid;
     min-height: 100vh;
     place-items: center;
-    background: linear-gradient(135deg, #111827, #4338ca);
+    background:
+        radial-gradient(
+            circle at 20% 0%,
+            rgba(28, 140, 255, 0.28),
+            transparent 32%
+        ),
+        linear-gradient(180deg, #03183f 0%, #03122f 54%, #061b45 100%);
 }
 
 .login-card {
