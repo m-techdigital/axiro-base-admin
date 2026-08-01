@@ -29,8 +29,22 @@ const STATUS_LABELS = {
     blocked: 'Đã khóa',
     inactive: 'Ngừng hoạt động',
     approved: 'Đã duyệt',
+    critical: 'Nghiêm trọng',
+    dismissed: 'Đã đóng',
+    failed: 'Thất bại',
+    hidden: 'Đã ẩn',
+    high: 'Cao',
+    low: 'Thấp',
+    medium: 'Trung bình',
+    new: 'Mới',
+    normal: 'Bình thường',
+    triaged: 'Đã phân loại',
+    urgent: 'Khẩn cấp',
     verified: 'Đã xác minh',
     unverified: 'Chưa xác minh',
+    waiting_counterparty: 'Chờ bên còn lại',
+    waiting_customer: 'Chờ khách hàng',
+    warning: 'Cảnh báo',
     suspended: 'Tạm khóa',
     archived: 'Lưu trữ',
     generated: 'Đã phát hành',
@@ -56,6 +70,48 @@ const VALUE_LABELS = {
     principal: 'Tiền mua tài khoản',
     bank: 'Chuyển khoản ngân hàng',
     wallet: 'Số dư ví',
+    admin: 'Quản trị viên',
+    after_handover: 'Sau bàn giao',
+    announcement: 'Thông báo',
+    appeal: 'Khiếu nại lại',
+    before_handover: 'Trước bàn giao',
+    business_license: 'Giấy phép kinh doanh',
+    buyer_guide: 'Hướng dẫn người mua',
+    cancellation: 'Yêu cầu hủy',
+    citizen_id: 'Căn cước công dân',
+    completion_minutes: 'Biên bản hoàn tất',
+    customer: 'Khách hàng',
+    deposit_confirmation: 'Xác nhận đặt cọc',
+    dispute: 'Tranh chấp',
+    dispute_minutes: 'Biên bản tranh chấp',
+    dispute_resolution: 'Xử lý tranh chấp',
+    faq: 'Câu hỏi thường gặp',
+    guide: 'Hướng dẫn',
+    handover: 'Bàn giao',
+    handover_issue: 'Sự cố bàn giao',
+    handover_minutes: 'Biên bản bàn giao',
+    installment_appendix: 'Phụ lục trả góp',
+    passport: 'Hộ chiếu',
+    payment_confirmation: 'Xác nhận thanh toán',
+    payment_issue: 'Sự cố thanh toán',
+    platform_transaction_record: 'Phiếu ghi nhận giao dịch',
+    policy: 'Chính sách',
+    privacy: 'Chính sách bảo mật',
+    refund: 'Yêu cầu hoàn tiền',
+    refund_settlement: 'Hoàn tiền và đối soát',
+    rental_contract: 'Hợp đồng thuê',
+    return_issue: 'Sự cố hoàn trả',
+    return_minutes: 'Biên bản hoàn trả',
+    risk_notice: 'Cảnh báo rủi ro',
+    sale_contract: 'Hợp đồng mua bán',
+    security_checklist: 'Kiểm tra bảo mật',
+    seller_guide: 'Hướng dẫn người bán',
+    snapshot: 'Biên bản hiện trạng',
+    support: 'Hỗ trợ',
+    system: 'Hệ thống',
+    terms: 'Điều khoản sử dụng',
+    topic: 'Chủ đề',
+    transaction: 'Giao dịch',
     hour: 'Giờ',
     day: 'Ngày',
     week: 'Tuần',
@@ -83,10 +139,15 @@ export const statusColor = (value) => {
             'approved',
             'accepted',
             'verified',
+            'normal',
         ].includes(value)
     )
         return 'green'
-    if (['rejected', 'cancelled', 'blocked', 'disputed'].includes(value))
+    if (
+        ['rejected', 'cancelled', 'blocked', 'disputed', 'failed'].includes(
+            value,
+        )
+    )
         return 'red'
     if (
         [
@@ -102,8 +163,14 @@ export const statusColor = (value) => {
             'unsettled',
             'overdue',
             'reviewing',
+            'triaged',
+            'waiting_customer',
+            'waiting_counterparty',
+            'warning',
         ].includes(value)
     )
         return 'gold'
+    if (['high', 'critical', 'urgent'].includes(value)) return 'red'
+    if (['medium'].includes(value)) return 'orange'
     return 'default'
 }

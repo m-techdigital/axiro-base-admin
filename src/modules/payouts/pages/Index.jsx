@@ -7,11 +7,18 @@ import {
 } from '@/components/base'
 import { Card, Input, Space, Tabs, Tag, message } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
+import {
+    statusColor,
+    statusLabel,
+    valueLabel,
+} from '@/contracts/marketplaceLabels'
 import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
 import service from '../service'
 const extract = (r) => r?.data?.data || r?.data || []
-const status = (v) => <Tag>{v}</Tag>
+const status = (v) => (
+    <Tag color={statusColor(v)}>{statusLabel(v, valueLabel(v, v || '—'))}</Tag>
+)
 export default function PayoutCenter() {
     const [active, setActive] = useState('withdrawals'),
         [rows, setRows] = useState([]),
@@ -55,7 +62,7 @@ export default function PayoutCenter() {
         {
             title: 'Giấy tờ',
             render: (_, r) =>
-                `${r.document_type || '—'} · ${r.document_number || '—'}`,
+                `${valueLabel(r.document_type)} · ${r.document_number || '—'}`,
         },
         { title: 'Trạng thái', dataIndex: 'status', render: status },
         { title: 'Ngày gửi', dataIndex: 'submitted_at' },

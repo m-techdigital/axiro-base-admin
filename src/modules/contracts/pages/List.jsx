@@ -12,6 +12,7 @@ import {
     BasePageHeader,
     Money,
 } from '@/components/base'
+import { statusColor, statusLabel } from '@/contracts/marketplaceLabels'
 import { useBaseFilters, useList } from '@/hooks'
 
 import service from '../service'
@@ -70,7 +71,11 @@ export default function ContractList() {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (value) => <Tag>{value}</Tag>,
+            render: (value) => (
+                <Tag color={statusColor(value)}>
+                    {statusLabel(value, value || '—')}
+                </Tag>
+            ),
         },
         {
             title: 'Thao tác',

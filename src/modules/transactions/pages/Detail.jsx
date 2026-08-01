@@ -347,10 +347,16 @@ export default function TransactionDetail() {
                                             (document.acceptances?.length ||
                                                 0) >= 2
                                                 ? 'green'
-                                                : 'gold'
+                                                : statusColor(document.status)
                                         }
                                     >
-                                        {document.status}
+                                        {statusLabel(
+                                            document.status,
+                                            valueLabel(
+                                                document.status,
+                                                document.status || '—',
+                                            ),
+                                        )}
                                     </Tag>
                                 </List.Item>
                             )}

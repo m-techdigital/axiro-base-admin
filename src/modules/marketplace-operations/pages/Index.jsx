@@ -8,6 +8,11 @@ import {
     BaseButton,
 } from '@/components/base'
 import {
+    statusColor,
+    statusLabel,
+    valueLabel,
+} from '@/contracts/marketplaceLabels'
+import {
     Card,
     Checkbox,
     Input,
@@ -83,7 +88,7 @@ export default function MarketplaceOperationsPage() {
             {
                 title: 'Loại',
                 dataIndex: 'case_type',
-                render: (value) => <Tag>{value}</Tag>,
+                render: (value) => <Tag>{valueLabel(value)}</Tag>,
             },
             {
                 title: 'Giao dịch',
@@ -106,14 +111,18 @@ export default function MarketplaceOperationsPage() {
                                   : undefined
                         }
                     >
-                        {value}
+                        {statusLabel(value, valueLabel(value, value || '—'))}
                     </Tag>
                 ),
             },
             {
                 title: 'Trạng thái',
                 dataIndex: 'status',
-                render: (value) => <Tag>{value}</Tag>,
+                render: (value) => (
+                    <Tag color={statusColor(value)}>
+                        {statusLabel(value, valueLabel(value, value || '—'))}
+                    </Tag>
+                ),
             },
             { title: 'Cập nhật', dataIndex: 'last_message_at', width: 180 },
             {
@@ -137,7 +146,7 @@ export default function MarketplaceOperationsPage() {
         {
             title: 'Loại',
             dataIndex: 'transaction_type',
-            render: (v) => v || 'Tất cả',
+            render: (v) => (v ? valueLabel(v) : 'Tất cả'),
         },
         {
             title: 'Phí người mua',
@@ -180,7 +189,7 @@ export default function MarketplaceOperationsPage() {
         {
             title: 'Giai đoạn',
             dataIndex: 'stage',
-            render: (v) => <Tag>{v}</Tag>,
+            render: (v) => <Tag>{valueLabel(v)}</Tag>,
         },
         {
             title: 'Người ghi nhận',

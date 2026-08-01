@@ -4,6 +4,7 @@ import { formatNumber } from '@/utils/format'
 import { formatCurrency as formatMoney } from '@/utils/formatters'
 import { renderOption } from '@/components/base/renderers/option.jsx'
 import { renderUsers } from '@/components/base/renderers/users.jsx'
+import { valueLabel } from '@/contracts/marketplaceLabels'
 
 const { Text } = Typography
 
@@ -11,7 +12,7 @@ const { Text } = Typography
 // SAFE RESOLVE
 // =========================
 const resolveLabel = (value, options = []) =>
-    options.find((o) => o.value === value)?.label ?? value ?? '-'
+    options.find((o) => o.value === value)?.label ?? valueLabel(value, '-')
 
 const resolveFieldOptions = (field = {}) => {
     if (Array.isArray(field.options)) return field.options
@@ -248,9 +249,9 @@ export const renderFieldValue = (field, value, record) => {
 
         case 'tags':
             return Array.isArray(value) ? (
-                value.map((v) => <Tag key={v}>{v}</Tag>)
+                value.map((v) => <Tag key={v}>{valueLabel(v, v)}</Tag>)
             ) : (
-                <Tag>{value}</Tag>
+                <Tag>{valueLabel(value, '-')}</Tag>
             )
 
         case 'users':

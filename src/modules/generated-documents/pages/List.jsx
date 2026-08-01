@@ -2,20 +2,11 @@ import { BaseActionGroup, BaseIconAction, BaseModal } from '@/components/base'
 import { DownloadOutlined, EyeOutlined } from '@ant-design/icons'
 import { Tag } from 'antd'
 import { useState } from 'react'
+import { valueLabel } from '@/contracts/marketplaceLabels'
 import BaseTable from '../../../components/base/BaseTable'
 import PageHeader from '../../../components/base/PageHeader'
 import { useList } from '../../../hooks/useList'
 import service from '../service'
-const labels = {
-    sale_contract: 'Hợp đồng mua bán',
-    rental_contract: 'Hợp đồng thuê',
-    installment_appendix: 'Phụ lục trả góp',
-    deposit_confirmation: 'Xác nhận đặt cọc',
-    payment_confirmation: 'Xác nhận thanh toán',
-    handover_minutes: 'Biên bản bàn giao',
-    return_minutes: 'Biên bản hoàn trả',
-    dispute_minutes: 'Biên bản tranh chấp',
-}
 export default function GeneratedDocumentList() {
     const list = useList(service.list),
         [preview, setPreview] = useState(null)
@@ -36,7 +27,7 @@ export default function GeneratedDocumentList() {
         {
             title: 'Loại',
             dataIndex: 'document_type',
-            render: (v) => labels[v] || v,
+            render: (v) => valueLabel(v),
         },
         { title: 'Phiên bản', dataIndex: 'version' },
         {

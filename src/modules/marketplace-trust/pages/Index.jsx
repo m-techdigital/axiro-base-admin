@@ -16,6 +16,11 @@ import {
     BaseTable,
     BaseButton,
 } from '@/components/base'
+import {
+    statusColor,
+    statusLabel,
+    valueLabel,
+} from '@/contracts/marketplaceLabels'
 import { Card, Checkbox, Input, Select, Space, Tabs, Tag, message } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
@@ -60,7 +65,11 @@ export default function MarketplaceTrustPage() {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (v) => <Tag>{v}</Tag>,
+            render: (v) => (
+                <Tag color={statusColor(v)}>
+                    {statusLabel(v, valueLabel(v, v || '—'))}
+                </Tag>
+            ),
         },
         {
             title: 'Thao tác',
@@ -75,14 +84,22 @@ export default function MarketplaceTrustPage() {
         },
     ]
     const contentColumns = [
-        { title: 'Loại', dataIndex: 'type', render: (v) => <Tag>{v}</Tag> },
+        {
+            title: 'Loại',
+            dataIndex: 'type',
+            render: (v) => <Tag>{valueLabel(v)}</Tag>,
+        },
         { title: 'Tiêu đề', dataIndex: 'title' },
         { title: 'Slug', dataIndex: 'slug' },
         { title: 'Phiên bản', dataIndex: 'version' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (v) => <Tag>{v}</Tag>,
+            render: (v) => (
+                <Tag color={statusColor(v)}>
+                    {statusLabel(v, valueLabel(v, v || '—'))}
+                </Tag>
+            ),
         },
         { title: 'Ngày hiệu lực', dataIndex: 'effective_at' },
         {
@@ -104,7 +121,7 @@ export default function MarketplaceTrustPage() {
         { title: 'Mã', dataIndex: 'code' },
         {
             title: 'Đối tượng',
-            render: (_, r) => `${r.subject_type} #${r.subject_id}`,
+            render: (_, r) => `${valueLabel(r.subject_type)} #${r.subject_id}`,
         },
         { title: 'Rule', dataIndex: 'rule_code' },
         {
@@ -120,7 +137,7 @@ export default function MarketplaceTrustPage() {
                               : undefined
                     }
                 >
-                    {v}
+                    {statusLabel(v, valueLabel(v, v || '—'))}
                 </Tag>
             ),
         },
@@ -128,7 +145,11 @@ export default function MarketplaceTrustPage() {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
-            render: (v) => <Tag>{v}</Tag>,
+            render: (v) => (
+                <Tag color={statusColor(v)}>
+                    {statusLabel(v, valueLabel(v, v || '—'))}
+                </Tag>
+            ),
         },
         {
             title: 'Thao tác',

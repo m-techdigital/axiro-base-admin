@@ -6,6 +6,7 @@ import {
     BaseIconAction,
     BaseTable,
 } from '@/components/base'
+import { statusLabel, valueLabel } from '@/contracts/marketplaceLabels'
 import {
     Button,
     Card,
@@ -96,7 +97,9 @@ export default function AuditLogList() {
                 dataIndex: 'risk_level',
                 width: 100,
                 render: (value) => (
-                    <Tag color={riskColors[value] || 'default'}>{value}</Tag>
+                    <Tag color={riskColors[value] || 'default'}>
+                        {statusLabel(value, valueLabel(value, value || '—'))}
+                    </Tag>
                 ),
             },
             {
