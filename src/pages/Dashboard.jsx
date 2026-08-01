@@ -19,7 +19,7 @@ const demoRows = [
         account: 'customer',
         scenario: 'Mua bán hoàn tất',
         status: 'completed',
-        expected: 'Có hợp đồng, bàn giao và tranh chấp đã giải quyết',
+        expected: 'Có tài liệu giao dịch, bàn giao và tranh chấp đã giải quyết',
     },
     {
         key: 'rental',
@@ -55,12 +55,12 @@ export default function Dashboard() {
     const stats = [
         ['Khách hàng', d.customers || 0],
         ['Sản phẩm', d.products || 0],
-        ['Tin đăng chờ duyệt', d.pending_listings || 0],
+        ['Sản phẩm chờ duyệt', d.pending_products || 0],
         ['Giao dịch', d.transactions || 0],
         ['Thanh toán chờ xác nhận', d.pending_payments || 0],
         ['Nạp tiền chờ xác nhận', d.pending_deposits || 0],
         ['Tranh chấp đang mở', d.open_disputes || 0],
-        ['Hợp đồng', d.contracts || 0],
+        ['Tài liệu phát hành', d.generated_documents || 0],
     ]
     return (
         <div className="page">

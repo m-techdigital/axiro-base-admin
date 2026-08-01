@@ -4,14 +4,14 @@ const meta = fs.readFileSync('src/routes/meta.js', 'utf8')
 const required = [
     'products',
     'transactions',
-    'contracts',
     'customers',
-    'listings',
     'payments',
     'wallets',
     'wallet-deposits',
     'payouts',
     'audit-logs',
+    'document-templates',
+    'generated-documents',
 ]
 const missing = required.filter(
     (path) =>

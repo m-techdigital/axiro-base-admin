@@ -31,7 +31,6 @@ if (
 
 const rowActionFiles = [
     'src/modules/products/pages/List.jsx',
-    'src/modules/contracts/pages/List.jsx',
     'src/modules/transactions/pages/List.jsx',
     'src/modules/generated-documents/pages/List.jsx',
     'src/modules/document-templates/pages/List.jsx',

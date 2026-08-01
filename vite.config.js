@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import path from 'node:path'
 import { cwd } from 'node:process'
 
 import react from '@vitejs/plugin-react'
@@ -12,7 +13,10 @@ export default defineConfig(({ mode }) => {
         plugins: [react()],
         resolve: {
             alias: {
-                '@': fileURLToPath(new URL('./src', import.meta.url)),
+                '@': path.resolve(
+                    fileURLToPath(new URL('.', import.meta.url)),
+                    'src',
+                ),
             },
         },
         server: {

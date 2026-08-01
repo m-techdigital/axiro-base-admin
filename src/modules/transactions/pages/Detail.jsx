@@ -176,8 +176,8 @@ export default function TransactionDetail() {
                                     span: { xs: 24, md: 12 },
                                 },
                                 {
-                                    name: ['listing', 'code'],
-                                    label: 'Tin đăng',
+                                    name: ['product', 'code'],
+                                    label: 'Sản phẩm',
                                     type: 'text',
                                     span: { xs: 24, md: 12 },
                                 },

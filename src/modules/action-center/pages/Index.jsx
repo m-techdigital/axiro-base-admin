@@ -70,7 +70,7 @@ export default function ActionCenter() {
                     <Card>
                         <Statistic
                             title="Tin chờ duyệt"
-                            value={counts.pending_listings || 0}
+                            value={counts.pending_products || 0}
                         />
                     </Card>
                 </Col>
@@ -110,18 +110,18 @@ export default function ActionCenter() {
             <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
                 <Col xs={24} xl={12}>
                     <Card
-                        title="Tin đăng chờ duyệt"
+                        title="Sản phẩm chờ duyệt"
                         extra={
                             <BaseButton
                                 icon={<RightOutlined />}
                                 type="link"
-                                onClick={() => navigate('/listings')}
+                                onClick={() => navigate('/products')}
                             >
                                 Mở danh sách
                             </BaseButton>
                         }
                     >
-                        {compact(data?.listings, [
+                        {compact(data?.products, [
                             { title: 'Mã', dataIndex: 'code' },
                             {
                                 title: 'Khách hàng',

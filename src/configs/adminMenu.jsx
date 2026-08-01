@@ -20,7 +20,6 @@ export const ADMIN_MENU_ITEMS = [
     },
     { key: '/customers', icon: <TeamOutlined />, label: 'Khách hàng' },
     { key: '/products', icon: <ShoppingOutlined />, label: 'Sản phẩm' },
-    { key: '/listings', icon: <ShopOutlined />, label: 'Tin đăng' },
     { key: '/transactions', icon: <SwapOutlined />, label: 'Giao dịch' },
     {
         key: '/payments',
@@ -53,7 +52,6 @@ export const ADMIN_MENU_ITEMS = [
         icon: <CreditCardOutlined />,
         label: 'Thông tin ngân hàng',
     },
-    { key: '/contracts', icon: <FileTextOutlined />, label: 'Hợp đồng' },
     {
         key: '/document-templates',
         icon: <FileTextOutlined />,

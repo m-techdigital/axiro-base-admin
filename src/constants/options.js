@@ -6,6 +6,19 @@ export const CUSTOMER_STATUS_OPTIONS = [
     option('blocked', 'Đã khóa'),
 ]
 
+export const GAME_OPTIONS = [
+    option('ninja_school', 'Ninja School'),
+    option('dragon_ball', 'Ngọc Rồng'),
+    option('avatar', 'Avatar'),
+]
+
+export const PRODUCT_TYPE_OPTIONS = [
+    option('game_account', 'Tài khoản trò chơi'),
+    option('item', 'Vật phẩm'),
+    option('currency', 'Tiền tệ trong game'),
+    option('service', 'Dịch vụ'),
+]
+
 export const PRODUCT_STATUS_OPTIONS = [
     option('draft', 'Bản nháp'),
     option('active', 'Đang hoạt động'),

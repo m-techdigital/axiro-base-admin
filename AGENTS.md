@@ -46,3 +46,7 @@ Không được tạo component mới chỉ cùng tên với AXIRO cha rồi g�
 ## Parent-source rule
 
 Do not create a second implementation merely because a component has the same name. Inspect the AXIRO parent source, its imports, CSS and consumers first. Copy dependency-closed sources exactly, use a thin adapter only for bounded Mini differences, and keep one CSS owner per primitive.
+
+## Mandatory parent-first workflow
+
+Before changing architecture, base components, CSS, hooks, Product, Transaction, payment, availability, documents, migrations or API contracts, read `docs/canonical/PARENT_FIRST_DEVELOPMENT_POLICY.md` and update `docs/canonical/parent-integration-matrix.json` when the parent source or integration decision changes. Do not start implementation until the parent owner, dependencies, consumers, tests and integration classification are recorded.

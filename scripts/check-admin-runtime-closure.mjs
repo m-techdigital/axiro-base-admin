@@ -30,7 +30,6 @@ if (
 
 const requiredPatterns = new Map([
     ['src/hooks/useRelationOptions.jsx', ['labelRef', '[service]']],
-    ['src/modules/contracts/pages/Form.jsx', ['[f, id]']],
     [
         'src/modules/marketplace-operations/pages/Index.jsx',
         ['useCallback', '[load]'],

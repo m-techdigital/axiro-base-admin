@@ -1,2 +1,0 @@
-import { createCrudService } from '../../services/base.service'
-export default createCrudService('contracts')

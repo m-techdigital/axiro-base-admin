@@ -25,7 +25,6 @@ for (const file of requiredFiles) {
 const coreLists = [
     'src/modules/customers/pages/List.jsx',
     'src/modules/products/pages/List.jsx',
-    'src/modules/contracts/pages/List.jsx',
     'src/modules/transactions/pages/List.jsx',
 ]
 

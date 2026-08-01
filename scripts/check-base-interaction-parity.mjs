@@ -6,7 +6,6 @@ const required = [
     'src/components/base/BaseFilter.jsx',
     'src/components/base/BaseIconAction.jsx',
     'src/modules/payments/pages/List.jsx',
-    'src/modules/listings/pages/List.jsx',
     'src/modules/disputes/pages/List.jsx',
     'src/modules/wallet-deposits/pages/List.jsx',
 ]
