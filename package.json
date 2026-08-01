@@ -14,7 +14,7 @@
         "check:marketplace-trust": "node scripts/check-marketplace-trust.mjs",
         "check:system-contract": "node scripts/check-system-contract.mjs",
         "check:parent-foundation": "node scripts/check-parent-foundation.mjs",
-        "check:all": "npm run check:admin-operational-readiness && npm run check:base-consumer-adoption && npm run check:source-closure && npm run check:parent-ui-source-alignment && npm run check:renderer-closure && npm run check:admin-runtime-closure && npm run check:table-action-scroll && npm run check:parent-dependency-closure && npm run check:parent-source-parity && npm run check:parent-base-parity && npm run check:parent-parallel-structure && npm run check:parent-foundation && npm run check:base-ownership && npm run check:parent-ui-parity && npm run check:parent-deep-foundation && npm run check:route-meta && npm run check:api-contract && npm run check:payout-flow && npm run check:marketplace-closure && npm run check:marketplace-trust && npm run check:system-contract && npm run check:base-interaction-parity && npm run check:deep-base-ownership && npm run format:check && npm run lint",
+        "check:all": "npm run check:parent-view-foundation && npm run check:parent-develop-neutral-sync-v6645 && npm run check:admin-operational-readiness && npm run check:base-consumer-adoption && npm run check:source-closure && npm run check:parent-ui-source-alignment && npm run check:renderer-closure && npm run check:admin-runtime-closure && npm run check:table-action-scroll && npm run check:parent-dependency-closure && npm run check:parent-source-parity && npm run check:parent-base-parity && npm run check:parent-parallel-structure && npm run check:parent-foundation && npm run check:base-ownership && npm run check:parent-ui-parity && npm run check:parent-deep-foundation && npm run check:route-meta && npm run check:api-contract && npm run check:payout-flow && npm run check:marketplace-closure && npm run check:marketplace-trust && npm run check:system-contract && npm run check:base-interaction-parity && npm run check:deep-base-ownership && npm run format:check && npm run lint",
         "check:base-ownership": "node scripts/check-base-ownership.mjs",
         "check:parent-parallel-structure": "node scripts/check-parent-parallel-structure.mjs",
         "check:parent-ui-parity": "node scripts/check-parent-ui-parity.mjs",
@@ -33,7 +33,9 @@
         "check:renderer-closure": "node scripts/check-renderer-closure.mjs",
         "check:source-closure": "node scripts/check-source-closure.mjs",
         "check:base-consumer-adoption": "node scripts/check-base-consumer-adoption.mjs",
-        "check:admin-operational-readiness": "node scripts/check-admin-operational-readiness.mjs"
+        "check:admin-operational-readiness": "node scripts/check-admin-operational-readiness.mjs",
+        "check:parent-develop-neutral-sync-v6645": "node scripts/check-parent-develop-neutral-sync-v6645.mjs",
+        "check:parent-view-foundation": "node scripts/check-parent-view-foundation.mjs"
     },
     "dependencies": {
         "@ant-design/icons": "^6.2.2",

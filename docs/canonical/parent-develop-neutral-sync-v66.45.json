@@ -1,0 +1,128 @@
+{
+    "version": "v66.45",
+    "parent_snapshot": "mylands-admin-develop-20260801-d0af27d9.zip",
+    "mini_baseline": "axiro-base-admin-main-20260801.zip",
+    "policy": "Only dependency-closed, domain-neutral parent sources are copied exactly. CSS may be mechanically extracted. Domain-heavy owners remain excluded.",
+    "exact_source": [
+        {
+            "target": "src/components/base/BaseHeaderFilters.jsx",
+            "source": "src/components/base/BaseHeaderFilters.jsx",
+            "sha256": "89a1efdf05c567fe155450f72a176b3df5230eeb76cd9f915fb4123348da522b"
+        },
+        {
+            "target": "src/components/base/BaseListInput.jsx",
+            "source": "src/components/base/BaseListInput.jsx",
+            "sha256": "286f2dd5d0b0e2e7c5bd994f4e9165fafec2a3ca348c668e22cbabcb75de9e2b"
+        },
+        {
+            "target": "src/components/base/BaseNumberFormatter.jsx",
+            "source": "src/components/base/BaseNumberFormatter.jsx",
+            "sha256": "6cd3c5aab9d5c531466fe82a5b7ec40baee50b9fbc11bebda9bdb77670d19262"
+        },
+        {
+            "target": "src/components/base/BaseViewModeSwitch.jsx",
+            "source": "src/components/base/BaseViewModeSwitch.jsx",
+            "sha256": "65c3729f346be5097298868f54bdc5e9a7eb2fe8a83267b1c1cadc30840f3dc4"
+        },
+        {
+            "target": "src/components/base/BaseWidgetGrid.jsx",
+            "source": "src/components/base/BaseWidgetGrid.jsx",
+            "sha256": "57b2dc499e163aae6af692538d85fb96da6a7e39a14c916870f6b76a31c0dc45"
+        },
+        {
+            "target": "src/components/base/FieldContainer.jsx",
+            "source": "src/components/base/FieldContainer.jsx",
+            "sha256": "9c6e6a652fa57d858ba662b48e9cff63a54b27c37a06915901e46196756bc9ea"
+        },
+        {
+            "target": "src/components/base/BaseCardStatistics.jsx",
+            "source": "src/components/base/BaseCardStatistics.jsx",
+            "sha256": "625704c07213396b3e3dc48d8fd59350e25ba354152763d9ae2b8a2e69209ef5"
+        },
+        {
+            "target": "src/components/base/BaseCardStatistics.css",
+            "source": "src/components/base/BaseCardStatistics.css",
+            "sha256": "a3242de49b981a4453793d8ec5b2cc53e1366d9fa3c60a2065204e3b41be6417"
+        },
+        {
+            "target": "src/hooks/table/useTableSummary.jsx",
+            "source": "src/hooks/table/useTableSummary.jsx",
+            "sha256": "036fdb424ba25b1fd3d0c8d7c4fb1852b6ff0b6569c3c6bc0c5934372701a1ef"
+        },
+        {
+            "target": "src/utils/format.js",
+            "source": "src/utils/format.js",
+            "sha256": "6b25533b3b104ef170e863e03083a661e14a7764b2dadf558b6bde4fdfd0169f"
+        },
+        {
+            "target": "src/utils/date.js",
+            "source": "src/utils/date.js",
+            "sha256": "464a4d127ae5b73440b7e08170b7785314d22e7eefad2a8bcbc61566854e8c49"
+        },
+        {
+            "target": "src/utils/options.js",
+            "source": "src/utils/options.js",
+            "sha256": "9dfad5c372a8ef513b6408aed36113556c2c07aaa453942daf1ea5c5a85f24c0"
+        },
+        {
+            "target": "src/utils/resolveFieldValue.js",
+            "source": "src/utils/resolveFieldValue.js",
+            "sha256": "66efdca91531d1a13ae9409dfd917f592af72724901beca2e1a5a74410f8ba1f"
+        },
+        {
+            "target": "src/utils/normalizeDynamicListErrors.js",
+            "source": "src/utils/normalizeDynamicListErrors.js",
+            "sha256": "0249385dc3d0829759e6c0ba41fc4d6d904323706357e5af74d43238576bbdbe"
+        },
+        {
+            "target": "src/utils/formDefaults.js",
+            "source": "src/utils/formDefaults.js",
+            "sha256": "9652118622ef103f3dd672b601c106918e8f0cac6257b6dc35c42eeb3ad125cd"
+        },
+        {
+            "target": "src/utils/formErrors.js",
+            "source": "src/utils/formErrors.js",
+            "sha256": "c693b118d8966128b1ee1ea592c167363f789e50712e17e286c60637b99b6316"
+        },
+        {
+            "target": "src/components/base/BaseCheckbox.jsx",
+            "source": "src/components/base/BaseCheckbox.jsx",
+            "sha256": "edff81a6aef1f349fcb1077e9dfaae22368379b183effc5e6bddeafec0d852ad"
+        },
+        {
+            "target": "src/constants/actions.js",
+            "source": "src/constants/actions.js",
+            "sha256": "784ed2d48e54b95185b8d5543aac3100778e0b1768f618552454daf2454b15ba"
+        }
+    ],
+    "mechanical_extract": [
+        {
+            "target": "src/styles/primitives/parent-develop-neutral.css",
+            "source": "src/index.css",
+            "source_ranges": ["228-260", "430-470", "673-819"],
+            "sha256": "0b627d2313a6f4a187e971a102bb10f5168aa16c9372afe26cd2397900c01f7d"
+        }
+    ],
+    "excluded": [
+        {
+            "path": "src/components/base/BaseEditor/**",
+            "reason": "Requires Tiptap/editor upload lifecycle not yet present in Mini."
+        },
+        {
+            "path": "src/components/base/BaseUpload.jsx",
+            "reason": "Requires parent fileService, authorization and file resource contract."
+        },
+        {
+            "path": "src/components/base/SavedViewsBar.jsx",
+            "reason": "Requires saved-view persistence and module registry."
+        },
+        {
+            "path": "src/hooks/useModule.js",
+            "reason": "Requires parent module registry and RBAC/company context."
+        },
+        {
+            "path": "src/hooks/useCapabilities.jsx",
+            "reason": "Requires parent capability and permission graph."
+        }
+    ]
+}

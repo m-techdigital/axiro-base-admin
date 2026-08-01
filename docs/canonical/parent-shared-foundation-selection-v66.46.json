@@ -1,0 +1,71 @@
+{
+    "version": "66.46",
+    "parent_source": "mylands-admin-develop-20260801-d0af27d9.zip",
+    "selection_policy": {
+        "exact_source": "Copy only when dependency closure exists in Mini.",
+        "bounded_adapter": "Preserve parent behavior while adapting only import or Mini permission boundaries.",
+        "excluded": "Do not port without a real Mini consumer and full dependency closure."
+    },
+    "integrated": [
+        {
+            "component": "BaseView",
+            "mode": "exact_source",
+            "consumer": "transactions/pages/Detail.jsx",
+            "reason": "Removes manual Descriptions markup and shares parent field rendering contract."
+        },
+        {
+            "component": "fieldRenderer",
+            "mode": "bounded_adapter",
+            "changes": [
+                "Use declared dayjs package directly",
+                "Map parent formatMoney import to Mini canonical formatCurrency"
+            ],
+            "supported_types": [
+                "text",
+                "switch",
+                "checkbox",
+                "date",
+                "datetime",
+                "select",
+                "multiple-select",
+                "relation",
+                "option",
+                "option_tag",
+                "tags",
+                "users",
+                "number",
+                "money",
+                "image",
+                "number_formatter",
+                "editor",
+                "description-box",
+                "json",
+                "network",
+                "device",
+                "location"
+            ]
+        }
+    ],
+    "deferred": [
+        {
+            "component": "BaseDynamicFormList",
+            "reason": "No production Form.List consumer in Mini yet; avoid unused surface and SCSS closure."
+        },
+        {
+            "component": "BaseUpload/BaseImageUpload",
+            "reason": "Requires canonical file service, upload authorization, resources and preview/download lifecycle."
+        },
+        {
+            "component": "BaseEditor",
+            "reason": "Requires full Tiptap dependency and document sanitization/storage boundary."
+        },
+        {
+            "component": "BaseViewPage/BaseTabbedListPage",
+            "reason": "Parent versions depend on useModule/module registry and broader RBAC-aware configuration."
+        },
+        {
+            "component": "BaseTimeline",
+            "reason": "Requires parent activity/timeline service, icon registry and timeline change components."
+        }
+    ]
+}

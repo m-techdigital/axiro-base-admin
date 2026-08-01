@@ -1,0 +1,181 @@
+.base-card-statistics {
+    display: grid;
+    grid-template-columns: repeat(var(--stat-xs), minmax(0, 1fr));
+    gap: 12px;
+    min-width: 0;
+}
+
+.base-card-statistics--span {
+    grid-template-columns: repeat(24, minmax(0, 1fr));
+}
+
+.base-card-statistics__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    min-width: 0;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #e8eef8;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.base-card-statistics--span .base-card-statistics__item {
+    grid-column: span var(--stat-item-xs, 24);
+}
+
+.base-card-statistics__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: #1677ff;
+    font-size: 22px;
+    background: #eaf3ff;
+    border-radius: 10px;
+}
+
+.base-card-statistics__icon--green {
+    color: #16a34a;
+    background: #e9fbea;
+}
+
+.base-card-statistics__icon--orange,
+.base-card-statistics__icon--gold {
+    color: #f59e0b;
+    background: #fff5df;
+}
+
+.base-card-statistics__icon--purple {
+    color: #9333ea;
+    background: #f3e8ff;
+}
+
+.base-card-statistics__icon--cyan,
+.base-card-statistics__icon--blue {
+    color: #1677ff;
+    background: #eaf3ff;
+}
+
+.base-card-statistics__icon--red {
+    color: #e11d48;
+    background: #ffe9ee;
+}
+
+.base-card-statistics__body {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.base-card-statistics__body span,
+.base-card-statistics__body small {
+    overflow: hidden;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.base-card-statistics__body strong {
+    overflow: hidden;
+    color: #071c4d;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.base-card-statistics__body small {
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.base-card-statistics__extra {
+    grid-column: 1 / -1;
+    min-width: 0;
+}
+
+.base-card-statistics--single,
+.base-card-statistics--single .base-card-statistics__item {
+    height: 100%;
+}
+
+@media (min-width: 576px) {
+    .base-card-statistics {
+        grid-template-columns: repeat(var(--stat-sm), minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span {
+        grid-template-columns: repeat(24, minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span .base-card-statistics__item {
+        grid-column: span var(--stat-item-sm, var(--stat-item-xs, 24));
+    }
+}
+
+@media (min-width: 768px) {
+    .base-card-statistics {
+        grid-template-columns: repeat(var(--stat-md), minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span {
+        grid-template-columns: repeat(24, minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span .base-card-statistics__item {
+        grid-column: span
+            var(--stat-item-md, var(--stat-item-sm, var(--stat-item-xs, 24)));
+    }
+}
+
+@media (min-width: 992px) {
+    .base-card-statistics {
+        grid-template-columns: repeat(var(--stat-lg), minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span {
+        grid-template-columns: repeat(24, minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span .base-card-statistics__item {
+        grid-column: span
+            var(
+                --stat-item-lg,
+                var(
+                    --stat-item-md,
+                    var(--stat-item-sm, var(--stat-item-xs, 24))
+                )
+            );
+    }
+}
+
+@media (min-width: 1200px) {
+    .base-card-statistics {
+        grid-template-columns: repeat(var(--stat-xl), minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span {
+        grid-template-columns: repeat(24, minmax(0, 1fr));
+    }
+
+    .base-card-statistics--span .base-card-statistics__item {
+        grid-column: span
+            var(
+                --stat-item-xl,
+                var(
+                    --stat-item-lg,
+                    var(
+                        --stat-item-md,
+                        var(--stat-item-sm, var(--stat-item-xs, 24))
+                    )
+                )
+            );
+    }
+}
