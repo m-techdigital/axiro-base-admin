@@ -105,16 +105,19 @@ export default function PaymentSettings() {
         }
     }
 
-    const restore = async (id) => {
-        try {
-            await service.activate(id)
-            message.success('Đã khôi phục cấu hình nhận thanh toán.')
-            setPreview(null)
-            await Promise.all([load(), loadHistory()])
-        } catch (error) {
-            message.error(error.message || 'Không thể khôi phục cấu hình.')
-        }
-    }
+    const restore = useCallback(
+        async (id) => {
+            try {
+                await service.activate(id)
+                message.success('Đã khôi phục cấu hình nhận thanh toán.')
+                setPreview(null)
+                await Promise.all([load(), loadHistory()])
+            } catch (error) {
+                message.error(error.message || 'Không thể khôi phục cấu hình.')
+            }
+        },
+        [load, loadHistory],
+    )
 
     const historyColumns = useMemo(
         () => [
@@ -160,7 +163,7 @@ export default function PaymentSettings() {
                     ),
             },
         ],
-        [],
+        [restore],
     )
 
     const configTab = (
