@@ -3,11 +3,23 @@
     --app-page-padding-desktop: 24px;
     --app-page-padding-mobile: 12px;
     --app-control-height: 36px;
+    --app-control-height-touch: 44px;
+    --app-space-1: 4px;
+    --app-space-2: 8px;
+    --app-space-3: 12px;
+    --app-space-4: 16px;
+    --app-space-5: 24px;
+    --app-space-6: 32px;
     --app-radius-sm: 6px;
     --app-radius-md: 8px;
     --app-radius-lg: 12px;
     --app-table-min-width: 720px;
+    --app-surface: #fff;
+    --app-border-color: rgba(5, 5, 5, 0.12);
+    --app-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --app-mobile-navigation-height: 64px;
     --app-z-header: 900;
-    --app-z-sider: 1001;
     --app-z-overlay: 1000;
+    --app-z-sider: 1001;
+    --app-z-sticky: 800;
 }

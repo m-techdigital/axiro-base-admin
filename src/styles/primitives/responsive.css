@@ -1,3 +1,64 @@
+.app-page-shell {
+    width: 100%;
+    max-width: var(--app-content-max-width);
+    margin-inline: auto;
+    padding: var(--app-page-padding-desktop);
+}
+
+.app-page-content,
+.app-section-stack {
+    display: grid;
+    gap: var(--app-space-5);
+    min-width: 0;
+}
+
+.app-card-surface {
+    min-width: 0;
+    border-radius: var(--app-radius-lg);
+}
+
+.app-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--app-space-3);
+    margin-block-end: var(--app-space-4);
+    align-items: end;
+}
+
+.app-filter-bar > * {
+    min-width: min(220px, 100%);
+}
+
+.app-form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--app-space-4);
+}
+
+.app-form-grid > * {
+    grid-column: span 6;
+    min-width: 0;
+}
+
+.app-sticky-actions {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: var(--app-z-sticky);
+    display: flex;
+    gap: var(--app-space-3);
+    padding: var(--app-space-3) var(--app-space-4)
+        calc(var(--app-space-3) + var(--app-safe-area-bottom));
+    background: var(--app-surface);
+    border-top: 1px solid var(--app-border-color);
+}
+
+.app-scroll-owner {
+    min-width: 0;
+    max-width: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
 .app-page-scroll {
     max-width: 100%;
     overflow-x: auto;
@@ -20,7 +81,7 @@
 .app-toolbar-responsive {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: var(--app-space-2);
     align-items: center;
 }
 
@@ -28,9 +89,65 @@
     min-width: 0;
 }
 
+.app-responsive-overlay .ant-modal-content,
+.app-responsive-overlay .ant-drawer-content {
+    max-height: calc(100dvh - var(--app-space-4));
+}
+
+.app-responsive-overlay .ant-modal-body,
+.app-responsive-overlay .ant-drawer-body {
+    overscroll-behavior: contain;
+}
+
 @media (max-width: 575px) {
+    .app-page-shell {
+        padding: var(--app-page-padding-mobile);
+        padding-bottom: calc(
+            var(--app-mobile-navigation-height) + var(--app-space-5) +
+                var(--app-safe-area-bottom)
+        );
+    }
+
+    .app-section-stack,
+    .app-page-content {
+        gap: var(--app-space-4);
+    }
+
+    .app-filter-bar,
     .app-toolbar-responsive {
         align-items: stretch;
         flex-direction: column;
+    }
+
+    .app-filter-bar > *,
+    .app-toolbar-responsive > * {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .app-form-grid > * {
+        grid-column: 1 / -1;
+    }
+
+    .app-touch-surface .ant-btn {
+        min-height: var(--app-control-height-touch);
+    }
+
+    .app-responsive-overlay .ant-modal {
+        max-width: none;
+        width: 100%;
+        margin: 0;
+        top: 0;
+        padding: 0;
+    }
+
+    .app-responsive-overlay .ant-modal-content {
+        min-height: 100dvh;
+        border-radius: 0;
+        padding-bottom: var(--app-safe-area-bottom);
+    }
+
+    .app-responsive-overlay .ant-drawer-content-wrapper {
+        max-width: 100%;
     }
 }

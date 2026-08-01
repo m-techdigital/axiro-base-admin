@@ -46,13 +46,14 @@
             "mini_path": "src/styles/tokens/layout.css",
             "parent_path": "src/styles/tokens/layout.css",
             "mode": "exact_source",
-            "sha256": "ffc62b45d7a0a6635ef4f401622dccc3ec046579c5d6f7248abe6186f96776d4"
+            "sha256": "71c5890c5965ec2544800902af31947602b84e9b83e009e1b9068868fceb0f1c"
         },
         {
             "mini_path": "src/styles/primitives/responsive.css",
             "parent_path": "src/styles/primitives/responsive.css",
-            "mode": "exact_source",
-            "sha256": "e807a2ef77395da9f8b325bd006be8a6a554c6f912942ce119603709dba1b04b"
+            "mode": "bounded_adapter",
+            "sha256": "8bc5411a70af1fadceea8cfad0f1ec3f62b86a985771b58fcadde0a9d04d8241",
+            "note": "AXIRO parent responsive primitives plus Mini table/page-scroll selectors retained for current admin runtime."
         },
         {
             "mini_path": "src/components/base/BaseModal.jsx",
