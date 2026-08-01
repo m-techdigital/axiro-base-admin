@@ -16,10 +16,10 @@
     align-items: center;
     min-width: 0;
     padding: 14px;
-    background: #fff;
-    border: 1px solid #e8eef8;
+    background: var(--axiro-bg-surface);
+    border: 1px solid var(--axiro-border-soft);
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    box-shadow: var(--axiro-shadow-soft);
 }
 
 .base-card-statistics--span .base-card-statistics__item {
@@ -32,37 +32,37 @@
     justify-content: center;
     width: 44px;
     height: 44px;
-    color: #1677ff;
+    color: var(--axiro-info);
     font-size: 22px;
-    background: #eaf3ff;
+    background: var(--axiro-info-bg);
     border-radius: 10px;
 }
 
 .base-card-statistics__icon--green {
-    color: #16a34a;
-    background: #e9fbea;
+    color: var(--axiro-success);
+    background: var(--axiro-success-bg);
 }
 
 .base-card-statistics__icon--orange,
 .base-card-statistics__icon--gold {
-    color: #f59e0b;
-    background: #fff5df;
+    color: var(--axiro-warning);
+    background: var(--axiro-warning-bg);
 }
 
 .base-card-statistics__icon--purple {
-    color: #9333ea;
-    background: #f3e8ff;
+    color: var(--axiro-purple);
+    background: var(--axiro-purple-bg);
 }
 
 .base-card-statistics__icon--cyan,
 .base-card-statistics__icon--blue {
-    color: #1677ff;
-    background: #eaf3ff;
+    color: var(--axiro-info);
+    background: var(--axiro-info-bg);
 }
 
 .base-card-statistics__icon--red {
-    color: #e11d48;
-    background: #ffe9ee;
+    color: var(--axiro-danger-strong);
+    background: var(--axiro-danger-bg);
 }
 
 .base-card-statistics__body {
@@ -74,7 +74,7 @@
 .base-card-statistics__body span,
 .base-card-statistics__body small {
     overflow: hidden;
-    color: #64748b;
+    color: var(--axiro-text-muted);
     font-size: 12px;
     font-weight: 700;
     text-overflow: ellipsis;
@@ -83,7 +83,7 @@
 
 .base-card-statistics__body strong {
     overflow: hidden;
-    color: #071c4d;
+    color: var(--axiro-text-heading);
     font-size: 24px;
     font-weight: 800;
     line-height: 1.15;

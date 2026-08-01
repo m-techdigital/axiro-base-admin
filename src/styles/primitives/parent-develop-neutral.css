@@ -7,7 +7,7 @@
     height: 36px;
     padding: 2px !important;
     border-radius: 8px;
-    background: #f1f5f9;
+    background: var(--axiro-color-primary-soft);
 }
 
 /* segmented */
@@ -46,9 +46,9 @@
 .base-header-filter .ant-picker {
     width: 100%;
     height: 40px;
-    border: 1px solid #d9e5f6 !important;
+    border: 1px solid var(--axiro-border-strong) !important;
     border-radius: 8px;
-    background: #fff;
+    background: var(--axiro-bg-surface);
     box-shadow: 0 6px 18px rgba(20, 68, 128, 0.04);
     display: flex;
     align-items: center;
@@ -61,14 +61,14 @@
 
 .base-header-filter .ant-input,
 .base-header-filter .ant-picker-input > input {
-    color: #071c4d !important;
+    color: var(--axiro-text-heading) !important;
     font-weight: 600;
 }
 
 .base-header-filter .ant-input-prefix,
 .base-header-filter .ant-picker-suffix,
 .base-header-filter .ant-picker-separator {
-    color: #071c4d;
+    color: var(--axiro-text-heading);
 }
 
 .base-header-filter--range {
@@ -89,9 +89,9 @@
 .base-list-input__item {
     min-width: 0;
     padding: 8px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--axiro-border);
     border-radius: 6px;
-    background: #fff;
+    background: var(--axiro-bg-surface);
 }
 
 .base-list-input__field--spaced {
@@ -113,7 +113,7 @@
 .base-list-input__error,
 .field-container-card-switch__error {
     margin-top: 4px;
-    color: #ef4444;
+    color: var(--axiro-danger);
     font-size: 12px;
     line-height: 1.4;
 }
@@ -224,10 +224,10 @@
     z-index: 3;
     width: 30px;
     height: 30px;
-    border: 1px solid #d9e5f6;
+    border: 1px solid var(--axiro-border-strong);
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.96);
-    color: #0f66ff;
+    color: var(--axiro-color-primary);
     display: grid;
     place-items: center;
     cursor: grab;

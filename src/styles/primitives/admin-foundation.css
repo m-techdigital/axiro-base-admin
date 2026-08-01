@@ -1,13 +1,13 @@
 html {
-    background: #eef5ff;
+    background: var(--axiro-bg-app);
     scrollbar-gutter: stable;
 }
 
 body {
     min-width: 320px;
     margin: 0;
-    color: #071c4d;
-    background: #eef5ff;
+    color: var(--axiro-text-heading);
+    background: var(--axiro-bg-app);
     font-family:
         Inter,
         -apple-system,
@@ -143,7 +143,7 @@ body {
     padding: 0 28px !important;
     border-bottom: 1px solid #dde7f6;
     background: rgba(255, 255, 255, 0.92) !important;
-    box-shadow: 0 8px 26px rgba(27, 63, 113, 0.06);
+    box-shadow: var(--axiro-shadow);
     backdrop-filter: blur(18px);
 }
 
@@ -159,7 +159,7 @@ body {
 .admin-header__title {
     margin: 0 !important;
     overflow: hidden;
-    color: #071c4d !important;
+    color: var(--axiro-text-heading) !important;
     font-size: 18px !important;
     line-height: 1;
     text-overflow: ellipsis;
@@ -171,13 +171,13 @@ body {
     width: 42px;
     height: 42px;
     border-radius: 12px;
-    color: #071c4d !important;
+    color: var(--axiro-text-heading) !important;
     font-size: 18px;
 }
 
 .admin-trigger:hover,
 .admin-header__trigger:hover {
-    background: #eef5ff !important;
+    background: var(--axiro-color-primary-soft) !important;
 }
 
 .admin-header-actions {
@@ -194,7 +194,7 @@ body {
     height: 40px;
     align-items: center;
     gap: 8px;
-    border-color: #d7e5f8;
+    border-color: var(--axiro-border-strong);
     border-radius: 10px;
 }
 
@@ -246,12 +246,12 @@ body {
 
 .base-page-header h2 {
     margin: 0 !important;
-    color: #071c4d;
+    color: var(--axiro-text-heading);
 }
 
 .base-page-header p {
     margin: 6px 0 0 !important;
-    color: #64748b;
+    color: var(--axiro-text-muted);
 }
 
 .base-page-header__actions {
@@ -267,9 +267,9 @@ body {
 .base-form-page__card,
 .ant-card {
     min-width: 0;
-    border-color: #dce7f5;
+    border-color: var(--axiro-border);
     border-radius: 10px;
-    box-shadow: 0 8px 26px rgba(27, 63, 113, 0.06);
+    box-shadow: var(--axiro-shadow);
 }
 
 .base-filter {
@@ -338,7 +338,7 @@ body {
 
 .base-filter-action--reset.ant-btn {
     background: #fff;
-    color: #42526d;
+    color: var(--axiro-text-secondary);
 }
 
 .base-filter-action--search.ant-btn {

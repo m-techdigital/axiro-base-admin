@@ -163,7 +163,11 @@ export default function FieldContainer({
         <div className="field-container-card-switch">
             <Card
                 size="small"
-                style={{ borderColor: error ? '#ef4444' : '#d9d9d9' }}
+                style={{
+                    borderColor: error
+                        ? 'var(--axiro-danger)'
+                        : 'var(--axiro-border)',
+                }}
             >
                 <Flex justify="space-between" align="center">
                     <Flex vertical>

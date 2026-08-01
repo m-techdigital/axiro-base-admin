@@ -52,11 +52,11 @@ export const BaseNumberFormatter = ({
                         alignItems: 'center',
                         justifyContent: 'center',
 
-                        border: '1px solid #d9d9d9',
+                        border: '1px solid var(--axiro-border)',
                         borderLeft: 0,
 
-                        background: '#fafafa',
-                        color: '#666',
+                        background: 'var(--axiro-bg-muted)',
+                        color: 'var(--axiro-text-muted)',
 
                         fontSize: 13,
                         whiteSpace: 'nowrap',

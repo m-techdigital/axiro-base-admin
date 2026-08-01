@@ -17,7 +17,7 @@
         {
             "target": "src/components/base/BaseNumberFormatter.jsx",
             "source": "src/components/base/BaseNumberFormatter.jsx",
-            "sha256": "6cd3c5aab9d5c531466fe82a5b7ec40baee50b9fbc11bebda9bdb77670d19262"
+            "sha256": "93a4ecbf6bf4daac10279cfb50686ca970b3f13db4b469c60b6be97d7e10790e"
         },
         {
             "target": "src/components/base/BaseViewModeSwitch.jsx",
@@ -32,7 +32,7 @@
         {
             "target": "src/components/base/FieldContainer.jsx",
             "source": "src/components/base/FieldContainer.jsx",
-            "sha256": "9c6e6a652fa57d858ba662b48e9cff63a54b27c37a06915901e46196756bc9ea"
+            "sha256": "58344fb9cbcaa69b602595a9985556e1b97607d6c122374e88cc8512f572a339"
         },
         {
             "target": "src/components/base/BaseCardStatistics.jsx",
@@ -42,7 +42,7 @@
         {
             "target": "src/components/base/BaseCardStatistics.css",
             "source": "src/components/base/BaseCardStatistics.css",
-            "sha256": "a3242de49b981a4453793d8ec5b2cc53e1366d9fa3c60a2065204e3b41be6417"
+            "sha256": "937732a9c4b2d4452a331c8aa77d0718073bd3e8c492589b5427e67b07fd471c"
         },
         {
             "target": "src/hooks/table/useTableSummary.jsx",
@@ -100,7 +100,7 @@
             "target": "src/styles/primitives/parent-develop-neutral.css",
             "source": "src/index.css",
             "source_ranges": ["228-260", "430-470", "673-819"],
-            "sha256": "0b627d2313a6f4a187e971a102bb10f5168aa16c9372afe26cd2397900c01f7d"
+            "sha256": "c807fc23c319a0e44879aa3088c549f128192ca3a191a5246724e9b4f40eb79d"
         }
     ],
     "excluded": [
