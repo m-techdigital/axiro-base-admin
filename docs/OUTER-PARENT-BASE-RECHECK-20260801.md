@@ -22,3 +22,8 @@ This admin base must stay aligned with reusable AXIRO foundation code, but it mu
 
 Development merge is acceptable for the admin base after this pass. Production release still requires dependency-audit remediation and any product-specific QA that sits above the base layer.
 
+## Cleanup Note
+
+- Removed local frontend build output from `dist`; it is generated output and should not be committed.
+- No dependency `node_modules/**/dist` package internals were removed.
+- Keep future build artifacts out of Git; regenerate them through `npm run build` when needed.
