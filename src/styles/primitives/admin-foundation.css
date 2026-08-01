@@ -296,15 +296,88 @@ body {
     border-radius: 8px !important;
 }
 
+.base-filter
+    :where(
+        .ant-input,
+        .ant-input-affix-wrapper,
+        .ant-picker,
+        .ant-select-selector,
+        .ant-btn
+    ) {
+    font-size: 14px;
+    line-height: calc(var(--app-control-height) - 2px);
+}
+
+.base-filter .ant-input,
+.base-filter .ant-input-affix-wrapper,
+.base-filter .ant-picker {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.base-filter .ant-input-affix-wrapper,
+.base-filter .ant-picker,
+.base-filter .ant-select-selector {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.base-filter .ant-input-affix-wrapper > input.ant-input,
+.base-filter .ant-picker-input > input {
+    height: calc(var(--app-control-height) - 2px) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: calc(var(--app-control-height) - 2px) !important;
+}
+
+.base-filter .ant-input-prefix,
+.base-filter .ant-input-suffix,
+.base-filter .ant-picker-prefix,
+.base-filter .ant-picker-suffix,
+.base-filter .ant-picker-clear,
+.base-filter .ant-picker-separator,
+.base-filter .ant-select-arrow,
+.base-filter .ant-select-clear {
+    display: inline-flex;
+    align-items: center;
+    min-height: 0;
+    line-height: 1;
+}
+
 .base-filter .ant-select,
 .base-filter .ant-select-single,
 .base-filter .ant-select-multiple {
     min-height: var(--app-control-height);
 }
 
+.base-filter .ant-select-single .ant-select-selector {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.base-filter .ant-select-selection-wrap {
+    align-self: stretch;
+    min-height: 0;
+}
+
 .base-filter .ant-select-selection-item,
 .base-filter .ant-select-selection-placeholder {
+    display: inline-flex;
+    align-items: center;
     line-height: calc(var(--app-control-height) - 2px) !important;
+}
+
+.base-filter .ant-select-multiple .ant-select-selector {
+    height: auto !important;
+    min-height: var(--app-control-height) !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+.base-filter .ant-select-multiple .ant-select-selection-item {
+    min-height: calc(var(--app-control-height) - 8px);
+    line-height: calc(var(--app-control-height) - 10px) !important;
 }
 
 .base-filter-actions-col {

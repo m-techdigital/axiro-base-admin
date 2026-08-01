@@ -47,6 +47,8 @@
     width: 100%;
     height: var(--app-control-height);
     min-height: var(--app-control-height);
+    padding-top: 0;
+    padding-bottom: 0;
     border: 1px solid var(--axiro-border-strong) !important;
     border-radius: 8px;
     background: var(--axiro-bg-surface);
@@ -55,23 +57,26 @@
     align-items: center;
 }
 
-.base-header-filter .ant-input-affix-wrapper {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
 .base-header-filter .ant-input,
 .base-header-filter .ant-picker-input > input {
-    height: calc(var(--app-control-height) - 2px);
+    height: calc(var(--app-control-height) - 2px) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     color: var(--axiro-text-heading) !important;
     font-weight: 600;
-    line-height: calc(var(--app-control-height) - 2px);
+    line-height: calc(var(--app-control-height) - 2px) !important;
 }
 
 .base-header-filter .ant-input-prefix,
+.base-header-filter .ant-input-suffix,
+.base-header-filter .ant-picker-clear,
 .base-header-filter .ant-picker-suffix,
 .base-header-filter .ant-picker-separator {
+    display: inline-flex;
+    align-items: center;
     color: var(--axiro-text-heading);
+    line-height: 1;
 }
 
 .base-header-filter--range {
