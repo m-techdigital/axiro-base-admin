@@ -18,3 +18,5 @@ export { default as useActiveTab } from './useActiveTab'
 export { useBreadcrumb } from './useBreadcrumb'
 export { usePageMeta } from './usePageMeta'
 export { usePageTitleOverride } from './usePageTitleOverride'
+
+export { default as useSavedFilterPresets } from './useSavedFilterPresets'

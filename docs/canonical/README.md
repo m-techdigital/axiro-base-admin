@@ -20,3 +20,4 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 - `MARKETPLACE_OPTIONS_RENTAL_DEDUCTION_CLOSURE_20260802.md`
 - `ADMIN_NOTIFICATION_RENTAL_SETTLEMENT_CLOSURE_20260803.md`: admin notification center, rental operation queues và settlement audit/export.
 - `ADMIN_NOTIFICATION_SETTLEMENT_FILTER_BUNDLE_CLOSURE_20260803.md`: notification detail drawer, settlement filters/export và route bundle splitting.
+- `OPERATIONS_PRESETS_EXPORT_QUEUE_20260803.md`: saved filter presets, unread notification counter và queued rental settlement export.

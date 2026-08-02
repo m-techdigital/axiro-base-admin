@@ -39,13 +39,15 @@ export default function AdminSidebar({ collapsed, setCollapsed, isMobile }) {
         () =>
             ADMIN_MENU_ITEMS.map((item) => {
                 const count =
-                    item.key === '/operations-control'
-                        ? counters.expired_holds
-                        : item.key === '/payments'
-                          ? counters.pending_payment_confirmation
-                          : item.key === '/disputes'
-                            ? counters.open_disputes
-                            : 0
+                    item.key === '/notifications'
+                        ? counters.unread_notifications
+                        : item.key === '/operations-control'
+                          ? counters.expired_holds
+                          : item.key === '/payments'
+                            ? counters.pending_payment_confirmation
+                            : item.key === '/disputes'
+                              ? counters.open_disputes
+                              : 0
 
                 return count
                     ? {

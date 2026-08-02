@@ -7,7 +7,17 @@ import {
     UnlockOutlined,
     WarningOutlined,
 } from '@ant-design/icons'
-import { Alert, Card, Input, Space, Statistic, Tabs, Tag, message } from 'antd'
+import {
+    Alert,
+    Card,
+    Input,
+    Progress,
+    Space,
+    Statistic,
+    Tabs,
+    Tag,
+    message,
+} from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -26,6 +36,7 @@ import {
     valueLabel,
 } from '@/contracts/marketplaceLabels'
 
+import FilterPresetBar from '../components/FilterPresetBar'
 import service from '../service'
 
 const unwrap = (response) => response?.data?.data || response?.data || {}
@@ -123,6 +134,42 @@ export default function OperationsControlPage() {
     const [timeline, setTimeline] = useState(null)
     const [checklist, setChecklist] = useState(null)
     const [settlementParams, setSettlementParams] = useState({})
+    const [exportRequest, setExportRequest] = useState(null)
+
+    useEffect(() => {
+        if (
+            !exportRequest?.id ||
+            !['pending', 'processing'].includes(exportRequest.status)
+        ) {
+            return undefined
+        }
+
+        const timer = window.setInterval(async () => {
+            try {
+                const response = await service.rentalSettlementExportStatus(
+                    exportRequest.id,
+                )
+                const current = unwrap(response)
+                setExportRequest(current)
+
+                if (current.status === 'completed') {
+                    message.success(
+                        `Đã tạo tệp xuất ${current.row_count || 0} dòng.`,
+                    )
+                } else if (current.status === 'failed') {
+                    message.error(
+                        current.error_message || 'Tạo tệp xuất thất bại.',
+                    )
+                }
+            } catch (error) {
+                message.error(
+                    error.message || 'Không thể kiểm tra tiến độ xuất dữ liệu.',
+                )
+            }
+        }, 3000)
+
+        return () => window.clearInterval(timer)
+    }, [exportRequest?.id, exportRequest?.status])
 
     const load = useCallback(async () => {
         setLoading(true)
@@ -444,6 +491,11 @@ export default function OperationsControlPage() {
 
             {tab === 'queues' ? (
                 <>
+                    <FilterPresetBar
+                        storageKey="operations.queue-presets"
+                        values={queueParams}
+                        onApply={setQueueParams}
+                    />
                     <BaseFilter
                         fields={queueFilters}
                         loading={loading}
@@ -467,6 +519,11 @@ export default function OperationsControlPage() {
 
             {tab === 'reconciliation' ? (
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                    <FilterPresetBar
+                        storageKey="operations.settlement-presets"
+                        values={settlementParams}
+                        onApply={setSettlementParams}
+                    />
                     <BaseFilter
                         fields={settlementFilters}
                         loading={loading}
@@ -477,8 +534,13 @@ export default function OperationsControlPage() {
                     <BaseButton
                         onClick={async () => {
                             try {
-                                await service.exportRentalSettlements(
-                                    settlementParams,
+                                const response =
+                                    await service.requestRentalSettlementExport(
+                                        settlementParams,
+                                    )
+                                setExportRequest(unwrap(response))
+                                message.success(
+                                    'Đã đưa yêu cầu xuất dữ liệu vào hàng đợi.',
                                 )
                             } catch (error) {
                                 message.error(
@@ -490,6 +552,51 @@ export default function OperationsControlPage() {
                     >
                         Xuất quyết toán giao dịch thuê
                     </BaseButton>
+                    {exportRequest ? (
+                        <Card size="small" title="Tiến độ tệp xuất">
+                            <Space
+                                direction="vertical"
+                                style={{ width: '100%' }}
+                            >
+                                <Progress
+                                    percent={
+                                        exportRequest.status === 'completed'
+                                            ? 100
+                                            : exportRequest.status ===
+                                                'processing'
+                                              ? 60
+                                              : exportRequest.status ===
+                                                  'failed'
+                                                ? 100
+                                                : 20
+                                    }
+                                    status={
+                                        exportRequest.status === 'failed'
+                                            ? 'exception'
+                                            : undefined
+                                    }
+                                />
+                                <span>
+                                    Trạng thái:{' '}
+                                    {valueLabel(exportRequest.status)}
+                                    {exportRequest.row_count
+                                        ? ` · ${exportRequest.row_count} dòng`
+                                        : ''}
+                                </span>
+                                {exportRequest.status === 'completed' ? (
+                                    <BaseButton
+                                        onClick={() =>
+                                            service.downloadRentalSettlementExport(
+                                                exportRequest.id,
+                                            )
+                                        }
+                                    >
+                                        Tải tệp CSV
+                                    </BaseButton>
+                                ) : null}
+                            </Space>
+                        </Card>
+                    ) : null}
                     <div className="base-statistics-grid">
                         <MetricCard
                             title="Thanh toán chờ duyệt"

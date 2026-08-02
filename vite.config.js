@@ -19,6 +19,26 @@ export default defineConfig(({ mode }) => {
                 ),
             },
         },
+        build: {
+            rollupOptions: {
+                output: {
+                    manualChunks(id) {
+                        if (!id.includes('node_modules')) return undefined
+                        if (
+                            id.includes('/react/') ||
+                            id.includes('/react-dom/') ||
+                            id.includes('/react-router')
+                        )
+                            return 'react-vendor'
+                        if (id.includes('/antd/') || id.includes('@ant-design'))
+                            return 'antd-vendor'
+                        if (id.includes('/axios/')) return 'http-vendor'
+                        if (id.includes('/dayjs/')) return 'date-vendor'
+                        return 'vendor'
+                    },
+                },
+            },
+        },
         server: {
             proxy: {
                 '/api': {
