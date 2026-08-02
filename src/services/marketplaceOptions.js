@@ -1,33 +1,50 @@
+import contract from '@/contracts/marketplace-contract.json'
+
 import api from './axios'
 
 let cached = null
+let expiresAt = 0
 let loading = null
 
+const catalog = contract.option_catalog || {}
 const fallbackOptions = {
-    document_types: [
-        { value: 'sale_record', label: 'Hồ sơ mua bán tài khoản trò chơi' },
-        { value: 'rental_record', label: 'Hồ sơ thuê tài khoản trò chơi' },
-    ],
-    dispute_outcomes: [
-        { value: 'complete', label: 'Chấp nhận và hoàn tất giao dịch' },
-        { value: 'cancel_refund', label: 'Chấp nhận, hủy và hoàn tiền' },
-        { value: 'cancel_no_refund', label: 'Chấp nhận, hủy không hoàn tiền' },
-        { value: 'reopen', label: 'Từ chối và đưa giao dịch về luồng xử lý' },
-    ],
+    document_types: catalog.document_types || [],
+    dispute_outcomes: catalog.dispute_outcomes || [],
 }
+const fallbackTtlMs = Number(catalog.cache_ttl_seconds || 300) * 1000
 
-export const loadMarketplaceOptions = async () => {
-    if (cached) return cached
+export const loadMarketplaceOptions = async ({ force = false } = {}) => {
+    if (!force && cached && Date.now() < expiresAt) return cached
+
     loading ??= api
         .get('/marketplace/options')
         .then((response) => {
-            cached = response.data || {}
+            const payload = response?.data || response || {}
+            const ttl = Number(
+                response?.meta?.cache_ttl_seconds ||
+                    catalog.cache_ttl_seconds ||
+                    300,
+            )
+            cached = {
+                document_types: payload.document_types?.length
+                    ? payload.document_types
+                    : fallbackOptions.document_types,
+                dispute_outcomes: payload.dispute_outcomes?.length
+                    ? payload.dispute_outcomes
+                    : fallbackOptions.dispute_outcomes,
+            }
+            expiresAt = Date.now() + ttl * 1000
             return cached
         })
-        .catch(() => fallbackOptions)
+        .catch(() => {
+            cached = fallbackOptions
+            expiresAt = Date.now() + fallbackTtlMs
+            return cached
+        })
         .finally(() => {
             loading = null
         })
+
     return loading
 }
 

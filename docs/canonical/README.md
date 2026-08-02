@@ -15,3 +15,5 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 
 - `TRANSACTION_DOCUMENT_DISPUTE_CLOSURE_20260802.md`: chuẩn hóa key hồ sơ giao dịch và outcome tranh chấp cuối.
 - `TRANSACTION_OPTIONS_DISPUTE_OUTCOME_E2E_20260802.md`
+
+- `MARKETPLACE_OPTIONS_RENTAL_E2E_20260802.md`: options cache/version, dispute timeline và rental E2E.
