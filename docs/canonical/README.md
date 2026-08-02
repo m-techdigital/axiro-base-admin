@@ -12,3 +12,5 @@ AXIRO cha là chuẩn kiến trúc cho Mini. Mini chỉ rút gọn phạm vi ngh
 
 ## Backend API
 Xem tài liệu canonical tương ứng trong repo API. Mini giữ response envelope, FormRequest, Resource/presenter, service lifecycle và audit conventions của AXIRO cha, nhưng không kéo RBAC/company/project vào.
+
+- `TRANSACTION_DOCUMENT_DISPUTE_CLOSURE_20260802.md`: chuẩn hóa key hồ sơ giao dịch và outcome tranh chấp cuối.

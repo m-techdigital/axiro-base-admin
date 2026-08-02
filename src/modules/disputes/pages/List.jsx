@@ -1,5 +1,5 @@
 import { EyeOutlined } from '@ant-design/icons'
-import { Tag, message } from 'antd'
+import { Select, Tag, Input, message } from 'antd'
 import { useState } from 'react'
 
 import {
@@ -43,20 +43,24 @@ export default function DisputeList() {
         onReset: list.setParams,
     })
     const [item, setItem] = useState(null)
+    const [outcome, setOutcome] = useState('cancel_refund')
+    const [resolution, setResolution] = useState('')
 
     const resolve = async (status) => {
+        if (resolution.trim().length < 10) {
+            message.warning('Cần nhập kết luận xử lý tối thiểu 10 ký tự')
+            return
+        }
         try {
             await service.resolve(item.id, {
                 status,
-                resolution:
-                    status === 'resolved'
-                        ? 'Đã đối chiếu bằng chứng và xử lý theo thỏa thuận giao dịch.'
-                        : 'Yêu cầu không đủ căn cứ để chấp nhận.',
-                transaction_status:
-                    status === 'resolved' ? 'completed' : 'paid',
+                resolution: resolution.trim(),
+                outcome: status === 'rejected' ? 'reopen' : outcome,
             })
             message.success('Đã xử lý tranh chấp')
             setItem(null)
+            setOutcome('cancel_refund')
+            setResolution('')
             await list.reload()
         } catch (error) {
             message.error(error.message)
@@ -88,7 +92,11 @@ export default function DisputeList() {
                     <BaseIconAction
                         icon={<EyeOutlined />}
                         label="Xử lý tranh chấp"
-                        onClick={() => setItem(record)}
+                        onClick={() => {
+                            setItem(record)
+                            setResolution('')
+                            setOutcome('cancel_refund')
+                        }}
                     />
                 </BaseActionGroup>
             ),
@@ -140,7 +148,7 @@ export default function DisputeList() {
                         onClick={() => resolve('resolved')}
                         type="primary"
                     >
-                        Chấp nhận và hoàn tất
+                        Áp dụng phương án
                     </BaseButton>,
                 ]}
                 onCancel={() => setItem(null)}
@@ -150,6 +158,37 @@ export default function DisputeList() {
                 <p>
                     <b>Mô tả:</b> {item?.description}
                 </p>
+                <p>
+                    <b>Phương án khi chấp nhận:</b>
+                </p>
+                <Select
+                    value={outcome}
+                    onChange={setOutcome}
+                    style={{ width: '100%', marginBottom: 12 }}
+                    options={[
+                        {
+                            value: 'complete',
+                            label: 'Chấp nhận và hoàn tất giao dịch',
+                        },
+                        {
+                            value: 'cancel_refund',
+                            label: 'Chấp nhận, hủy và hoàn tiền',
+                        },
+                        {
+                            value: 'cancel_no_refund',
+                            label: 'Chấp nhận, hủy không hoàn tiền',
+                        },
+                    ]}
+                />
+                <p>
+                    <b>Kết luận xử lý:</b>
+                </p>
+                <Input.TextArea
+                    rows={4}
+                    value={resolution}
+                    onChange={(event) => setResolution(event.target.value)}
+                    placeholder="Nhập kết luận, căn cứ và phương án xử lý"
+                />
             </BaseModal>
         </>
     )

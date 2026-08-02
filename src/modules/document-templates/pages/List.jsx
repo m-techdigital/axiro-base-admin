@@ -15,7 +15,7 @@ const typeLabel = Object.fromEntries(documentTypes)
 const empty = {
     code: '',
     name: '',
-    type: 'sale_contract',
+    type: 'sale_record',
     target_module: 'transactions',
     status: 'approved',
     content_html: '',
