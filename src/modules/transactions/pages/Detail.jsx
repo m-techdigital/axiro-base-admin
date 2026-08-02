@@ -7,6 +7,8 @@ import {
 import {
     Alert,
     Card,
+    Input,
+    InputNumber,
     Col,
     List,
     Row,
@@ -46,14 +48,23 @@ export default function TransactionDetail() {
     const { id } = useParams(),
         navigate = useNavigate()
     const [documentTypes, setDocumentTypes] = useState([])
+    const [disputeOutcomes, setDisputeOutcomes] = useState([])
+    const [deductionModalOpen, setDeductionModalOpen] = useState(false)
+    const [deductionAmount, setDeductionAmount] = useState(0)
+    const [deductionNote, setDeductionNote] = useState('')
     const documentLabels = useMemo(
         () => optionMap(documentTypes),
         [documentTypes],
     )
+    const disputeOutcomeLabels = useMemo(
+        () => optionMap(disputeOutcomes),
+        [disputeOutcomes],
+    )
     useEffect(() => {
-        loadMarketplaceOptions().then((options) =>
-            setDocumentTypes(options.document_types || []),
-        )
+        loadMarketplaceOptions().then((options) => {
+            setDocumentTypes(options.document_types || [])
+            setDisputeOutcomes(options.dispute_outcomes || [])
+        })
     }, [])
     const [data, setData] = useState(null),
         [loading, setLoading] = useState(true),
@@ -102,6 +113,37 @@ export default function TransactionDetail() {
         } finally {
             setActing('')
         }
+    }
+    const completeRental = async () => {
+        if (deductionAmount > 0 && !deductionNote.trim()) {
+            message.warning('Vui lòng nhập lý do khấu trừ tiền cọc')
+            return
+        }
+
+        setActing('complete')
+        try {
+            await service.action(id, {
+                action: 'complete',
+                note: 'Hoàn tất giao dịch thuê và quyết toán tiền cọc.',
+                rental_deposit_deduction_amount: deductionAmount || 0,
+                rental_deposit_deduction_note:
+                    deductionAmount > 0 ? deductionNote : null,
+            })
+            message.success('Đã hoàn tất và quyết toán giao dịch thuê')
+            setDeductionModalOpen(false)
+            setDeductionAmount(0)
+            setDeductionNote('')
+            await load()
+        } catch (error) {
+            message.error(error.message || 'Không thể hoàn tất giao dịch thuê')
+        } finally {
+            setActing('')
+        }
+    }
+    const closeDeductionModal = () => {
+        setDeductionModalOpen(false)
+        setDeductionAmount(0)
+        setDeductionNote('')
     }
     const ensureDocuments = async () => {
         setActing('documents')
@@ -402,6 +444,32 @@ export default function TransactionDetail() {
                                     <>
                                         <b>{item.title}</b>
                                         <div>{item.description || ''}</div>
+                                        {item.metadata?.outcome && (
+                                            <Tag color="purple">
+                                                Kết quả:{' '}
+                                                {disputeOutcomeLabels[
+                                                    item.metadata.outcome
+                                                ] ||
+                                                    valueLabel(
+                                                        item.metadata.outcome,
+                                                    )}
+                                            </Tag>
+                                        )}
+                                        {Number(
+                                            item.metadata
+                                                ?.rental_deposit_deduction_amount ||
+                                                0,
+                                        ) > 0 && (
+                                            <div>
+                                                Khấu trừ cọc:{' '}
+                                                <Money
+                                                    value={
+                                                        item.metadata
+                                                            .rental_deposit_deduction_amount
+                                                    }
+                                                />
+                                            </div>
+                                        )}
                                         <small>
                                             {new Date(
                                                 item.created_at,
@@ -538,7 +606,12 @@ export default function TransactionDetail() {
                                     type="primary"
                                     loading={acting === 'complete'}
                                     onClick={() =>
-                                        act('complete', 'Hoàn tất giao dịch')
+                                        data?.transaction_type === 'rental'
+                                            ? setDeductionModalOpen(true)
+                                            : act(
+                                                  'complete',
+                                                  'Hoàn tất giao dịch',
+                                              )
                                     }
                                 >
                                     Hoàn tất giao dịch
@@ -598,6 +671,45 @@ export default function TransactionDetail() {
                     </Card>
                 </Col>
             </Row>
+            <BaseModal
+                open={deductionModalOpen}
+                onCancel={closeDeductionModal}
+                onSubmit={completeRental}
+                submitText="Hoàn tất và quyết toán"
+                loading={acting === 'complete'}
+                title="Quyết toán tiền cọc thuê"
+            >
+                <Space direction="vertical" style={{ width: '100%' }}>
+                    <Typography.Text>
+                        Tiền cọc hiện tại:{' '}
+                        <Money value={data?.deposit_amount} />
+                    </Typography.Text>
+                    <label>
+                        Số tiền khấu trừ
+                        <InputNumber
+                            min={0}
+                            max={Number(data?.deposit_amount || 0)}
+                            value={deductionAmount}
+                            onChange={(value) =>
+                                setDeductionAmount(Number(value || 0))
+                            }
+                            style={{ width: '100%' }}
+                        />
+                    </label>
+                    <label>
+                        Lý do khấu trừ
+                        <Input.TextArea
+                            rows={4}
+                            value={deductionNote}
+                            disabled={deductionAmount <= 0}
+                            onChange={(event) =>
+                                setDeductionNote(event.target.value)
+                            }
+                            placeholder="Bắt buộc khi có khấu trừ cọc"
+                        />
+                    </label>
+                </Space>
+            </BaseModal>
             <BaseModal
                 open={!!preview}
                 onCancel={() => setPreview(null)}

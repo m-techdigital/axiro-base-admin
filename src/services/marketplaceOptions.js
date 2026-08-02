@@ -1,4 +1,9 @@
-import contract from '@/contracts/marketplace-contract.json'
+import {
+    MARKETPLACE_DISPUTE_OUTCOMES,
+    MARKETPLACE_DOCUMENT_TYPES,
+    MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS,
+    MARKETPLACE_OPTIONS_CONTRACT_VERSION,
+} from '@/generated/marketplaceOptions'
 
 import api from './axios'
 
@@ -6,15 +11,22 @@ let cached = null
 let expiresAt = 0
 let loading = null
 
-const catalog = contract.option_catalog || {}
 const fallbackOptions = {
-    document_types: catalog.document_types || [],
-    dispute_outcomes: catalog.dispute_outcomes || [],
+    document_types: MARKETPLACE_DOCUMENT_TYPES,
+    dispute_outcomes: MARKETPLACE_DISPUTE_OUTCOMES,
 }
-const fallbackTtlMs = Number(catalog.cache_ttl_seconds || 300) * 1000
+const fallbackTtlMs = MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS * 1000
+let cachedContractVersion = MARKETPLACE_OPTIONS_CONTRACT_VERSION
 
 export const loadMarketplaceOptions = async ({ force = false } = {}) => {
-    if (!force && cached && Date.now() < expiresAt) return cached
+    if (
+        !force &&
+        cached &&
+        Date.now() < expiresAt &&
+        cachedContractVersion === MARKETPLACE_OPTIONS_CONTRACT_VERSION
+    ) {
+        return cached
+    }
 
     loading ??= api
         .get('/marketplace/options')
@@ -22,8 +34,7 @@ export const loadMarketplaceOptions = async ({ force = false } = {}) => {
             const payload = response?.data || response || {}
             const ttl = Number(
                 response?.meta?.cache_ttl_seconds ||
-                    catalog.cache_ttl_seconds ||
-                    300,
+                    MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS,
             )
             cached = {
                 document_types: payload.document_types?.length
@@ -33,7 +44,12 @@ export const loadMarketplaceOptions = async ({ force = false } = {}) => {
                     ? payload.dispute_outcomes
                     : fallbackOptions.dispute_outcomes,
             }
-            expiresAt = Date.now() + ttl * 1000
+            cachedContractVersion =
+                response?.meta?.contract_version ||
+                MARKETPLACE_OPTIONS_CONTRACT_VERSION
+            const mismatch =
+                cachedContractVersion !== MARKETPLACE_OPTIONS_CONTRACT_VERSION
+            expiresAt = Date.now() + (mismatch ? Math.min(ttl, 30) : ttl) * 1000
             return cached
         })
         .catch(() => {

@@ -17,3 +17,4 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 - `TRANSACTION_OPTIONS_DISPUTE_OUTCOME_E2E_20260802.md`
 
 - `MARKETPLACE_OPTIONS_RENTAL_E2E_20260802.md`: options cache/version, dispute timeline và rental E2E.
+- `MARKETPLACE_OPTIONS_RENTAL_DEDUCTION_CLOSURE_20260802.md`
