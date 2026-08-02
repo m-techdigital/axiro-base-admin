@@ -75,6 +75,21 @@ const queueFilters = [
     },
 ]
 
+const settlementFilters = [
+    { name: 'date_from', label: 'Từ ngày', type: 'date' },
+    { name: 'date_to', label: 'Đến ngày', type: 'date' },
+    { name: 'customer_id', label: 'ID khách hàng', type: 'number' },
+    {
+        name: 'status',
+        label: 'Trạng thái',
+        type: 'select',
+        options: [
+            { value: 'completed', label: 'Hoàn tất' },
+            { value: 'cancelled', label: 'Đã hủy' },
+        ],
+    },
+]
+
 function MetricCard({ title, value, suffix, danger }) {
     return (
         <Card size="small">
@@ -107,6 +122,7 @@ export default function OperationsControlPage() {
     const [releaseNote, setReleaseNote] = useState('')
     const [timeline, setTimeline] = useState(null)
     const [checklist, setChecklist] = useState(null)
+    const [settlementParams, setSettlementParams] = useState({})
 
     const load = useCallback(async () => {
         setLoading(true)
@@ -451,10 +467,19 @@ export default function OperationsControlPage() {
 
             {tab === 'reconciliation' ? (
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                    <BaseFilter
+                        fields={settlementFilters}
+                        loading={loading}
+                        onReset={() => setSettlementParams({})}
+                        onSearch={setSettlementParams}
+                        values={settlementParams}
+                    />
                     <BaseButton
                         onClick={async () => {
                             try {
-                                await service.exportRentalSettlements()
+                                await service.exportRentalSettlements(
+                                    settlementParams,
+                                )
                             } catch (error) {
                                 message.error(
                                     error.message ||

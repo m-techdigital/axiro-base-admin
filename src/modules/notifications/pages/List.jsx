@@ -1,10 +1,12 @@
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons'
-import { Tag, message } from 'antd'
+import { Descriptions, Tag, Timeline, message } from 'antd'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
     BaseActionGroup,
     BaseButton,
+    BaseDrawer,
     BaseFilter,
     BaseIconAction,
     BaseListView,
@@ -32,6 +34,8 @@ const filterFields = [
 
 export default function NotificationList() {
     const navigate = useNavigate()
+    const [detail, setDetail] = useState(null)
+    const [detailLoading, setDetailLoading] = useState(false)
     const list = useList(service, { page: 1, per_page: 20 })
     const filters = useBaseFilters({
         defaultParams: { page: 1, per_page: 20 },
@@ -45,6 +49,22 @@ export default function NotificationList() {
             await list.reload()
         } catch (error) {
             message.error(error.message)
+        }
+    }
+
+    const showDetail = async (record) => {
+        setDetailLoading(true)
+        try {
+            const response = await service.show(record.id)
+            setDetail(response?.data || response)
+            if (!record.read_at) {
+                await service.read(record.id)
+                await list.reload()
+            }
+        } catch (error) {
+            message.error(error.message || 'Không thể tải chi tiết thông báo.')
+        } finally {
+            setDetailLoading(false)
         }
     }
 
@@ -71,6 +91,11 @@ export default function NotificationList() {
             fixed: 'right',
             render: (_, row) => (
                 <BaseActionGroup>
+                    <BaseIconAction
+                        icon={<EyeOutlined />}
+                        label="Xem chi tiết"
+                        onClick={() => showDetail(row)}
+                    />
                     {!row.read_at ? (
                         <BaseIconAction
                             icon={<CheckOutlined />}
@@ -93,44 +118,129 @@ export default function NotificationList() {
     ]
 
     return (
-        <BaseListView
-            columns={columns}
-            data={list.data}
-            filters={
-                <BaseFilter
-                    fields={filterFields}
-                    loading={list.loading}
-                    onReset={filters.reset}
-                    onSearch={filters.search}
-                    values={filters.filters}
-                />
-            }
-            header={
-                <BasePageHeader
-                    title="Trung tâm thông báo"
-                    description="Lọc thông báo theo giao dịch, khách hàng, loại và trạng thái đọc."
-                    actions={
-                        <BaseButton
-                            onClick={async () => {
-                                await service.readAll()
-                                await list.reload()
-                            }}
-                        >
-                            Đánh dấu tất cả đã đọc
-                        </BaseButton>
-                    }
-                />
-            }
-            loading={list.loading}
-            onChange={(pagination) =>
-                filters.paginate(pagination.current, pagination.pageSize)
-            }
-            pagination={{
-                total: list.meta.pagination?.total,
-                current: list.meta.pagination?.current_page,
-                pageSize: list.meta.pagination?.per_page,
-                showSizeChanger: true,
-            }}
-        />
+        <>
+            <BaseListView
+                columns={columns}
+                data={list.data}
+                filters={
+                    <BaseFilter
+                        fields={filterFields}
+                        loading={list.loading}
+                        onReset={filters.reset}
+                        onSearch={filters.search}
+                        values={filters.filters}
+                    />
+                }
+                header={
+                    <BasePageHeader
+                        title="Trung tâm thông báo"
+                        description="Lọc thông báo theo giao dịch, khách hàng, loại và trạng thái đọc."
+                        actions={
+                            <BaseButton
+                                onClick={async () => {
+                                    await service.readAll()
+                                    await list.reload()
+                                }}
+                            >
+                                Đánh dấu tất cả đã đọc
+                            </BaseButton>
+                        }
+                    />
+                }
+                loading={list.loading}
+                onChange={(pagination) =>
+                    filters.paginate(pagination.current, pagination.pageSize)
+                }
+                pagination={{
+                    total: list.meta.pagination?.total,
+                    current: list.meta.pagination?.current_page,
+                    pageSize: list.meta.pagination?.per_page,
+                    showSizeChanger: true,
+                }}
+            />
+            <BaseDrawer
+                open={Boolean(detail) || detailLoading}
+                loading={detailLoading}
+                title={detail?.title || 'Chi tiết thông báo'}
+                width={760}
+                onClose={() => setDetail(null)}
+            >
+                {detail ? (
+                    <>
+                        <Descriptions
+                            bordered
+                            column={1}
+                            size="small"
+                            items={[
+                                {
+                                    key: 'type',
+                                    label: 'Loại',
+                                    children: detail.type || '—',
+                                },
+                                {
+                                    key: 'customer',
+                                    label: 'Khách hàng',
+                                    children: detail.customer
+                                        ? `${detail.customer.code || ''} ${detail.customer.name || ''}`.trim()
+                                        : '—',
+                                },
+                                {
+                                    key: 'transaction',
+                                    label: 'Giao dịch',
+                                    children:
+                                        detail.transaction_code ||
+                                        detail.transaction?.code ||
+                                        '—',
+                                },
+                                {
+                                    key: 'message',
+                                    label: 'Nội dung',
+                                    children: detail.message || '—',
+                                },
+                                {
+                                    key: 'created',
+                                    label: 'Thời gian',
+                                    children: detail.created_at || '—',
+                                },
+                            ]}
+                        />
+                        {detail.transaction?.events?.length ? (
+                            <div style={{ marginTop: 20 }}>
+                                <h3>Tiến trình giao dịch</h3>
+                                <Timeline
+                                    items={detail.transaction.events.map(
+                                        (event) => ({
+                                            children: (
+                                                <>
+                                                    <b>{event.title}</b>
+                                                    <div>
+                                                        {event.description ||
+                                                            event.event_type}
+                                                    </div>
+                                                    <small>
+                                                        {event.created_at}
+                                                    </small>
+                                                </>
+                                            ),
+                                        }),
+                                    )}
+                                />
+                            </div>
+                        ) : null}
+                        {detail.transaction_id ? (
+                            <BaseButton
+                                onClick={() =>
+                                    navigate(
+                                        `/transactions/${detail.transaction_id}`,
+                                    )
+                                }
+                            >
+                                Mở hồ sơ giao dịch
+                            </BaseButton>
+                        ) : null}
+                    </>
+                ) : null}
+            </BaseDrawer>
+        </>
     )
 }

@@ -12,10 +12,10 @@ export default {
     reconciliation: () => api.get('/operations-dashboard/reconciliation'),
     rentalSettlements: (params = {}) =>
         api.get('/operations-dashboard/rental-settlements', { params }),
-    exportRentalSettlements: async () => {
+    exportRentalSettlements: async (params = {}) => {
         const blob = await api.get(
             '/operations-dashboard/rental-settlements/export',
-            { responseType: 'blob' },
+            { params, responseType: 'blob' },
         )
         const url = URL.createObjectURL(blob)
         const link = document.createElement('a')

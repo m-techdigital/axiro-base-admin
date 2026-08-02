@@ -1,9 +1,11 @@
+import { Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import AdminLayout from '../../layouts/AdminLayout'
 import Login from '../../modules/auth/pages/Login'
 import RequireAuth from '../../middleware/RequireAuth'
 import GuestOnly from '../../middleware/GuestOnly'
 import { ADMIN_ROUTES } from '../../routes/adminRoutes'
+
 export default function AdminRouter() {
     return (
         <Routes>
@@ -26,6 +28,17 @@ export default function AdminRouter() {
                     <Route
                         key={route.index ? 'index' : route.path}
                         {...route}
+                        element={
+                            <Suspense
+                                fallback={
+                                    <div className="route-loading">
+                                        Đang tải...
+                                    </div>
+                                }
+                            >
+                                {route.element}
+                            </Suspense>
+                        }
                     />
                 ))}
             </Route>

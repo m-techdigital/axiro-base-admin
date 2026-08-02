@@ -1,25 +1,45 @@
-import Dashboard from '../pages/Dashboard'
-import ActionCenter from '../modules/action-center/pages/Index'
-import ProductList from '../modules/products/pages/List'
-import ProductForm from '../modules/products/pages/Form'
-import TransactionList from '../modules/transactions/pages/List'
-import TransactionForm from '../modules/transactions/pages/Form'
-import TransactionDetail from '../modules/transactions/pages/Detail'
-import CustomerList from '../modules/customers/pages/List'
-import CustomerForm from '../modules/customers/pages/Form'
-import PaymentList from '../modules/payments/pages/List'
-import DisputeList from '../modules/disputes/pages/List'
-import AuditLogList from '../modules/audit-logs/pages/List'
-import WalletDepositList from '../modules/wallet-deposits/pages/List'
-import WalletList from '../modules/wallets/pages/List'
-import DocumentTemplateList from '../modules/document-templates/pages/List'
-import GeneratedDocumentList from '../modules/generated-documents/pages/List'
-import PaymentSettings from '../modules/payment-settings/pages/Index'
-import PayoutCenter from '../modules/payouts/pages/Index'
-import MarketplaceOperationsPage from '../modules/marketplace-operations/pages/Index'
-import MarketplaceTrustPage from '../modules/marketplace-trust/pages/Index'
-import OperationsControlPage from '../modules/operations-control/pages/Index'
-import NotificationList from '../modules/notifications/pages/List'
+import { lazy } from 'react'
+
+const Dashboard = lazy(() => import('../pages/Dashboard'))
+const ActionCenter = lazy(() => import('../modules/action-center/pages/Index'))
+const ProductList = lazy(() => import('../modules/products/pages/List'))
+const ProductForm = lazy(() => import('../modules/products/pages/Form'))
+const TransactionList = lazy(() => import('../modules/transactions/pages/List'))
+const TransactionForm = lazy(() => import('../modules/transactions/pages/Form'))
+const TransactionDetail = lazy(
+    () => import('../modules/transactions/pages/Detail'),
+)
+const CustomerList = lazy(() => import('../modules/customers/pages/List'))
+const CustomerForm = lazy(() => import('../modules/customers/pages/Form'))
+const PaymentList = lazy(() => import('../modules/payments/pages/List'))
+const DisputeList = lazy(() => import('../modules/disputes/pages/List'))
+const AuditLogList = lazy(() => import('../modules/audit-logs/pages/List'))
+const WalletDepositList = lazy(
+    () => import('../modules/wallet-deposits/pages/List'),
+)
+const WalletList = lazy(() => import('../modules/wallets/pages/List'))
+const DocumentTemplateList = lazy(
+    () => import('../modules/document-templates/pages/List'),
+)
+const GeneratedDocumentList = lazy(
+    () => import('../modules/generated-documents/pages/List'),
+)
+const PaymentSettings = lazy(
+    () => import('../modules/payment-settings/pages/Index'),
+)
+const PayoutCenter = lazy(() => import('../modules/payouts/pages/Index'))
+const MarketplaceOperationsPage = lazy(
+    () => import('../modules/marketplace-operations/pages/Index'),
+)
+const MarketplaceTrustPage = lazy(
+    () => import('../modules/marketplace-trust/pages/Index'),
+)
+const OperationsControlPage = lazy(
+    () => import('../modules/operations-control/pages/Index'),
+)
+const NotificationList = lazy(
+    () => import('../modules/notifications/pages/List'),
+)
 
 export const ADMIN_ROUTES = [
     { index: true, element: <Dashboard /> },
