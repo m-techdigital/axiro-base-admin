@@ -704,3 +704,11 @@ body {
         grid-column: 1 / -1 !important;
     }
 }
+
+.admin-menu-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+}

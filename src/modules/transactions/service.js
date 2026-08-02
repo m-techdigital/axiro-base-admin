@@ -4,4 +4,7 @@ const service = createCrudService('transactions')
 export default {
     ...service,
     action: (id, data) => api.post(`/transactions/${id}/actions`, data),
+    confirmPayment: (paymentId) => api.post(`/payments/${paymentId}/confirm`),
+    rejectPayment: (paymentId, data) =>
+        api.post(`/payments/${paymentId}/reject`, data),
 }

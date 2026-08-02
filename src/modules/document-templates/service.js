@@ -6,8 +6,8 @@ export default {
     remove: (id) => api.delete(`/document-templates/${id}`),
 }
 export const documentTypes = [
-    ['sale_contract', 'Hợp đồng mua bán'],
-    ['rental_contract', 'Hợp đồng thuê'],
+    ['sale_contract', 'Hồ sơ mua bán'],
+    ['rental_contract', 'Hồ sơ thuê'],
     ['installment_appendix', 'Phụ lục trả góp'],
     ['deposit_confirmation', 'Thỏa thuận đặt cọc'],
     ['payment_confirmation', 'Xác nhận thanh toán'],

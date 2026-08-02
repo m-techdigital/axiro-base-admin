@@ -39,8 +39,8 @@ const labels = {
     disputed: 'Đang tranh chấp',
 }
 const documentLabels = {
-    sale_contract: 'Hợp đồng mua bán',
-    rental_contract: 'Hợp đồng thuê',
+    sale_contract: 'Hồ sơ mua bán',
+    rental_contract: 'Hồ sơ thuê',
     installment_appendix: 'Phụ lục trả góp',
     deposit_confirmation: 'Thỏa thuận đặt cọc',
     payment_confirmation: 'Xác nhận thanh toán',
@@ -93,6 +93,18 @@ export default function TransactionDetail() {
                 }
             },
         })
+    const confirmPayment = async (paymentId) => {
+        setActing(`payment-${paymentId}`)
+        try {
+            await service.confirmPayment(paymentId)
+            message.success('Đã xác nhận thanh toán')
+            await load()
+        } catch (error) {
+            message.error(error.message || 'Không thể xác nhận thanh toán')
+        } finally {
+            setActing('')
+        }
+    }
     const ensureDocuments = async () => {
         setActing('documents')
         try {
@@ -287,6 +299,27 @@ export default function TransactionDetail() {
                                         >
                                             {statusLabel(item.status)}
                                         </Tag>,
+                                        ...(['pending', 'submitted'].includes(
+                                            item.status,
+                                        )
+                                            ? [
+                                                  <BaseButton
+                                                      key="confirm"
+                                                      type="link"
+                                                      loading={
+                                                          acting ===
+                                                          `payment-${item.id}`
+                                                      }
+                                                      onClick={() =>
+                                                          confirmPayment(
+                                                              item.id,
+                                                          )
+                                                      }
+                                                  >
+                                                      Xác nhận
+                                                  </BaseButton>,
+                                              ]
+                                            : []),
                                     ]}
                                 >
                                     <List.Item.Meta
@@ -383,6 +416,43 @@ export default function TransactionDetail() {
                     </Card>
                     <Card
                         loading={loading}
+                        title="Checklist xử lý"
+                        style={{ marginTop: 16 }}
+                    >
+                        <List
+                            dataSource={data?.workflow_checklist || []}
+                            locale={{ emptyText: 'Chưa có dữ liệu checklist.' }}
+                            renderItem={(item) => (
+                                <List.Item>
+                                    <List.Item.Meta
+                                        title={item.label}
+                                        description={item.detail}
+                                    />
+                                    <Tag
+                                        color={
+                                            item.status === 'completed'
+                                                ? 'green'
+                                                : item.status === 'attention'
+                                                  ? 'red'
+                                                  : item.status === 'pending'
+                                                    ? 'gold'
+                                                    : 'default'
+                                        }
+                                    >
+                                        {item.status === 'completed'
+                                            ? 'Đã xong'
+                                            : item.status === 'attention'
+                                              ? 'Cần xử lý'
+                                              : item.status === 'pending'
+                                                ? 'Đang chờ'
+                                                : 'Không phát sinh'}
+                                    </Tag>
+                                </List.Item>
+                            )}
+                        />
+                    </Card>
+                    <Card
+                        loading={loading}
                         title="Lịch sử kiểm tra hệ thống"
                         style={{ marginTop: 16 }}
                     >
@@ -430,19 +500,25 @@ export default function TransactionDetail() {
                     </Card>
                     <Card title="Can thiệp quản trị" style={{ marginTop: 16 }}>
                         <Space direction="vertical" style={{ width: '100%' }}>
-                            <BaseButton
-                                block
-                                loading={acting === 'force_handover'}
-                                onClick={() =>
-                                    act(
-                                        'force_handover',
-                                        'Xác nhận hoàn tất bàn giao',
-                                    )
-                                }
-                            >
-                                Xác nhận bàn giao
-                            </BaseButton>
-                            {data?.transaction_type === 'rental' && (
+                            {(data?.admin_actions || []).includes(
+                                'force_handover',
+                            ) && (
+                                <BaseButton
+                                    block
+                                    loading={acting === 'force_handover'}
+                                    onClick={() =>
+                                        act(
+                                            'force_handover',
+                                            'Xác nhận hoàn tất bàn giao',
+                                        )
+                                    }
+                                >
+                                    Xác nhận bàn giao
+                                </BaseButton>
+                            )}
+                            {(data?.admin_actions || []).includes(
+                                'force_return',
+                            ) && (
                                 <BaseButton
                                     block
                                     loading={acting === 'force_return'}
@@ -456,36 +532,70 @@ export default function TransactionDetail() {
                                     Xác nhận hoàn trả
                                 </BaseButton>
                             )}
-                            <BaseButton
-                                block
-                                type="primary"
-                                loading={acting === 'complete'}
-                                onClick={() =>
-                                    act('complete', 'Hoàn tất giao dịch')
-                                }
-                            >
-                                Hoàn tất giao dịch
-                            </BaseButton>
-                            <BaseButton
-                                block
-                                danger
-                                loading={acting === 'cancel'}
-                                onClick={() => act('cancel', 'Hủy giao dịch')}
-                            >
-                                Hủy giao dịch
-                            </BaseButton>
-                            <BaseButton
-                                block
-                                loading={acting === 'reopen'}
-                                onClick={() =>
-                                    act(
-                                        'reopen',
-                                        'Mở lại giao dịch về trạng thái chờ thanh toán',
-                                    )
-                                }
-                            >
-                                Mở lại giao dịch
-                            </BaseButton>
+                            {(data?.admin_actions || []).includes(
+                                'complete',
+                            ) && (
+                                <BaseButton
+                                    block
+                                    type="primary"
+                                    loading={acting === 'complete'}
+                                    onClick={() =>
+                                        act('complete', 'Hoàn tất giao dịch')
+                                    }
+                                >
+                                    Hoàn tất giao dịch
+                                </BaseButton>
+                            )}
+                            {(data?.admin_actions || []).includes('cancel') && (
+                                <BaseButton
+                                    block
+                                    danger
+                                    loading={acting === 'cancel'}
+                                    onClick={() =>
+                                        act(
+                                            'cancel',
+                                            'Hủy giao dịch và hoàn phần tiền đang tạm giữ',
+                                        )
+                                    }
+                                >
+                                    Hủy và hoàn tiền
+                                </BaseButton>
+                            )}
+                            {(data?.admin_actions || []).includes('reopen') && (
+                                <BaseButton
+                                    block
+                                    loading={acting === 'reopen'}
+                                    onClick={() =>
+                                        act(
+                                            'reopen',
+                                            'Mở lại giao dịch về trạng thái chờ thanh toán',
+                                        )
+                                    }
+                                >
+                                    Mở lại giao dịch
+                                </BaseButton>
+                            )}
+                            {(data?.disputes || []).some(
+                                (item) =>
+                                    ![
+                                        'resolved',
+                                        'rejected',
+                                        'cancelled',
+                                    ].includes(item.status),
+                            ) && (
+                                <BaseButton
+                                    block
+                                    onClick={() => navigate('/disputes')}
+                                >
+                                    Mở hồ sơ tranh chấp
+                                </BaseButton>
+                            )}
+                            {!(data?.admin_actions || []).length && (
+                                <Typography.Text type="secondary">
+                                    Không có thao tác quản trị phù hợp với trạng
+                                    thái hiện tại.
+                                </Typography.Text>
+                            )}
                         </Space>
                     </Card>
                 </Col>
