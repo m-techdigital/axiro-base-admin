@@ -38,9 +38,14 @@ export const ADMIN_MENU_ITEMS = [
         label: 'Xác minh và chi trả',
     },
     {
+        key: '/operations-control',
+        icon: <WarningOutlined />,
+        label: 'Điều hành Marketplace',
+    },
+    {
         key: '/marketplace-operations',
         icon: <WarningOutlined />,
-        label: 'Vận hành Marketplace',
+        label: 'Chính sách và yêu cầu',
     },
     {
         key: '/marketplace-trust',

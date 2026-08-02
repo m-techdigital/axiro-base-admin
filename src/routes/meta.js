@@ -12,6 +12,7 @@ export const ROUTE_META = {
     [ROUTE_PATHS.PAYMENT_SETTINGS]: { title: 'Thông tin ngân hàng' },
     [ROUTE_PATHS.DISPUTES]: { title: 'Tranh chấp' },
     [ROUTE_PATHS.MARKETPLACE_OPERATIONS]: { title: 'Vận hành Marketplace' },
+    [ROUTE_PATHS.OPERATIONS_CONTROL]: { title: 'Điều hành Marketplace' },
     [ROUTE_PATHS.MARKETPLACE_TRUST]: { title: 'Niềm tin và nội dung' },
     [ROUTE_PATHS.AUDIT_LOGS]: { title: 'Nhật ký hệ thống' },
     [ROUTE_PATHS.DOCUMENT_TEMPLATES]: { title: 'Mẫu tài liệu' },

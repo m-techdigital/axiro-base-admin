@@ -3,27 +3,24 @@
 ## Pham vi dong bo tu AXIRO cha
 
 - Nguon doi chieu: `mylands-api-develop-20260802-0359.zip` va `mylands-admin-develop-20260802-0359.zip`.
-- Dot nay admin chua thay doi UI, nhung da ghi nhan manifest canonical de doi chieu cac phan backend/customer moi.
+- Admin da bo sung man hinh `operations-control` de quan ly cac dau viec van hanh marketplace moi.
 - Khong keo vao base admin cac module company, project, team, Reservation/CRM ownership chain, Accounting posting, RBAC graph, inventory hay report.
 
 ## Tac dong len admin
 
 - Backend da co idempotency checkout, optimistic availability version, expire hold va money math decimal.
 - Customer app da gui `availability_version` va `idempotency_key` khi tao giao dich.
-- Admin nen uu tien bo sung cac man hinh quan tri lifecycle thay vi mo rong sang hop dong rieng, vi MBN hien product-only transaction-first.
+- Admin da co hold monitor, transaction queue, canh bao checkout lap, reconciliation, document checklist va manual release hold.
+- Module van giu product-only transaction-first, khong mo rong sang hop dong rieng.
+- Khong dung `/contracts` nhu module CRUD rieng; ho so/tai lieu chi nam trong ngu canh giao dich.
 
-## Dau viec nen bo sung cho admin
+## Trang thai dau viec admin
 
-1. Man hinh hold monitor: san pham dang hold, sap het han, da expire, nguon hold, buyer va transaction.
-2. Timeline availability trong chi tiet san pham: from/to status, actor, source, note, hold expiry va version.
-3. Hang doi transaction can xu ly: pending payment qua han, delivery tre, acceptance tre, dispute dang mo.
-4. Idempotency audit: request key/hash, lan lap checkout, transaction duoc tra lai.
-5. Tac vu release hold co note bat buoc, canh bao truoc khi override nguon hold.
-6. Bang doi soat wallet/payout/refund: before/after balance, escrow release, deposit refund.
-7. Bo loc availability status va stale hold tren danh sach san pham.
-8. Checklist tai lieu bang chung theo giao dich: snapshot, proof thanh toan, proof ban giao, acceptance/dispute.
-9. Canh bao spam hold hoac checkout nhieu lan theo buyer/product trong khoang thoi gian ngan.
-10. Dashboard SLA theo tung buoc nghiep vu de admin nhin duoc diem nghen.
+1. Da co: hold monitor, availability timeline, transaction queue, canh bao checkout lap, manual release hold, reconciliation va document checklist.
+2. Da co: filter availability/version tren danh sach san pham.
+3. Can phat trien tiep: badge/counter thong bao nhe cho viec can xu ly.
+4. Can phat trien tiep: action nhanh tu transaction detail.
+5. Tam khong phat trien: fraud engine, SLA engine, role/policy nhieu cap, report/BI rieng.
 
 ## Ghi chu UI/UX
 

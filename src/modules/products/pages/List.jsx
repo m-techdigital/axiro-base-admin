@@ -61,6 +61,24 @@ const filterFields = [
         ],
     },
     {
+        name: 'availability_status',
+        label: 'Khả dụng',
+        type: 'select',
+        options: [
+            { value: 'available', label: 'Sẵn sàng' },
+            { value: 'held', label: 'Đang giữ' },
+            { value: 'transacting', label: 'Đang giao dịch' },
+            { value: 'rented', label: 'Đang cho thuê' },
+            { value: 'sold', label: 'Đã bán' },
+            { value: 'suspended', label: 'Tạm khóa' },
+        ],
+    },
+    {
+        name: 'availability_version',
+        label: 'Phiên bản khả dụng',
+        type: 'number',
+    },
+    {
         name: 'status',
         label: 'Trạng thái',
         type: 'select',
@@ -106,6 +124,18 @@ export default function ProductList() {
                         </Tag>
                     ))}
                     {record.installment_enabled ? <Tag>Trả góp</Tag> : null}
+                </>
+            ),
+        },
+        {
+            title: 'Khả dụng',
+            dataIndex: 'availability_status',
+            render: (value, record) => (
+                <>
+                    <Tag color={statusColor(value)}>
+                        {statusLabel(value, value || '—')}
+                    </Tag>
+                    <small>v{record.availability_version || 1}</small>
                 </>
             ),
         },
