@@ -1,6 +1,6 @@
 import { EyeOutlined } from '@ant-design/icons'
 import { Select, Tag, Input, message } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
     BaseActionGroup,
@@ -15,6 +15,7 @@ import { useBaseFilters, useList } from '@/hooks'
 
 import { statusColor, statusLabel } from '../../../contracts/marketplaceLabels'
 import service from '../service'
+import { loadMarketplaceOptions } from '@/services/marketplaceOptions'
 
 const filterFields = [
     {
@@ -42,6 +43,12 @@ export default function DisputeList() {
         onSearch: list.setParams,
         onReset: list.setParams,
     })
+    const [disputeOutcomes, setDisputeOutcomes] = useState([])
+    useEffect(() => {
+        loadMarketplaceOptions().then((options) =>
+            setDisputeOutcomes(options.dispute_outcomes || []),
+        )
+    }, [])
     const [item, setItem] = useState(null)
     const [outcome, setOutcome] = useState('cancel_refund')
     const [resolution, setResolution] = useState('')
@@ -165,20 +172,9 @@ export default function DisputeList() {
                     value={outcome}
                     onChange={setOutcome}
                     style={{ width: '100%', marginBottom: 12 }}
-                    options={[
-                        {
-                            value: 'complete',
-                            label: 'Chấp nhận và hoàn tất giao dịch',
-                        },
-                        {
-                            value: 'cancel_refund',
-                            label: 'Chấp nhận, hủy và hoàn tiền',
-                        },
-                        {
-                            value: 'cancel_no_refund',
-                            label: 'Chấp nhận, hủy không hoàn tiền',
-                        },
-                    ]}
+                    options={disputeOutcomes.filter(
+                        ({ value }) => value !== 'reopen',
+                    )}
                 />
                 <p>
                     <b>Kết luận xử lý:</b>

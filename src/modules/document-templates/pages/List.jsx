@@ -6,12 +6,15 @@ import {
 } from '@/components/base'
 import { EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { Input, Select, Space, Tag, message } from 'antd'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import BaseTable from '../../../components/base/BaseTable'
 import PageHeader from '../../../components/base/PageHeader'
 import { useList } from '../../../hooks/useList'
-import service, { documentTypes } from '../service'
-const typeLabel = Object.fromEntries(documentTypes)
+import service from '../service'
+import {
+    loadMarketplaceOptions,
+    optionMap,
+} from '@/services/marketplaceOptions'
 const empty = {
     code: '',
     name: '',
@@ -23,6 +26,13 @@ const empty = {
 }
 export default function DocumentTemplateList() {
     const list = useList(service.list)
+    const [documentTypes, setDocumentTypes] = useState([])
+    const typeLabel = useMemo(() => optionMap(documentTypes), [documentTypes])
+    useEffect(() => {
+        loadMarketplaceOptions().then((options) =>
+            setDocumentTypes(options.document_types || []),
+        )
+    }, [])
     const [open, setOpen] = useState(false),
         [editing, setEditing] = useState(null),
         [saving, setSaving] = useState(false)
@@ -139,11 +149,7 @@ export default function DocumentTemplateList() {
                             rules={[{ required: true }]}
                             style={{ flex: 1 }}
                         >
-                            <Select
-                                options={documentTypes.map(
-                                    ([value, label]) => ({ value, label }),
-                                )}
-                            />
+                            <Select options={documentTypes} />
                         </BaseForm.Item>
                         <BaseForm.Item
                             name="status"

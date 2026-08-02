@@ -4,8 +4,10 @@ export default {
     create: (data) => api.post('/document-templates', data),
     update: (id, data) => api.put(`/document-templates/${id}`, data),
     remove: (id) => api.delete(`/document-templates/${id}`),
+    options: () => api.get('/marketplace/options'),
 }
-export const documentTypes = [
+
+export const legacyDocumentTypes = [
     ['sale_record', 'Hồ sơ mua bán'],
     ['rental_record', 'Hồ sơ thuê'],
     ['installment_appendix', 'Phụ lục trả góp'],

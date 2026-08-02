@@ -16,12 +16,16 @@ import {
     Typography,
     message,
 } from 'antd'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
 import documentService from '../../generated-documents/service'
 import service from '../service'
+import {
+    loadMarketplaceOptions,
+    optionMap,
+} from '@/services/marketplaceOptions'
 
 const labels = {
     purchase: 'Mua bán',
@@ -38,25 +42,19 @@ const labels = {
     cancelled: 'Đã hủy',
     disputed: 'Đang tranh chấp',
 }
-const documentLabels = {
-    sale_record: 'Hồ sơ mua bán',
-    rental_record: 'Hồ sơ thuê',
-    installment_appendix: 'Phụ lục trả góp',
-    deposit_confirmation: 'Thỏa thuận đặt cọc',
-    payment_confirmation: 'Xác nhận thanh toán',
-    handover_minutes: 'Biên bản bàn giao',
-    return_minutes: 'Biên bản hoàn trả',
-    dispute_minutes: 'Tiếp nhận tranh chấp',
-    dispute_resolution: 'Xử lý tranh chấp',
-    refund_settlement: 'Hoàn tiền và đối soát',
-    completion_minutes: 'Hoàn tất giao dịch',
-    security_checklist: 'Kiểm tra bảo mật',
-    platform_transaction_record: 'Phiếu ghi nhận giao dịch',
-}
-
 export default function TransactionDetail() {
     const { id } = useParams(),
         navigate = useNavigate()
+    const [documentTypes, setDocumentTypes] = useState([])
+    const documentLabels = useMemo(
+        () => optionMap(documentTypes),
+        [documentTypes],
+    )
+    useEffect(() => {
+        loadMarketplaceOptions().then((options) =>
+            setDocumentTypes(options.document_types || []),
+        )
+    }, [])
     const [data, setData] = useState(null),
         [loading, setLoading] = useState(true),
         [acting, setActing] = useState(''),

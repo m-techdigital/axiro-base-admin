@@ -1,13 +1,26 @@
 import { BaseActionGroup, BaseIconAction, BaseModal } from '@/components/base'
 import { DownloadOutlined, EyeOutlined } from '@ant-design/icons'
 import { Tag } from 'antd'
-import { useState } from 'react'
-import { valueLabel } from '@/contracts/marketplaceLabels'
+import { useEffect, useMemo, useState } from 'react'
+import {
+    loadMarketplaceOptions,
+    optionMap,
+} from '@/services/marketplaceOptions'
 import BaseTable from '../../../components/base/BaseTable'
 import PageHeader from '../../../components/base/PageHeader'
 import { useList } from '../../../hooks/useList'
 import service from '../service'
 export default function GeneratedDocumentList() {
+    const [documentTypes, setDocumentTypes] = useState([])
+    const documentLabels = useMemo(
+        () => optionMap(documentTypes),
+        [documentTypes],
+    )
+    useEffect(() => {
+        loadMarketplaceOptions().then((options) =>
+            setDocumentTypes(options.document_types || []),
+        )
+    }, [])
     const list = useList(service.list),
         [preview, setPreview] = useState(null)
     const show = async (id) => setPreview((await service.preview(id)).data)
@@ -27,7 +40,7 @@ export default function GeneratedDocumentList() {
         {
             title: 'Loại',
             dataIndex: 'document_type',
-            render: (v) => valueLabel(v),
+            render: (v) => documentLabels[v] || v,
         },
         { title: 'Phiên bản', dataIndex: 'version' },
         {
