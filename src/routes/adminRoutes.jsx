@@ -19,6 +19,7 @@ import PayoutCenter from '../modules/payouts/pages/Index'
 import MarketplaceOperationsPage from '../modules/marketplace-operations/pages/Index'
 import MarketplaceTrustPage from '../modules/marketplace-trust/pages/Index'
 import OperationsControlPage from '../modules/operations-control/pages/Index'
+import NotificationList from '../modules/notifications/pages/List'
 
 export const ADMIN_ROUTES = [
     { index: true, element: <Dashboard /> },
@@ -40,6 +41,7 @@ export const ADMIN_ROUTES = [
     { path: 'payouts', element: <PayoutCenter /> },
     { path: 'marketplace-operations', element: <MarketplaceOperationsPage /> },
     { path: 'operations-control', element: <OperationsControlPage /> },
+    { path: 'notifications', element: <NotificationList /> },
     { path: 'marketplace-trust', element: <MarketplaceTrustPage /> },
     { path: 'disputes', element: <DisputeList /> },
     { path: 'audit-logs', element: <AuditLogList /> },

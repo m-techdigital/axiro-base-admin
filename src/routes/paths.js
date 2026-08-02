@@ -13,6 +13,7 @@ export const ROUTE_PATHS = {
     DISPUTES: '/disputes',
     MARKETPLACE_OPERATIONS: '/marketplace-operations',
     OPERATIONS_CONTROL: '/operations-control',
+    NOTIFICATIONS: '/notifications',
     MARKETPLACE_TRUST: '/marketplace-trust',
     AUDIT_LOGS: '/audit-logs',
     DOCUMENT_TEMPLATES: '/document-templates',

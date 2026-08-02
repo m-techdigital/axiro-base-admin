@@ -9,6 +9,7 @@ import {
     WarningOutlined,
     HistoryOutlined,
     FileTextOutlined,
+    BellOutlined,
 } from '@ant-design/icons'
 
 export const ADMIN_MENU_ITEMS = [
@@ -21,6 +22,7 @@ export const ADMIN_MENU_ITEMS = [
     { key: '/customers', icon: <TeamOutlined />, label: 'Khách hàng' },
     { key: '/products', icon: <ShoppingOutlined />, label: 'Sản phẩm' },
     { key: '/transactions', icon: <SwapOutlined />, label: 'Giao dịch' },
+    { key: '/notifications', icon: <BellOutlined />, label: 'Thông báo' },
     {
         key: '/payments',
         icon: <CreditCardOutlined />,

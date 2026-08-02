@@ -58,6 +58,9 @@ const queueFilters = [
             { value: 'delivery', label: 'Chờ bàn giao' },
             { value: 'acceptance', label: 'Chờ xác nhận/hoàn trả' },
             { value: 'dispute', label: 'Đang tranh chấp' },
+            { value: 'overdue_rental', label: 'Thuê quá hạn' },
+            { value: 'pending_return', label: 'Chờ hoàn trả' },
+            { value: 'deposit_deduction_review', label: 'Chờ quyết toán cọc' },
         ],
     },
     {
@@ -347,6 +350,19 @@ export default function OperationsControlPage() {
                             title="Tranh chấp"
                             value={overview.queues?.dispute}
                         />
+                        <MetricCard
+                            danger
+                            title="Thuê quá hạn"
+                            value={overview.queues?.overdue_rental}
+                        />
+                        <MetricCard
+                            title="Chờ hoàn trả"
+                            value={overview.queues?.pending_return}
+                        />
+                        <MetricCard
+                            title="Chờ quyết toán cọc"
+                            value={overview.queues?.deposit_deduction_review}
+                        />
                     </div>
                     <Card title="Việc quá hạn cần xử lý">
                         <div className="base-statistics-grid">
@@ -435,6 +451,20 @@ export default function OperationsControlPage() {
 
             {tab === 'reconciliation' ? (
                 <Space direction="vertical" size={16} style={{ width: '100%' }}>
+                    <BaseButton
+                        onClick={async () => {
+                            try {
+                                await service.exportRentalSettlements()
+                            } catch (error) {
+                                message.error(
+                                    error.message ||
+                                        'Không thể xuất quyết toán giao dịch thuê.',
+                                )
+                            }
+                        }}
+                    >
+                        Xuất quyết toán giao dịch thuê
+                    </BaseButton>
                     <div className="base-statistics-grid">
                         <MetricCard
                             title="Thanh toán chờ duyệt"

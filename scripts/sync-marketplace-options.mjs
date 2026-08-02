@@ -10,7 +10,10 @@ const contract = JSON.parse(
     ),
 )
 const catalog = contract.option_catalog || {}
-const quote = (value) => `'${String(value ?? '').replaceAll('\\', '\\\\').replaceAll("'", "\\'")}'`
+const quote = (value) =>
+    `'${String(value ?? '')
+        .replaceAll('\\', '\\\\')
+        .replaceAll("'", "\\'")}'`
 const options = (items = []) =>
     `[\n${items
         .map(
