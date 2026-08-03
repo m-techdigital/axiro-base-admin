@@ -1,233 +1,35 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
-import { getListData } from '@/utils/apiAdapter'
 import { getModuleAction } from './useModule'
+import {
+    areRelationDependenciesReady,
+    buildRelationCacheKey,
+    buildRelationConfigSignature,
+    buildRelationContext,
+    buildRelationSourceKey,
+    hasRequiredRelationParams,
+    normalizeRelationParams,
+    resolveRelationSource,
+    shallowEqualRelationParams,
+    withSelectedRelationParam,
+} from './relation/relationConfigResolver'
+import { relationOptionCache } from './relation/relationOptionCache'
+import {
+    buildRelationOptions,
+    mergeRelationOptions,
+    resolveFallbackOptions,
+} from './relation/relationOptionNormalizer'
 
-// Cache dùng chung giữa các instance
-const cache = {}
-const inflight = {}
-const resolved = {}
-const FORCE_REFRESH_KEYS = new Set()
+const {
+    cache,
+    inflight,
+    resolved,
+    sharedCache,
+    sharedInflight,
+    requestVersions: requestVersionMap,
+    forceRefreshKeys: FORCE_REFRESH_KEYS,
+} = relationOptionCache
 
-// =========================
-// ADDED: shared request cache (FIX DUPLICATE CALL)
-// =========================
-const sharedCache = {}
-const sharedInflight = {}
-
-const requestVersionMap = {}
-
-// Kiểm tra params đã đủ dữ liệu chưa
-const isDepsReady = (params = {}) =>
-    Object.values(params).every(
-        (v) => v !== undefined && v !== null && v !== '',
-    )
-
-// Chuyển data API -> option select
-const mapOptions = (
-    list = [],
-    valueKey = 'id',
-    labelKey = 'name',
-    source = {},
-) =>
-    (list || []).map((item) => ({
-        value: item?.[valueKey],
-        label: source.labelFormatter
-            ? source.labelFormatter({
-                  value: item?.[valueKey],
-                  label: item?.[labelKey],
-                  raw: item,
-              })
-            : item?.[labelKey],
-        disabled: source.disabledFormatter
-            ? source.disabledFormatter(item)
-            : false,
-        searchText: source.searchFormatter
-            ? source.searchFormatter(item)
-            : String(item?.[labelKey] ?? ''),
-        raw: item,
-    }))
-
-const buildOptions = (data, valueKey, labelKey, source) =>
-    mapOptions(getListData(data), valueKey || 'id', labelKey || 'name', source)
-
-const resolveFallbackOptions = (source = {}, record = null, values = {}) => {
-    const fallback =
-        typeof source.fallbackOptions === 'function'
-            ? source.fallbackOptions({ record, values })
-            : source.fallbackOptions
-
-    return (
-        Array.isArray(fallback) ? fallback : fallback ? [fallback] : []
-    ).filter((option) => option?.value !== undefined && option?.value !== null)
-}
-
-const mergeOptions = (primary = [], fallback = []) => {
-    const seen = new Set()
-    return [...fallback, ...primary].filter((option) => {
-        const key = String(option?.value)
-        if (seen.has(key)) return false
-        seen.add(key)
-        return true
-    })
-}
-
-const shallowEqual = (a = {}, b = {}) => {
-    const ak = Object.keys(a)
-    const bk = Object.keys(b)
-
-    if (ak.length !== bk.length) return false
-
-    for (const k of ak) {
-        if (a[k] !== b[k]) return false
-    }
-
-    return true
-}
-
-const normalizeParams = (params) => {
-    if (params === undefined || params === null) return {}
-    if (typeof params !== 'object') return { value: params }
-
-    return params
-}
-
-const getFieldValue = (values = {}, fieldName) => {
-    if (!fieldName) return undefined
-    if (Array.isArray(fieldName)) {
-        return fieldName.reduce((current, key) => current?.[key], values)
-    }
-    return values?.[fieldName]
-}
-
-const withSelectedParam = (params, config, values, record, source = {}) => {
-    const normalized = { ...normalizeParams(params) }
-
-    if (source.includeSelected === false || normalized.selected !== undefined) {
-        return normalized
-    }
-
-    const selected =
-        getFieldValue(values, config?.name) ??
-        getFieldValue(record || {}, config?.name)
-
-    if (selected !== undefined && selected !== null && selected !== '') {
-        normalized.selected = selected
-    }
-
-    return normalized
-}
-
-const hasRequiredParams = (params = {}, source = {}) =>
-    (source.requiredParams || []).every((key) => {
-        const value = params?.[key]
-        return value !== undefined && value !== null && value !== ''
-    })
-
-const buildKey = (module, method, fieldKey, recordId, params) => {
-    const normalizedParams = normalizeParams(params)
-    const normalized = Object.keys(normalizedParams)
-        .sort()
-        .reduce((acc, key) => {
-            acc[key] = normalizedParams[key]
-            return acc
-        }, {})
-
-    const sharedKey = normalizedParams?.keyRelation || fieldKey
-
-    return `${module}.${method}:${sharedKey}:${recordId || 'global'}:${JSON.stringify(normalized)}`
-}
-
-// =========================
-// ADDED: source-level cache key (FIX DUPLICATE REQUEST ACROSS FIELDS)
-// =========================
-const getFunctionSignature = (fn) => {
-    if (typeof fn !== 'function') return ''
-    return fn.name || String(fn)
-}
-
-const buildSourceKey = (module, method, params, source = {}, fieldKey = '') => {
-    const normalizedParams = normalizeParams(params)
-    const normalized = Object.keys(normalizedParams)
-        .sort()
-        .reduce((acc, key) => {
-            acc[key] = normalizedParams[key]
-            return acc
-        }, {})
-
-    const mapSignature = [
-        source.valueKey || 'id',
-        source.labelKey || 'name',
-        getFunctionSignature(source.labelFormatter),
-        getFunctionSignature(source.disabledFormatter),
-        getFunctionSignature(source.searchFormatter),
-        getFunctionSignature(source.optionRender),
-    ].join(':')
-
-    const cacheNamespace =
-        source.shareCache === true
-            ? source.cacheNamespace || ''
-            : source.cacheNamespace || source.cacheKey || fieldKey || ''
-
-    return `${module}.${method}:${cacheNamespace}:${mapSignature}:${JSON.stringify(normalized)}`
-}
-
-const buildConfigSignature = (configs = []) =>
-    JSON.stringify(
-        (configs || []).map((config) => {
-            const isDynamicSource = typeof config?.source === 'function'
-            const source = isDynamicSource ? {} : config?.source || {}
-
-            return {
-                key: config?.key || config?.name,
-                name: config?.name,
-                dynamicSource: isDynamicSource,
-                module: source?.module,
-                method: source?.method,
-                valueKey: source?.valueKey,
-                labelKey: source?.labelKey,
-                reload: source?.reload === true,
-                hasParams: Boolean(source?.params),
-                params: getFunctionSignature(source?.params),
-                source: getFunctionSignature(config?.source),
-                labelFormatter: getFunctionSignature(source?.labelFormatter),
-                disabledFormatter: getFunctionSignature(
-                    source?.disabledFormatter,
-                ),
-                searchFormatter: getFunctionSignature(source?.searchFormatter),
-                optionRender: getFunctionSignature(source?.optionRender),
-            }
-        }),
-    )
-
-// Hỗ trợ source động
-const resolveSource = (source, record, form, values = {}) => {
-    if (typeof source === 'function') {
-        return source(record, {
-            values,
-            record,
-            form,
-        })
-    }
-
-    return source
-}
-
-// Context chuẩn dùng nhiều nơi
-const buildContext = (values, record, form, ctx) => ({
-    values: values || form?.getFieldsValue?.(true) || {},
-    record,
-    form,
-    ctx,
-})
-
-const forceInvalidate = (cacheKey) => {
-    FORCE_REFRESH_KEYS.add(cacheKey)
-
-    delete cache[cacheKey]
-    delete resolved[cacheKey]
-    delete inflight[cacheKey]
-    delete requestVersionMap[cacheKey]
-}
+const forceInvalidate = (cacheKey) => relationOptionCache.invalidate(cacheKey)
 
 export function useRelationOptions(
     configsOrService = [],
@@ -248,7 +50,7 @@ export function useRelationOptions(
     const configsRef = useRef(configs)
     const contextRef = useRef(context)
     const configSignature = useMemo(
-        () => buildConfigSignature(configs),
+        () => buildRelationConfigSignature(configs),
         [configs],
     )
 
@@ -269,7 +71,7 @@ export function useRelationOptions(
 
     const getResolvedSource = useCallback(
         (config, values) =>
-            resolveSource(
+            resolveRelationSource(
                 config?.source,
                 record,
                 form,
@@ -343,7 +145,7 @@ export function useRelationOptions(
             // =========================
             // ADDED: shared dedupe key
             // =========================
-            const sourceKey = buildSourceKey(
+            const sourceKey = buildRelationSourceKey(
                 module,
                 method,
                 params,
@@ -381,7 +183,7 @@ export function useRelationOptions(
                 try {
                     const response = await fn(params)
 
-                    const mapped = buildOptions(
+                    const mapped = buildRelationOptions(
                         response,
                         valueKey,
                         labelKey,
@@ -437,14 +239,14 @@ export function useRelationOptions(
                 }
 
                 const currentValues = form?.getFieldsValue?.(true) || {}
-                const params = withSelectedParam(
+                const params = withSelectedRelationParam(
                     {},
                     config,
                     currentValues,
                     record,
                     source,
                 )
-                const cacheKey = buildKey(
+                const cacheKey = buildRelationCacheKey(
                     module,
                     method,
                     key,
@@ -468,7 +270,7 @@ export function useRelationOptions(
                     fieldKey: key,
                 })
 
-                updates[key] = mergeOptions(
+                updates[key] = mergeRelationOptions(
                     result,
                     resolveFallbackOptions(source, record, currentValues),
                 )
@@ -495,10 +297,15 @@ export function useRelationOptions(
 
             const fieldKey = config.key || config.name
 
-            const params = withSelectedParam(
+            const params = withSelectedRelationParam(
                 resolveParams(
                     source?.params,
-                    buildContext(values, record, form, contextRef.current),
+                    buildRelationContext(
+                        values,
+                        record,
+                        form,
+                        contextRef.current,
+                    ),
                 ),
                 config,
                 values,
@@ -506,9 +313,9 @@ export function useRelationOptions(
                 source,
             )
 
-            if (!hasRequiredParams(params, source)) return []
+            if (!hasRequiredRelationParams(params, source)) return []
 
-            const cacheKey = buildKey(
+            const cacheKey = buildRelationCacheKey(
                 module,
                 method,
                 fieldKey,
@@ -522,7 +329,7 @@ export function useRelationOptions(
                 forceInvalidate(cacheKey)
             }
 
-            const result = mergeOptions(
+            const result = mergeRelationOptions(
                 await fetchOptions({
                     cacheKey,
                     module,
@@ -569,10 +376,15 @@ export function useRelationOptions(
                     continue
                 }
 
-                const params = withSelectedParam(
+                const params = withSelectedRelationParam(
                     resolveParams(
                         source.params,
-                        buildContext(values, record, form, contextRef.current),
+                        buildRelationContext(
+                            values,
+                            record,
+                            form,
+                            contextRef.current,
+                        ),
                     ),
                     config,
                     values,
@@ -586,20 +398,20 @@ export function useRelationOptions(
                 }
 
                 if (
-                    (source.params && !isDepsReady(params)) ||
-                    !hasRequiredParams(params, source)
+                    (source.params && !areRelationDependenciesReady(params)) ||
+                    !hasRequiredRelationParams(params, source)
                 ) {
                     updates[key] = []
                     continue
                 }
 
                 const compareValue = {
-                    ...normalizeParams(params),
+                    ...normalizeRelationParams(params),
                     __module: source.module,
                     __method: source.method,
                 }
                 const previousParams = lastParamsRef.current[instanceKey][key]
-                const cacheKey = buildKey(
+                const cacheKey = buildRelationCacheKey(
                     source.module,
                     source.method,
                     key,
@@ -610,7 +422,7 @@ export function useRelationOptions(
                 const isForce = FORCE_REFRESH_KEYS.has(cacheKey)
                 const paramsChanged =
                     !previousParams ||
-                    !shallowEqual(previousParams, compareValue)
+                    !shallowEqualRelationParams(previousParams, compareValue)
 
                 if (!isForce && !paramsChanged) {
                     continue
@@ -623,7 +435,7 @@ export function useRelationOptions(
                 }
 
                 try {
-                    updates[key] = mergeOptions(
+                    updates[key] = mergeRelationOptions(
                         await fetchOptions({
                             cacheKey,
                             module: source.module,

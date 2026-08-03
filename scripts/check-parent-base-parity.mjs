@@ -30,7 +30,12 @@ const formErrors = read('src/components/base/BaseForm/formErrors.js')
 const formSubmit = read('src/components/base/BaseForm/formSubmit.js')
 const formUtils = read('src/components/base/BaseForm/formUtils.js')
 const relationSelect = read('src/components/base/RelationSelect.jsx')
-const relationOptions = read('src/hooks/useRelationOptions.jsx')
+const relationOptions = [
+    read('src/hooks/useRelationOptions.jsx'),
+    read('src/hooks/relation/relationConfigResolver.js'),
+    read('src/hooks/relation/relationOptionCache.js'),
+    read('src/hooks/relation/relationOptionNormalizer.js'),
+].join('\n')
 const extractRelationConfigs = read('src/utils/extractRelationConfigs.js')
 const header = read('src/components/base/BasePageHeader.jsx')
 const list = read('src/components/base/BaseListView.jsx')

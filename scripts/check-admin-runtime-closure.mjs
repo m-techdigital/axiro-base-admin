@@ -30,8 +30,8 @@ if (
 
 const requiredPatterns = new Map([
     [
-        'src/hooks/useRelationOptions.jsx',
-        ['buildConfigSignature', 'runCascade'],
+        'src/hooks/useRelationOptions.jsx|src/hooks/relation/relationConfigResolver.js',
+        ['buildRelationConfigSignature', 'runCascade'],
     ],
     [
         'src/modules/marketplace-operations/pages/Index.jsx',

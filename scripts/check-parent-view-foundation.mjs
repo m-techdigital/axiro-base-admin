@@ -15,10 +15,12 @@ const barrel = fs.readFileSync(
     'utf8',
 )
 if (!barrel.includes('BaseView')) throw new Error('BaseView is not exported')
-const detail = fs.readFileSync(
-    path.join(root, 'src/modules/transactions/pages/Detail.jsx'),
-    'utf8',
-)
+const detail = [
+    'src/modules/transactions/pages/Detail.jsx',
+    'src/modules/transactions/components/TransactionDetailSections.jsx',
+]
+    .map((file) => fs.readFileSync(path.join(root, file), 'utf8'))
+    .join('\n')
 if (!detail.includes('<BaseView'))
     throw new Error('Transaction detail has not adopted BaseView')
 if (detail.includes('<Descriptions'))

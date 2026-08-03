@@ -115,5 +115,27 @@
             "parent RBAC permission gate",
             "company/project scope"
         ]
+    },
+    "relation_and_transaction_detail_split": {
+        "classification": "mini_bounded",
+        "parent_patterns": [
+            "relation dynamic field lifecycle",
+            "BaseView presentation sections",
+            "centralized confirmed actions"
+        ],
+        "mini_owners": [
+            "src/hooks/relation/relationConfigResolver.js",
+            "src/hooks/relation/relationOptionCache.js",
+            "src/hooks/relation/relationOptionNormalizer.js",
+            "src/hooks/useRelationOptions.jsx",
+            "src/modules/transactions/components/detail/*"
+        ],
+        "excluded": [
+            "parent module registry",
+            "RBAC permission graph",
+            "company/project scope",
+            "accounting",
+            "reports"
+        ]
     }
 }

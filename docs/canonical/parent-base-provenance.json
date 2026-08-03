@@ -154,7 +154,53 @@
             "mini_path": "src/hooks/useRelationOptions.jsx",
             "parent_path": "src/hooks/useRelationOptions.jsx",
             "mode": "bounded_adapter",
-            "note": "Parent relation cache/cascade/hydrate owner with a legacy Mini service/list compatibility path while forms are converted to relation source configs."
+            "note": "React coordinator only. Parent relation cache/cascade/hydrate pattern is retained, while resolver/cache/normalizer responsibilities are split into Mini-bounded owners to avoid a monolithic hook."
+        },
+        {
+            "mini_path": "src/hooks/relation/relationConfigResolver.js",
+            "parent_path": "src/utils/fields/adapters/relationDynamicFields.jsx",
+            "mode": "mini_bounded",
+            "note": "Mini extracts relation source resolution, params and cache-key signatures from the parent relation field pattern without importing parent module registry, RBAC, company or accounting sources."
+        },
+        {
+            "mini_path": "src/hooks/relation/relationOptionCache.js",
+            "mode": "mini_bounded",
+            "note": "Shared option cache/inflight owner for Mini relation fields; parent behavior is followed at lifecycle level, not copied as an exact source."
+        },
+        {
+            "mini_path": "src/hooks/relation/relationOptionNormalizer.js",
+            "mode": "mini_bounded",
+            "note": "Relation option normalization owner for Mini response envelopes and fallback options."
+        },
+        {
+            "mini_path": "src/modules/transactions/components/TransactionDetailSections.jsx",
+            "parent_path": "src/components/base/BaseView.jsx",
+            "mode": "mini_bounded",
+            "note": "Transaction detail sections follow parent BaseView presentation ownership while keeping Mini transaction command/payment/document/timeline semantics."
+        },
+        {
+            "mini_path": "src/modules/transactions/components/detail/TransactionAdminActionsPanel.jsx",
+            "parent_path": "src/components/base/BaseView.jsx",
+            "mode": "mini_bounded",
+            "note": "Admin transaction action presentation section extracted from the Mini detail page; follows parent section ownership without importing parent permission graph."
+        },
+        {
+            "mini_path": "src/modules/transactions/components/detail/TransactionDocumentPanel.jsx",
+            "parent_path": "src/components/base/BaseView.jsx",
+            "mode": "mini_bounded",
+            "note": "Document presentation section extracted from the Mini transaction detail page."
+        },
+        {
+            "mini_path": "src/modules/transactions/components/detail/TransactionPaymentPanel.jsx",
+            "parent_path": "src/components/base/BaseView.jsx",
+            "mode": "mini_bounded",
+            "note": "Payment presentation section extracted from the Mini transaction detail page."
+        },
+        {
+            "mini_path": "src/modules/transactions/components/detail/TransactionTimelinePanel.jsx",
+            "parent_path": "src/components/base/BaseView.jsx",
+            "mode": "mini_bounded",
+            "note": "Timeline presentation section extracted from the Mini transaction detail page."
         },
         {
             "mini_path": "src/hooks/useModule.js",

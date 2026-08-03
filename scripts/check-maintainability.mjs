@@ -27,13 +27,23 @@ for (const file of requiredTransactionDetailOwners) {
     }
 }
 
-const detail = fs.readFileSync(
+const detailOwnerFiles = [
+    'src/modules/transactions/pages/Detail.jsx',
+    'src/modules/transactions/components/TransactionDetailSections.jsx',
+    ...fs
+        .readdirSync('src/modules/transactions/components/detail')
+        .map((file) => `src/modules/transactions/components/detail/${file}`),
+]
+const detail = detailOwnerFiles
+    .map((file) => fs.readFileSync(file, 'utf8'))
+    .join('\n')
+const detailPage = fs.readFileSync(
     'src/modules/transactions/pages/Detail.jsx',
     'utf8',
 )
-if (detail.split(/\r?\n/).length > 520) {
+if (detailPage.split(/\r?\n/).length > 150) {
     failures.push(
-        'src/modules/transactions/pages/Detail.jsx: route page không được phình lại quá 520 dòng.',
+        'src/modules/transactions/pages/Detail.jsx: route page không được phình lại quá 150 dòng.',
     )
 }
 for (const needle of [
@@ -79,6 +89,25 @@ for (const file of tracked.filter((entry) => entry.startsWith('src/'))) {
             `${file}: Mini admin không được giữ parent-only runtime scope.`,
         )
     }
+}
+
+for (const file of [
+    'src/hooks/relation/relationConfigResolver.js',
+    'src/hooks/relation/relationOptionCache.js',
+    'src/hooks/relation/relationOptionNormalizer.js',
+    'src/modules/transactions/components/TransactionDetailSections.jsx',
+    'src/modules/transactions/components/detail/TransactionPaymentPanel.jsx',
+    'src/modules/transactions/components/detail/TransactionDocumentPanel.jsx',
+    'src/modules/transactions/components/detail/TransactionTimelinePanel.jsx',
+    'src/modules/transactions/components/detail/TransactionAdminActionsPanel.jsx',
+]) {
+    if (!fs.existsSync(file)) failures.push(`${file}: missing extracted owner.`)
+}
+const relationHook = fs.readFileSync('src/hooks/useRelationOptions.jsx', 'utf8')
+if (relationHook.split(/\r?\n/).length > 520) {
+    failures.push(
+        'src/hooks/useRelationOptions.jsx: relation orchestration must remain below 520 lines.',
+    )
 }
 
 if (failures.length) {
