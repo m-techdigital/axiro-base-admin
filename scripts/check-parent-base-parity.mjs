@@ -58,6 +58,8 @@ expect(
         form.includes('extractRelationConfigs') &&
         form.includes('useRelationOptions') &&
         form.includes('RelationSelect') &&
+        form.includes('gridColumn') &&
+        !form.includes('calc(${(span / 24) * 100}%') &&
         form.includes('buildDependentResetFields') &&
         form.includes('tabs') &&
         form.includes('sections') &&

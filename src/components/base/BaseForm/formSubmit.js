@@ -43,6 +43,11 @@ export const buildSubmitPayload = ({
             return
         }
 
+        if (typeof field.submitTransform === 'function') {
+            setValueAtPath(payload, key, transformedValue)
+            return
+        }
+
         if (value === '' || value === undefined) {
             setValueAtPath(payload, key, null)
             return
@@ -57,6 +62,11 @@ export const buildSubmitPayload = ({
                 : []
 
             setValueAtPath(payload, key, ids)
+            return
+        }
+
+        if (field.type === 'date' && value?.format) {
+            setValueAtPath(payload, key, value.format('YYYY-MM-DD'))
             return
         }
 

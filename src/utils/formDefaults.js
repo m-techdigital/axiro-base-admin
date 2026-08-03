@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 const normalizePath = (path) => (Array.isArray(path) ? path : [path])
 
 const getByPath = (source, path) =>
@@ -73,7 +75,7 @@ export const buildDefaultValues = (fields = []) => {
  * =======================================================================
  */
 const normalizeValueByField = (value, field) => {
-    if (value === undefined || value === null) {
+    if (value === undefined || value === null || value === '') {
         return value
     }
 
@@ -81,6 +83,9 @@ const normalizeValueByField = (value, field) => {
         case 'number':
         case 'number_formatter':
             return value === '' ? null : Number(value)
+
+        case 'date':
+            return dayjs.isDayjs(value) ? value : dayjs(value)
 
         default:
             return value

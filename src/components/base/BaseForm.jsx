@@ -5,7 +5,6 @@ import {
     Form,
     Input,
     InputNumber,
-    Row,
     Select,
     Switch,
     Tabs,
@@ -450,6 +449,10 @@ function BaseForm({
             if (resolveHidden(field, record, values, form)) return null
 
             const span = field.span || 24
+            const gridColumn =
+                typeof span === 'number'
+                    ? `span ${Math.min(12, Math.max(1, span / 2))}`
+                    : undefined
 
             return (
                 <div
@@ -459,12 +462,7 @@ function BaseForm({
                             ? field.name.join('.')
                             : field.name
                     }
-                    style={{
-                        width:
-                            span >= 24
-                                ? '100%'
-                                : `calc(${(span / 24) * 100}% - 12px)`,
-                    }}
+                    style={gridColumn ? { gridColumn } : undefined}
                 >
                     <Form.Item {...buildItemProps(field)}>
                         {renderInputByType(field, {
@@ -484,9 +482,9 @@ function BaseForm({
 
     const renderGroup = useCallback(
         (group) => (
-            <Row className="base-form-grid" gutter={[16, 0]}>
+            <div className="base-form-grid">
                 {(group.fields || []).map(renderField)}
-            </Row>
+            </div>
         ),
         [renderField],
     )

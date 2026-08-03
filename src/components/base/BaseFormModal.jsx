@@ -20,11 +20,13 @@ export default function BaseFormModal({
     width = 800,
     ...modalProps
 }) {
+    const [internalForm] = BaseForm.useForm()
     const [resetKey, setResetKey] = useState(0)
+    const resolvedForm = form || internalForm
 
     const handleClose = () => {
-        form?.resetFields?.()
-        form?.setFieldsValue?.({})
+        resolvedForm?.resetFields?.()
+        resolvedForm?.setFieldsValue?.({})
         setResetKey((value) => value + 1)
         onCancel?.()
     }
@@ -32,8 +34,11 @@ export default function BaseFormModal({
     return (
         <BaseModalForm
             destroyOnHidden={false}
+            loading={loading}
             onCancel={handleClose}
+            onSubmit={() => resolvedForm.submit()}
             open={open}
+            submitText={submitText}
             title={title}
             width={width}
             {...modalProps}
@@ -44,14 +49,14 @@ export default function BaseFormModal({
             <BaseForm
                 context={context}
                 fields={fields || []}
-                form={form}
+                form={resolvedForm}
                 key={resetKey}
                 loading={loading}
                 onCancel={handleClose}
                 onFinish={onFinish}
                 record={record}
                 sections={sections}
-                showFooter
+                showFooter={false}
                 submitText={submitText}
                 tabs={tabs}
             />
