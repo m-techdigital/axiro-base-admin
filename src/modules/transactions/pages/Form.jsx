@@ -1,10 +1,7 @@
 import { BaseForm, BaseFormPage } from '@/components/base'
 import { message } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useRelationOptions } from '../../../hooks/useRelationOptions'
-import customers from '../../customers/service'
-import products from '../../products/service'
 import {
     createTransactionFormFields,
     toTransactionFormRecord,
@@ -18,18 +15,7 @@ export default function TransactionForm() {
     const [form] = BaseForm.useForm()
     const [loading, setLoading] = useState(false)
     const [record, setRecord] = useState(null)
-    const { options: productOptions } = useRelationOptions(
-        products,
-        (item) => `${item.code} - ${item.name}`,
-    )
-    const { options: customerOptions } = useRelationOptions(
-        customers,
-        (item) => `${item.code} - ${item.name}`,
-    )
-    const fields = useMemo(
-        () => createTransactionFormFields({ customerOptions, productOptions }),
-        [customerOptions, productOptions],
-    )
+    const fields = createTransactionFormFields()
 
     useEffect(() => {
         if (!id) {

@@ -30,3 +30,5 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 - `NOTIFICATION-PAYOUT-JOURNEY-CLOSURE-20260803.md`
 - `OPERATIONAL-AUDIT-TODAY-QUEUE-CLOSURE-20260803.md`
 - [Large file domain ownership closure](./LARGE_FILE_DOMAIN_OWNERSHIP_20260803.md)
+
+- [Lifecycle, relation, UI and lightweight E2E closure](./LIFECYCLE_RELATION_UI_E2E_CLOSURE_20260803.md)

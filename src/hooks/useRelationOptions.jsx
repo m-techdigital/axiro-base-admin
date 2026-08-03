@@ -229,67 +229,15 @@ const forceInvalidate = (cacheKey) => {
     delete requestVersionMap[cacheKey]
 }
 
-const defaultLegacyLabel = (item) => item.name || item.code
-
-const useLegacyRelationOptions = (service, label = defaultLegacyLabel) => {
-    const labelRef = useRef(label)
-    const [legacyOptions, setLegacyOptions] = useState([])
-    const [loading, setLoading] = useState(Boolean(service?.list))
-
-    useEffect(() => {
-        labelRef.current = label
-    }, [label])
-
-    useEffect(() => {
-        if (!service?.list) {
-            setLegacyOptions([])
-            setLoading(false)
-            return undefined
-        }
-
-        let active = true
-
-        setLoading(true)
-        service
-            .list({ per_page: 100 })
-            .then((response) => {
-                if (!active) return
-
-                setLegacyOptions(
-                    getListData(response).map((item) => ({
-                        value: item.id,
-                        label: labelRef.current(item),
-                        record: item,
-                        raw: item,
-                    })),
-                )
-            })
-            .finally(() => {
-                if (active) setLoading(false)
-            })
-
-        return () => {
-            active = false
-        }
-    }, [service])
-
-    return { options: legacyOptions, loading }
-}
-
 export function useRelationOptions(
     configsOrService = [],
     form,
     record = null,
     context = {},
 ) {
-    const isLegacyService = !Array.isArray(configsOrService)
     const configs = useMemo(
-        () => (isLegacyService ? [] : configsOrService),
-        [configsOrService, isLegacyService],
-    )
-    const legacy = useLegacyRelationOptions(
-        isLegacyService ? configsOrService : null,
-        isLegacyService ? form : defaultLegacyLabel,
+        () => (Array.isArray(configsOrService) ? configsOrService : []),
+        [configsOrService],
     )
     const [options, setOptions] = useState({})
 
@@ -731,5 +679,5 @@ export function useRelationOptions(
         runCascade,
     }
 
-    return isLegacyService ? legacy : relationState
+    return relationState
 }

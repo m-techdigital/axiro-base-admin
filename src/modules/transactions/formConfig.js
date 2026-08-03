@@ -27,10 +27,31 @@ export const toTransactionFormRecord = (data = {}) => ({
     rental_end_at: data.rental_end_at ? dayjs(data.rental_end_at) : null,
 })
 
-export const createTransactionFormFields = ({
-    customerOptions = [],
-    productOptions = [],
-} = {}) => [
+const productRelationSource = {
+    module: 'products',
+    method: 'list',
+    params: { per_page: 100 },
+    valueKey: 'id',
+    labelKey: 'name',
+    labelFormatter: ({ label, raw }) => `${raw?.code || '—'} - ${label || '—'}`,
+    searchFormatter: (item) => `${item?.code || ''} ${item?.name || ''}`,
+    shareCache: true,
+    cacheNamespace: 'transaction-products',
+}
+
+const customerRelationSource = {
+    module: 'customers',
+    method: 'list',
+    params: { per_page: 100 },
+    valueKey: 'id',
+    labelKey: 'name',
+    labelFormatter: ({ label, raw }) => `${raw?.code || '—'} - ${label || '—'}`,
+    searchFormatter: (item) => `${item?.code || ''} ${item?.name || ''}`,
+    shareCache: true,
+    cacheNamespace: 'transaction-customers',
+}
+
+export const createTransactionFormFields = () => [
     { name: 'code', label: 'Mã', rules: [{ required: true }], span: 4 },
     {
         name: 'transaction_type',
@@ -50,8 +71,8 @@ export const createTransactionFormFields = ({
     {
         name: 'product_id',
         label: 'Sản phẩm',
-        type: 'select',
-        options: productOptions,
+        type: 'relation',
+        source: productRelationSource,
         rules: [{ required: true }],
         props: { optionFilterProp: 'label' },
         span: 12,
@@ -59,8 +80,8 @@ export const createTransactionFormFields = ({
     {
         name: 'buyer_customer_id',
         label: 'Người mua / thuê',
-        type: 'select',
-        options: customerOptions,
+        type: 'relation',
+        source: customerRelationSource,
         rules: [{ required: true }],
         props: { optionFilterProp: 'label' },
         span: 6,
@@ -68,8 +89,8 @@ export const createTransactionFormFields = ({
     {
         name: 'seller_customer_id',
         label: 'Người bán / cho thuê',
-        type: 'select',
-        options: customerOptions,
+        type: 'relation',
+        source: customerRelationSource,
         rules: [{ required: true }],
         props: { optionFilterProp: 'label' },
         span: 6,

@@ -53,6 +53,11 @@ export const buildSubmitPayload = ({
             return
         }
 
+        if (field.type === 'date' && value?.format) {
+            setValueAtPath(payload, key, value.format('YYYY-MM-DD'))
+            return
+        }
+
         if (field.type === 'upload' || field.type === 'image-upload') {
             const ids = Array.isArray(value)
                 ? value
@@ -62,11 +67,6 @@ export const buildSubmitPayload = ({
                 : []
 
             setValueAtPath(payload, key, ids)
-            return
-        }
-
-        if (field.type === 'date' && value?.format) {
-            setValueAtPath(payload, key, value.format('YYYY-MM-DD'))
             return
         }
 
