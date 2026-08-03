@@ -638,7 +638,7 @@ body {
     }
 }
 
-/* v66.41 parent-aligned runtime polish */
+/* Parent-aligned runtime polish */
 .base-filter .ant-input-search .ant-input-group-addon {
     display: none;
 }

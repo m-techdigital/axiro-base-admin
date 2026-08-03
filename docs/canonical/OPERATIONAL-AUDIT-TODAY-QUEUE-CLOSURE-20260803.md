@@ -19,3 +19,16 @@
 ## Không mở rộng
 
 Không port RBAC, company/project/team, Accounting, Reports, generic workflow/SLA hoặc fraud engine.
+
+## UI language follow-up
+
+- The operations-control contract keys remain unchanged.
+- Remaining visible English labels for hold/availability ownership were normalized to Vietnamese (`Giữ chỗ`, `Lịch sử trạng thái khả dụng`, `Giữ đến`).
+
+## Large-file ownership follow-up — 2026-08-03
+
+- Large files are split only when a stable business owner exists; line count alone is not a reason to introduce another abstraction.
+- `operations-control/pages/Index.jsx` now coordinates tab selection, shared loading and modal state only.
+- `OverviewTab`, `HoldsTab`, `QueuesTab`, and `ReconciliationTab` own their tab rendering.
+- `useSettlementExport` owns queued-export polling and prevents overlapping status requests.
+- `OperationsModals` owns release, availability timeline, and document-checklist overlays.

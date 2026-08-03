@@ -1,5 +1,5 @@
 {
-    "version": "v66.45",
+    "version": "parent-develop-neutral-sync",
     "parent_snapshot": "mylands-admin-develop-20260801-d0af27d9.zip",
     "mini_baseline": "axiro-base-admin-main-20260801.zip",
     "policy": "Only dependency-closed, domain-neutral parent sources are copied exactly. CSS may be mechanically extracted. Domain-heavy owners remain excluded.",

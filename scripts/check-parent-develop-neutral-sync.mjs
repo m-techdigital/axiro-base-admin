@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const manifestPath = path.join(
     root,
-    'docs/canonical/parent-develop-neutral-sync-v66.45.json',
+    'docs/canonical/parent-develop-neutral-sync.json',
 )
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
 const hash = (file) =>
@@ -55,4 +55,4 @@ if (failures.length) {
     console.error(failures.join('\n'))
     process.exit(1)
 }
-console.log('Parent develop neutral sync v66.45: PASS')
+console.log('Parent develop neutral sync: PASS')
