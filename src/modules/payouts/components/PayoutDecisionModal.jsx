@@ -1,7 +1,4 @@
-import {
-    BaseConfirmActionButton,
-    BaseModal,
-} from '@/components/base'
+import { BaseConfirmActionButton, BaseModal } from '@/components/base'
 import Money from '@/components/base/Money'
 import { Alert, Descriptions, Input, Space, Typography } from 'antd'
 import service from '../service'
@@ -28,7 +25,11 @@ export default function PayoutDecisionModal({
                     <>
                         <Alert
                             showIcon
-                            type={selected.journey.next_action ? 'info' : 'success'}
+                            type={
+                                selected.journey.next_action
+                                    ? 'info'
+                                    : 'success'
+                            }
                             message={
                                 selected.journey.next_action?.label ||
                                 selected.journey.blocked_reason
@@ -59,7 +60,8 @@ export default function PayoutDecisionModal({
                                     children: (
                                         <Money
                                             value={
-                                                selected.journey.customer_context
+                                                selected.journey
+                                                    .customer_context
                                                     ?.available_balance
                                             }
                                         />
@@ -71,7 +73,8 @@ export default function PayoutDecisionModal({
                                     children: (
                                         <Money
                                             value={
-                                                selected.journey.customer_context
+                                                selected.journey
+                                                    .customer_context
                                                     ?.held_balance
                                             }
                                         />

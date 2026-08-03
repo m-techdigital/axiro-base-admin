@@ -8,14 +8,20 @@ const readOwners = (files) =>
         .join('\n')
 
 const checks = [
-    [[
-        'src/modules/notifications/pages/List.jsx',
-        'src/modules/notifications/components/NotificationDetailDrawer.jsx',
-    ], 'action_context?.deep_link'],
-    [[
-        'src/modules/notifications/pages/List.jsx',
-        'src/modules/notifications/components/NotificationDetailDrawer.jsx',
-    ], 'next_action?.label'],
+    [
+        [
+            'src/modules/notifications/pages/List.jsx',
+            'src/modules/notifications/components/NotificationDetailDrawer.jsx',
+        ],
+        'action_context?.deep_link',
+    ],
+    [
+        [
+            'src/modules/notifications/pages/List.jsx',
+            'src/modules/notifications/components/NotificationDetailDrawer.jsx',
+        ],
+        'next_action?.label',
+    ],
     [
         [
             'src/modules/payouts/pages/Index.jsx',

@@ -29,7 +29,10 @@ if (
 }
 
 const requiredPatterns = new Map([
-    ['src/hooks/useRelationOptions.jsx', ['buildConfigSignature', 'runCascade']],
+    [
+        'src/hooks/useRelationOptions.jsx',
+        ['buildConfigSignature', 'runCascade'],
+    ],
     [
         'src/modules/marketplace-operations/pages/Index.jsx',
         ['useCallback', '[load]'],
@@ -38,7 +41,10 @@ const requiredPatterns = new Map([
         'src/modules/marketplace-trust/pages/Index.jsx',
         ['useCallback', '[load]'],
     ],
-    ['src/modules/payouts/pages/Index.jsx|src/modules/payouts/hooks/usePayoutCenter.js', ['useCallback', '[load]']],
+    [
+        'src/modules/payouts/pages/Index.jsx|src/modules/payouts/hooks/usePayoutCenter.js',
+        ['useCallback', '[load]'],
+    ],
     [
         'src/modules/transactions/pages/Detail.jsx|src/modules/transactions/hooks/useTransactionDetail.js',
         ['useCallback', '[load]'],

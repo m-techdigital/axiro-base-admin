@@ -13,17 +13,40 @@ const relationHook = read('src/hooks/useRelationOptions.jsx')
 const payoutPage = read('src/modules/payouts/pages/Index.jsx')
 const payoutService = read('src/modules/payouts/service.js')
 
-for (const route of ['/transactions', '/payouts', '/wallets', '/notifications']) {
+for (const route of [
+    '/transactions',
+    '/payouts',
+    '/wallets',
+    '/notifications',
+]) {
     assert(routes.includes(route), `Thiếu route vận hành bắt buộc: ${route}`)
 }
 
-assert(transactionForm.includes("type: 'relation'"), 'Form giao dịch phải dùng relation config canonical.')
-assert(transactionForm.includes("module: 'products'"), 'Form giao dịch thiếu relation product.')
-assert(transactionForm.includes("module: 'customers'"), 'Form giao dịch thiếu relation customer.')
-assert(!relationHook.includes('useLegacyRelationOptions'), 'Không được khôi phục relation hook legacy.')
-assert(payoutPage.includes('usePayoutCenter'), 'Trang payout phải giữ orchestration trong hook owner.')
+assert(
+    transactionForm.includes("type: 'relation'"),
+    'Form giao dịch phải dùng relation config canonical.',
+)
+assert(
+    transactionForm.includes("module: 'products'"),
+    'Form giao dịch thiếu relation product.',
+)
+assert(
+    transactionForm.includes("module: 'customers'"),
+    'Form giao dịch thiếu relation customer.',
+)
+assert(
+    !relationHook.includes('useLegacyRelationOptions'),
+    'Không được khôi phục relation hook legacy.',
+)
+assert(
+    payoutPage.includes('usePayoutCenter'),
+    'Trang payout phải giữ orchestration trong hook owner.',
+)
 for (const action of ['approve', 'reject', 'paid']) {
-    assert(payoutService.includes(`${action}:`), `Payout service thiếu action ${action}.`)
+    assert(
+        payoutService.includes(`${action}:`),
+        `Payout service thiếu action ${action}.`,
+    )
 }
 
 console.log('Core admin flow contract: PASS')

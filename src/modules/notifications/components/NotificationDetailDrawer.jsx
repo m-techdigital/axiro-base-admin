@@ -25,7 +25,11 @@ export default function NotificationDetailDrawer({
                         column={1}
                         size="small"
                         items={[
-                            { key: 'type', label: 'Loại', children: detail.type || '—' },
+                            {
+                                key: 'type',
+                                label: 'Loại',
+                                children: detail.type || '—',
+                            },
                             {
                                 key: 'customer',
                                 label: 'Khách hàng',
@@ -41,35 +45,53 @@ export default function NotificationDetailDrawer({
                                     detail.transaction?.code ||
                                     '—',
                             },
-                            { key: 'message', label: 'Nội dung', children: detail.message || '—' },
-                            { key: 'created', label: 'Thời gian', children: detail.created_at || '—' },
+                            {
+                                key: 'message',
+                                label: 'Nội dung',
+                                children: detail.message || '—',
+                            },
+                            {
+                                key: 'created',
+                                label: 'Thời gian',
+                                children: detail.created_at || '—',
+                            },
                         ]}
                     />
                     {detail.transaction?.events?.length ? (
                         <div style={{ marginTop: 20 }}>
                             <h3>Tiến trình giao dịch</h3>
                             <Timeline
-                                items={detail.transaction.events.map((event) => ({
-                                    children: (
-                                        <>
-                                            <b>{event.title}</b>
-                                            <div>{event.description || event.event_type}</div>
-                                            <small>{event.created_at}</small>
-                                        </>
-                                    ),
-                                }))}
+                                items={detail.transaction.events.map(
+                                    (event) => ({
+                                        children: (
+                                            <>
+                                                <b>{event.title}</b>
+                                                <div>
+                                                    {event.description ||
+                                                        event.event_type}
+                                                </div>
+                                                <small>
+                                                    {event.created_at}
+                                                </small>
+                                            </>
+                                        ),
+                                    }),
+                                )}
                             />
                         </div>
                     ) : null}
                     {detail.action_context?.next_action ? (
                         <div style={{ marginTop: 20 }}>
                             <Tag color="blue">
-                                Việc tiếp theo: {detail.action_context.next_action.label}
+                                Việc tiếp theo:{' '}
+                                {detail.action_context.next_action.label}
                             </Tag>
                             {(detail.action_context.blocking_reasons || [])
                                 .slice(0, 2)
                                 .map((reason) => (
-                                    <div key={reason}><small>{reason}</small></div>
+                                    <div key={reason}>
+                                        <small>{reason}</small>
+                                    </div>
                                 ))}
                         </div>
                     ) : null}
@@ -80,7 +102,9 @@ export default function NotificationDetailDrawer({
                                 rows={3}
                                 value={handlingNote}
                                 placeholder="Ghi rõ kết quả hoặc lý do xử lý"
-                                onChange={(event) => onHandlingNoteChange(event.target.value)}
+                                onChange={(event) =>
+                                    onHandlingNoteChange(event.target.value)
+                                }
                             />
                             <BaseButton
                                 style={{ marginTop: 12 }}
@@ -98,7 +122,9 @@ export default function NotificationDetailDrawer({
                     {detail.action_context?.deep_link ? (
                         <BaseButton
                             style={{ marginTop: 16 }}
-                            onClick={() => onNavigate(detail.action_context.deep_link)}
+                            onClick={() =>
+                                onNavigate(detail.action_context.deep_link)
+                            }
                         >
                             {detail.action_context?.next_action?.label
                                 ? `Mở hồ sơ để ${detail.action_context.next_action.label.toLowerCase()}`

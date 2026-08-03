@@ -1,7 +1,11 @@
 import { ToolOutlined } from '@ant-design/icons'
 import { BaseIconAction } from '@/components/base'
 import Money from '@/components/base/Money'
-import { statusColor, statusLabel, valueLabel } from '@/contracts/marketplaceLabels'
+import {
+    statusColor,
+    statusLabel,
+    valueLabel,
+} from '@/contracts/marketplaceLabels'
 import { Tag } from 'antd'
 
 const status = (value) => (
