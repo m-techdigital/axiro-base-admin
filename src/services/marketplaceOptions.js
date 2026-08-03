@@ -3,6 +3,7 @@ import {
     MARKETPLACE_DOCUMENT_TYPES,
     MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS,
     MARKETPLACE_OPTIONS_CONTRACT_VERSION,
+    MARKETPLACE_TRANSACTION_STATUSES,
 } from '@/generated/marketplaceOptions'
 
 import api from './axios'
@@ -14,6 +15,7 @@ let loading = null
 const fallbackOptions = {
     document_types: MARKETPLACE_DOCUMENT_TYPES,
     dispute_outcomes: MARKETPLACE_DISPUTE_OUTCOMES,
+    transaction_statuses: MARKETPLACE_TRANSACTION_STATUSES,
 }
 const fallbackTtlMs = MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS * 1000
 let cachedContractVersion = MARKETPLACE_OPTIONS_CONTRACT_VERSION
@@ -43,6 +45,9 @@ export const loadMarketplaceOptions = async ({ force = false } = {}) => {
                 dispute_outcomes: payload.dispute_outcomes?.length
                     ? payload.dispute_outcomes
                     : fallbackOptions.dispute_outcomes,
+                transaction_statuses: payload.transaction_statuses?.length
+                    ? payload.transaction_statuses
+                    : fallbackOptions.transaction_statuses,
             }
             cachedContractVersion =
                 response?.meta?.contract_version ||

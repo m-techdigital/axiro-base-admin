@@ -74,3 +74,53 @@ export const MARKETPLACE_DISPUTE_OUTCOMES = [
         label: 'Từ chối và đưa giao dịch về luồng xử lý',
     },
 ]
+export const MARKETPLACE_TRANSACTION_STATUSES = [
+    {
+        value: 'pending_payment',
+        label: 'Chờ thanh toán',
+    },
+    {
+        value: 'partially_paid',
+        label: 'Thanh toán một phần',
+    },
+    {
+        value: 'paid',
+        label: 'Đã thanh toán',
+    },
+    {
+        value: 'handover_pending',
+        label: 'Chờ xác nhận bàn giao',
+    },
+    {
+        value: 'handed_over',
+        label: 'Đã bàn giao',
+    },
+    {
+        value: 'active',
+        label: 'Đang thuê',
+    },
+    {
+        value: 'return_pending',
+        label: 'Chờ hoàn trả',
+    },
+    {
+        value: 'returned',
+        label: 'Đã hoàn trả',
+    },
+    {
+        value: 'overdue',
+        label: 'Quá hạn',
+    },
+    {
+        value: 'disputed',
+        label: 'Đang tranh chấp',
+    },
+    {
+        value: 'completed',
+        label: 'Hoàn tất',
+    },
+    {
+        value: 'cancelled',
+        label: 'Đã hủy',
+    },
+]

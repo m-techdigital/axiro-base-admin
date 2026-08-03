@@ -29,6 +29,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Money from '../../../components/base/Money'
 import documentService from '../../generated-documents/service'
 import service from '../service'
+import TransactionCommandCenter from '../components/TransactionCommandCenter'
 import {
     loadMarketplaceOptions,
     optionMap,
@@ -197,6 +198,14 @@ export default function TransactionDetail() {
                     description="Không nên hoàn tất hoặc hủy trước khi đối chiếu đầy đủ bằng chứng."
                 />
             )}
+            <TransactionCommandCenter
+                data={data}
+                loading={loading}
+                onAction={(action) =>
+                    act(action, `Thực hiện: ${labels[action] || action}`)
+                }
+                onConfirmPayment={(paymentId) => confirmPayment(paymentId)}
+            />
             <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
                 <Col xs={24} xl={15}>
                     <Card loading={loading} title="Thông tin giao dịch">

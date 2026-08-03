@@ -40,7 +40,8 @@
         "check:parent-offer-mode-alignment": "node scripts/check-parent-offer-mode-alignment.mjs",
         "check:product-option-exports": "node scripts/check-product-option-exports.mjs",
         "sync:marketplace-options": "node scripts/sync-marketplace-options.mjs",
-        "check:marketplace-options-sync": "node scripts/sync-marketplace-options.mjs --check"
+        "check:marketplace-options-sync": "node scripts/sync-marketplace-options.mjs --check",
+        "check:transaction-command-center": "node scripts/check-transaction-command-center.mjs"
     },
     "dependencies": {
         "@ant-design/icons": "^6.2.2",

@@ -27,6 +27,7 @@ export const MARKETPLACE_OPTIONS_VERSION = ${quote(catalog.version)}
 export const MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS = ${Number(catalog.cache_ttl_seconds || 300)}
 export const MARKETPLACE_DOCUMENT_TYPES = ${options(catalog.document_types)}
 export const MARKETPLACE_DISPUTE_OUTCOMES = ${options(catalog.dispute_outcomes)}
+export const MARKETPLACE_TRANSACTION_STATUSES = ${options(catalog.transaction_statuses)}
 `
 const target = path.join(root, 'src/generated/marketplaceOptions.js')
 if (process.argv.includes('--check')) {

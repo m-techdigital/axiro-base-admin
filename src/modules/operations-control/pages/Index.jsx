@@ -288,6 +288,15 @@ export default function OperationsControlPage() {
                 </Tag>
             ),
         },
+        {
+            title: 'Việc tiếp theo',
+            render: (_, row) =>
+                row.lifecycle?.next_action ? (
+                    <Tag color="blue">{row.lifecycle.next_action.label}</Tag>
+                ) : (
+                    '—'
+                ),
+        },
         { title: 'Cập nhật cuối', dataIndex: 'updated_at', width: 180 },
         {
             title: 'Chứng từ',
