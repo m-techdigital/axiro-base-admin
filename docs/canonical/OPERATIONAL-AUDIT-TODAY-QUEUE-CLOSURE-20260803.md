@@ -32,3 +32,17 @@ Không port RBAC, company/project/team, Accounting, Reports, generic workflow/SL
 - `OverviewTab`, `HoldsTab`, `QueuesTab`, and `ReconciliationTab` own their tab rendering.
 - `useSettlementExport` owns queued-export polling and prevents overlapping status requests.
 - `OperationsModals` owns release, availability timeline, and document-checklist overlays.
+
+## Transaction detail ownership follow-up
+
+- `transactions/pages/Detail.jsx` remains the route orchestration owner.
+- Transaction field presentation metadata is owned by `transactions/config/detailPresentation.js`.
+- Rental deposit settlement and document preview modals are owned by `transactions/components/TransactionDetailModals.jsx`.
+- Public routes and API contracts are unchanged.
+
+## Large-file ownership follow-up — 2026-08-03
+
+- `transactions/pages/Detail.jsx` delegates remote state, command execution, payment confirmation, document actions and rental-deposit settlement state to `transactions/hooks/useTransactionDetail.js`.
+- The page remains the presentation/orchestration owner; the hook is the transaction-detail runtime owner.
+- Existing routes and API payloads are unchanged.
+- Transaction detail presentation labels, modals and runtime side effects are separated so follow-up UI parity work can move through base components without rebuilding the route page.

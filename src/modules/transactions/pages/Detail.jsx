@@ -1,10 +1,10 @@
 import {
     BaseConfirmActionButton,
-    BaseModal,
     BaseButton,
     BasePageHeader,
     BaseView,
 } from '@/components/base'
+import Money from '../../../components/base/Money'
 import {
     statusColor,
     statusLabel,
@@ -13,8 +13,6 @@ import {
 import {
     Alert,
     Card,
-    Input,
-    InputNumber,
     Col,
     List,
     Row,
@@ -22,160 +20,42 @@ import {
     Tag,
     Timeline,
     Typography,
-    message,
 } from 'antd'
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import Money from '../../../components/base/Money'
-import documentService from '../../generated-documents/service'
-import service from '../service'
 import TransactionCommandCenter from '../components/TransactionCommandCenter'
+import TransactionDetailModals from '../components/TransactionDetailModals'
 import {
-    loadMarketplaceOptions,
-    optionMap,
-} from '@/services/marketplaceOptions'
+    buildTransactionDetailFields,
+    transactionLabels,
+} from '../config/detailPresentation'
+import useTransactionDetail from '../hooks/useTransactionDetail'
 
-const labels = {
-    purchase: 'Mua bán',
-    rental: 'Thuê',
-    pending_payment: 'Chờ thanh toán',
-    partially_paid: 'Đã thanh toán một phần',
-    paid: 'Đã thanh toán',
-    handover_pending: 'Chờ bên nhận xác nhận',
-    handed_over: 'Đã bàn giao',
-    active: 'Đang thuê',
-    return_pending: 'Chờ xác nhận hoàn trả',
-    returned: 'Đã hoàn trả',
-    completed: 'Hoàn tất',
-    cancelled: 'Đã hủy',
-    disputed: 'Đang tranh chấp',
-}
 export default function TransactionDetail() {
-    const { id } = useParams(),
-        navigate = useNavigate()
-    const [documentTypes, setDocumentTypes] = useState([])
-    const [disputeOutcomes, setDisputeOutcomes] = useState([])
-    const [deductionModalOpen, setDeductionModalOpen] = useState(false)
-    const [deductionAmount, setDeductionAmount] = useState(0)
-    const [deductionNote, setDeductionNote] = useState('')
-    const documentLabels = useMemo(
-        () => optionMap(documentTypes),
-        [documentTypes],
-    )
-    const disputeOutcomeLabels = useMemo(
-        () => optionMap(disputeOutcomes),
-        [disputeOutcomes],
-    )
-    useEffect(() => {
-        loadMarketplaceOptions().then((options) => {
-            setDocumentTypes(options.document_types || [])
-            setDisputeOutcomes(options.dispute_outcomes || [])
-        })
-    }, [])
-    const [data, setData] = useState(null),
-        [loading, setLoading] = useState(true),
-        [acting, setActing] = useState(''),
-        [preview, setPreview] = useState(null)
-    const load = useCallback(async () => {
-        setLoading(true)
-        try {
-            const r = await service.get(id)
-            setData(r.data)
-        } finally {
-            setLoading(false)
-        }
-    }, [id])
-    useEffect(() => {
-        load()
-    }, [load])
-    const act = (action, title) =>
-        BaseModal.confirm({
-            title,
-            content:
-                'Hành động quản trị sẽ được ghi vào nhật ký và thông báo cho cả hai bên.',
-            okText: 'Xác nhận',
-            cancelText: 'Hủy',
-            onOk: async () => {
-                setActing(action)
-                try {
-                    await service.action(id, { action, note: title })
-                    message.success('Đã cập nhật giao dịch')
-                    await load()
-                } catch (e) {
-                    message.error(e.message)
-                } finally {
-                    setActing('')
-                }
-            },
-        })
-    const confirmPayment = async (paymentId) => {
-        setActing(`payment-${paymentId}`)
-        try {
-            await service.confirmPayment(paymentId)
-            message.success('Đã xác nhận thanh toán')
-            await load()
-        } catch (error) {
-            message.error(error.message || 'Không thể xác nhận thanh toán')
-        } finally {
-            setActing('')
-        }
-    }
-    const completeRental = async () => {
-        if (deductionAmount > 0 && !deductionNote.trim()) {
-            message.warning('Vui lòng nhập lý do khấu trừ tiền cọc')
-            return
-        }
-
-        setActing('complete')
-        try {
-            await service.action(id, {
-                action: 'complete',
-                note: 'Hoàn tất giao dịch thuê và quyết toán tiền cọc.',
-                rental_deposit_deduction_amount: deductionAmount || 0,
-                rental_deposit_deduction_note:
-                    deductionAmount > 0 ? deductionNote : null,
-            })
-            message.success('Đã hoàn tất và quyết toán giao dịch thuê')
-            setDeductionModalOpen(false)
-            setDeductionAmount(0)
-            setDeductionNote('')
-            await load()
-        } catch (error) {
-            message.error(error.message || 'Không thể hoàn tất giao dịch thuê')
-        } finally {
-            setActing('')
-        }
-    }
-    const closeDeductionModal = () => {
-        setDeductionModalOpen(false)
-        setDeductionAmount(0)
-        setDeductionNote('')
-    }
-    const ensureDocuments = async () => {
-        setActing('documents')
-        try {
-            await documentService.ensure(id)
-            message.success('Đã đồng bộ bộ tài liệu theo trạng thái giao dịch')
-            await load()
-        } catch (error) {
-            message.error(
-                error.message || 'Không thể đồng bộ tài liệu giao dịch',
-            )
-        } finally {
-            setActing('')
-        }
-    }
-    const viewDocument = async (transactionDocument) =>
-        setPreview((await documentService.preview(transactionDocument.id)).data)
-    const downloadDocument = async (transactionDocument) => {
-        const blob = await documentService.download(transactionDocument.id)
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${transactionDocument.code}.pdf`
-        a.click()
-        URL.revokeObjectURL(url)
-    }
+    const { id } = useParams()
+    const navigate = useNavigate()
+    const {
+        data,
+        loading,
+        acting,
+        preview,
+        documentLabels,
+        disputeOutcomeLabels,
+        deductionModalOpen,
+        deductionAmount,
+        deductionNote,
+        load,
+        act,
+        confirmPayment,
+        completeRental,
+        closeDeductionModal,
+        ensureDocuments,
+        viewDocument,
+        downloadDocument,
+        setPreview,
+        setDeductionModalOpen,
+        setDeductionAmount,
+        setDeductionNote,
+    } = useTransactionDetail(id)
     return (
         <div className="page">
             <BasePageHeader
@@ -202,7 +82,10 @@ export default function TransactionDetail() {
                 data={data}
                 loading={loading}
                 onAction={(action) =>
-                    act(action, `Thực hiện: ${labels[action] || action}`)
+                    act(
+                        action,
+                        `Thực hiện: ${transactionLabels[action] || action}`,
+                    )
                 }
                 onConfirmPayment={(paymentId) => confirmPayment(paymentId)}
             />
@@ -212,128 +95,7 @@ export default function TransactionDetail() {
                         <BaseView
                             record={data}
                             columns={2}
-                            fields={[
-                                {
-                                    name: 'transaction_type',
-                                    label: 'Loại',
-                                    type: 'option_tag',
-                                    options: Object.entries(labels).map(
-                                        ([value, label]) => ({ value, label }),
-                                    ),
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: 'status',
-                                    label: 'Trạng thái',
-                                    type: 'option_tag',
-                                    labels: Object.fromEntries(
-                                        Object.keys(labels).map((value) => [
-                                            value,
-                                            statusLabel(value),
-                                        ]),
-                                    ),
-                                    colors: Object.fromEntries(
-                                        Object.keys(labels).map((value) => [
-                                            value,
-                                            statusColor(value),
-                                        ]),
-                                    ),
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: ['product', 'name'],
-                                    label: 'Tài khoản',
-                                    type: 'text',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: ['product', 'code'],
-                                    label: 'Sản phẩm',
-                                    type: 'text',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: ['buyer', 'name'],
-                                    label: 'Người mua / thuê',
-                                    type: 'text',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: ['seller', 'name'],
-                                    label: 'Người bán / cho thuê',
-                                    type: 'text',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: 'total_payable',
-                                    label: 'Tổng tiền',
-                                    type: 'money',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: 'paid_amount',
-                                    label: 'Đã thanh toán',
-                                    type: 'money',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: 'escrow_amount',
-                                    label: 'Đang tạm giữ',
-                                    type: 'money',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: 'released_amount',
-                                    label: 'Đã giải ngân',
-                                    type: 'money',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                {
-                                    name: 'refunded_amount',
-                                    label: 'Đã hoàn',
-                                    type: 'money',
-                                    span: { xs: 24, md: 12 },
-                                },
-                                ...(data?.transaction_type === 'rental'
-                                    ? [
-                                          {
-                                              name: 'rental_period_count',
-                                              label: 'Kỳ hạn thuê',
-                                              render: (value, record) =>
-                                                  `${value || 0} ${record?.rental_period_unit || ''}`.trim(),
-                                              span: { xs: 24, md: 12 },
-                                          },
-                                          {
-                                              name: 'rental_billing_mode',
-                                              label: 'Cách thu tiền',
-                                              type: 'option',
-                                              options: [
-                                                  {
-                                                      value: 'periodic',
-                                                      label: 'Theo từng kỳ',
-                                                  },
-                                                  {
-                                                      value: 'full_term',
-                                                      label: 'Thu trước toàn kỳ',
-                                                  },
-                                              ],
-                                              span: { xs: 24, md: 12 },
-                                          },
-                                          {
-                                              name: 'rental_start_at',
-                                              label: 'Bắt đầu thuê',
-                                              type: 'datetime',
-                                              span: { xs: 24, md: 12 },
-                                          },
-                                          {
-                                              name: 'rental_end_at',
-                                              label: 'Hết hạn thuê',
-                                              type: 'datetime',
-                                              span: { xs: 24, md: 12 },
-                                          },
-                                      ]
-                                    : []),
-                            ]}
+                            fields={buildTransactionDetailFields(data)}
                         />
                     </Card>
                     <Card
@@ -696,57 +458,19 @@ export default function TransactionDetail() {
                     </Card>
                 </Col>
             </Row>
-            <BaseModal
-                open={deductionModalOpen}
-                onCancel={closeDeductionModal}
-                onSubmit={completeRental}
-                submitText="Hoàn tất và quyết toán"
-                loading={acting === 'complete'}
-                title="Quyết toán tiền cọc thuê"
-            >
-                <Space direction="vertical" style={{ width: '100%' }}>
-                    <Typography.Text>
-                        Tiền cọc hiện tại:{' '}
-                        <Money value={data?.deposit_amount} />
-                    </Typography.Text>
-                    <label>
-                        Số tiền khấu trừ
-                        <InputNumber
-                            min={0}
-                            max={Number(data?.deposit_amount || 0)}
-                            value={deductionAmount}
-                            onChange={(value) =>
-                                setDeductionAmount(Number(value || 0))
-                            }
-                            style={{ width: '100%' }}
-                        />
-                    </label>
-                    <label>
-                        Lý do khấu trừ
-                        <Input.TextArea
-                            rows={4}
-                            value={deductionNote}
-                            disabled={deductionAmount <= 0}
-                            onChange={(event) =>
-                                setDeductionNote(event.target.value)
-                            }
-                            placeholder="Bắt buộc khi có khấu trừ cọc"
-                        />
-                    </label>
-                </Space>
-            </BaseModal>
-            <BaseModal
-                open={!!preview}
-                onCancel={() => setPreview(null)}
-                footer={null}
-                width={900}
-                title={preview?.title}
-            >
-                <div
-                    className="document-preview"
-                    dangerouslySetInnerHTML={{ __html: preview?.html || '' }}
-                />
-            </BaseModal>
+            <TransactionDetailModals
+                data={data}
+                acting={acting}
+                deductionModalOpen={deductionModalOpen}
+                deductionAmount={deductionAmount}
+                deductionNote={deductionNote}
+                preview={preview}
+                onCloseDeduction={closeDeductionModal}
+                onCompleteRental={completeRental}
+                onDeductionAmountChange={setDeductionAmount}
+                onDeductionNoteChange={setDeductionNote}
+                onClosePreview={() => setPreview(null)}
+            />
         </div>
     )
 }

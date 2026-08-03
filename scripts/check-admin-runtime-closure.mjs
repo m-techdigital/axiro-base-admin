@@ -39,7 +39,10 @@ const requiredPatterns = new Map([
         ['useCallback', '[load]'],
     ],
     ['src/modules/payouts/pages/Index.jsx', ['useCallback', '[load]']],
-    ['src/modules/transactions/pages/Detail.jsx', ['useCallback', '[load]']],
+    [
+        'src/modules/transactions/pages/Detail.jsx|src/modules/transactions/hooks/useTransactionDetail.js',
+        ['useCallback', '[load]'],
+    ],
     [
         'src/modules/wallets/pages/List.jsx',
         ['useCallback', 'keywordRef', '[load]'],
@@ -47,7 +50,7 @@ const requiredPatterns = new Map([
 ])
 
 for (const [file, patterns] of requiredPatterns) {
-    const source = read(file)
+    const source = file.split('|').map(read).join('\n')
     for (const pattern of patterns) {
         if (!source.includes(pattern)) {
             failures.push(`${file} thiếu runtime hook contract: ${pattern}`)
