@@ -1,9 +1,8 @@
 import { CUSTOMER_STATUS_OPTIONS } from '@/constants/options'
-import { BaseForm, BaseButton } from '@/components/base'
-import { Card, Input, Select, message } from 'antd'
+import { BaseForm, BaseFormFooter, BaseFormPage } from '@/components/base'
+import { Input, Select, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import PageHeader from '../../../components/base/PageHeader'
 import service from '../service'
 export default function CustomerForm() {
     const { id } = useParams(),
@@ -33,16 +32,19 @@ export default function CustomerForm() {
         }
     }
     return (
-        <div className="page">
-            <PageHeader title={id ? 'Cập nhật khách hàng' : 'Tạo khách hàng'} />
-            <Card className="form-card">
-                <BaseForm
-                    form={f}
-                    layout="vertical"
-                    onFinish={save}
-                    initialValues={{ status: 'active' }}
-                >
+        <BaseFormPage
+            description="Hồ sơ khách hàng trong phạm vi một admin quản lý nhiều khách hàng."
+            title={id ? 'Cập nhật khách hàng' : 'Tạo khách hàng'}
+        >
+            <BaseForm
+                form={f}
+                layout="vertical"
+                onFinish={save}
+                initialValues={{ status: 'active' }}
+            >
+                <div className="base-form-grid">
                     <BaseForm.Item
+                        className="span-6"
                         name="username"
                         label="Tên đăng nhập"
                         rules={[{ required: true }]}
@@ -50,19 +52,29 @@ export default function CustomerForm() {
                         <Input />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-6"
                         name="name"
                         label="Tên khách hàng"
                         rules={[{ required: true }]}
                     >
                         <Input />
                     </BaseForm.Item>
-                    <BaseForm.Item name="email" label="Email">
-                        <Input />
-                    </BaseForm.Item>
-                    <BaseForm.Item name="phone" label="Điện thoại">
+                    <BaseForm.Item
+                        className="span-6"
+                        name="email"
+                        label="Email"
+                    >
                         <Input />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-6"
+                        name="phone"
+                        label="Điện thoại"
+                    >
+                        <Input />
+                    </BaseForm.Item>
+                    <BaseForm.Item
+                        className="span-8"
                         name="password"
                         label={
                             id
@@ -73,19 +85,21 @@ export default function CustomerForm() {
                     >
                         <Input.Password />
                     </BaseForm.Item>
-                    <BaseForm.Item name="status" label="Trạng thái">
+                    <BaseForm.Item
+                        className="span-4"
+                        name="status"
+                        label="Trạng thái"
+                    >
                         <Select options={CUSTOMER_STATUS_OPTIONS} />
                     </BaseForm.Item>
-                    <BaseButton
-                        type="primary"
-                        htmlType="submit"
-                        loading={loading}
-                    >
-                        Lưu
-                    </BaseButton>{' '}
-                    <BaseButton onClick={() => n('/customers')}>Hủy</BaseButton>
-                </BaseForm>
-            </Card>
-        </div>
+                </div>
+                <BaseFormFooter
+                    cancelText="Hủy"
+                    loading={loading}
+                    onCancel={() => n('/customers')}
+                    submitText="Lưu khách hàng"
+                />
+            </BaseForm>
+        </BaseFormPage>
     )
 }

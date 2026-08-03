@@ -8,6 +8,7 @@ export default function BaseFormPage({
     actions,
     children,
     className = '',
+    cardProps,
 }) {
     return (
         <section className={`base-form-page ${className}`.trim()}>
@@ -16,7 +17,9 @@ export default function BaseFormPage({
                 description={description}
                 title={title}
             />
-            <Card className="base-form-page__card">{children}</Card>
+            <Card className="base-form-page__card" {...cardProps}>
+                {children}
+            </Card>
         </section>
     )
 }

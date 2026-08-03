@@ -1,6 +1,6 @@
 import { TRANSACTION_STATUS_OPTIONS } from '@/constants/options'
-import { BaseForm, BaseButton } from '@/components/base'
-import { Card, DatePicker, Input, InputNumber, Select, message } from 'antd'
+import { BaseForm, BaseFormFooter, BaseFormPage } from '@/components/base'
+import { DatePicker, Input, InputNumber, Select, message } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -8,7 +8,6 @@ import service from '../service'
 import products from '../../products/service'
 import customers from '../../customers/service'
 import { useRelationOptions } from '../../../hooks/useRelationOptions'
-import PageHeader from '../../../components/base/PageHeader'
 export default function TransactionForm() {
     const { id } = useParams(),
         n = useNavigate(),
@@ -65,25 +64,28 @@ export default function TransactionForm() {
         }
     }
     return (
-        <div className="page">
-            <PageHeader title={id ? 'Cập nhật giao dịch' : 'Tạo giao dịch'} />
-            <Card className="form-card">
-                <BaseForm
-                    form={f}
-                    layout="vertical"
-                    onFinish={save}
-                    initialValues={{
-                        transaction_type: 'purchase',
-                        status: 'pending_payment',
-                        transaction_date: dayjs(),
-                        service_fee: 0,
-                        discount: 0,
-                        deposit_amount: 0,
-                        paid_amount: 0,
-                        refunded_amount: 0,
-                    }}
-                >
+        <BaseFormPage
+            description="Giao dịch là vòng đời chính thay cho hợp đồng trong Mini."
+            title={id ? 'Cập nhật giao dịch' : 'Tạo giao dịch'}
+        >
+            <BaseForm
+                form={f}
+                layout="vertical"
+                onFinish={save}
+                initialValues={{
+                    transaction_type: 'purchase',
+                    status: 'pending_payment',
+                    transaction_date: dayjs(),
+                    service_fee: 0,
+                    discount: 0,
+                    deposit_amount: 0,
+                    paid_amount: 0,
+                    refunded_amount: 0,
+                }}
+            >
+                <div className="base-form-grid">
                     <BaseForm.Item
+                        className="span-4"
                         name="code"
                         label="Mã"
                         rules={[{ required: true }]}
@@ -91,6 +93,7 @@ export default function TransactionForm() {
                         <Input />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-4"
                         name="transaction_type"
                         label="Loại giao dịch"
                         rules={[{ required: true }]}
@@ -103,6 +106,14 @@ export default function TransactionForm() {
                         />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-4"
+                        name="status"
+                        label="Trạng thái"
+                    >
+                        <Select options={TRANSACTION_STATUS_OPTIONS} />
+                    </BaseForm.Item>
+                    <BaseForm.Item
+                        className="span-12"
                         name="product_id"
                         label="Sản phẩm"
                         rules={[{ required: true }]}
@@ -114,6 +125,7 @@ export default function TransactionForm() {
                         />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-6"
                         name="buyer_customer_id"
                         label="Người mua / thuê"
                         rules={[{ required: true }]}
@@ -125,6 +137,7 @@ export default function TransactionForm() {
                         />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-6"
                         name="seller_customer_id"
                         label="Người bán / cho thuê"
                         rules={[{ required: true }]}
@@ -136,35 +149,61 @@ export default function TransactionForm() {
                         />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-4"
                         name="transaction_value"
                         label="Giá trị"
                         rules={[{ required: true }]}
                     >
                         <InputNumber min={0} style={{ width: '100%' }} />
                     </BaseForm.Item>
-                    <BaseForm.Item name="service_fee" label="Phí">
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                    </BaseForm.Item>
-                    <BaseForm.Item name="discount" label="Giảm giá">
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                    </BaseForm.Item>
-                    <BaseForm.Item name="deposit_amount" label="Tiền cọc">
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                    </BaseForm.Item>
-                    <BaseForm.Item name="paid_amount" label="Đã thanh toán">
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                    </BaseForm.Item>
-                    <BaseForm.Item name="refunded_amount" label="Đã hoàn">
+                    <BaseForm.Item
+                        className="span-4"
+                        name="service_fee"
+                        label="Phí"
+                    >
                         <InputNumber min={0} style={{ width: '100%' }} />
                     </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-4"
+                        name="discount"
+                        label="Giảm giá"
+                    >
+                        <InputNumber min={0} style={{ width: '100%' }} />
+                    </BaseForm.Item>
+                    <BaseForm.Item
+                        className="span-4"
+                        name="deposit_amount"
+                        label="Tiền cọc"
+                    >
+                        <InputNumber min={0} style={{ width: '100%' }} />
+                    </BaseForm.Item>
+                    <BaseForm.Item
+                        className="span-4"
+                        name="paid_amount"
+                        label="Đã thanh toán"
+                    >
+                        <InputNumber min={0} style={{ width: '100%' }} />
+                    </BaseForm.Item>
+                    <BaseForm.Item
+                        className="span-4"
+                        name="refunded_amount"
+                        label="Đã hoàn"
+                    >
+                        <InputNumber min={0} style={{ width: '100%' }} />
+                    </BaseForm.Item>
+                    <BaseForm.Item
+                        className="span-6"
                         name="transaction_date"
                         label="Ngày giao dịch"
                         rules={[{ required: true }]}
                     >
                         <DatePicker style={{ width: '100%' }} />
                     </BaseForm.Item>
-                    <BaseForm.Item name="due_date" label="Hạn thanh toán">
+                    <BaseForm.Item
+                        className="span-6"
+                        name="due_date"
+                        label="Hạn thanh toán"
+                    >
                         <DatePicker style={{ width: '100%' }} />
                     </BaseForm.Item>
                     <BaseForm.Item
@@ -177,6 +216,7 @@ export default function TransactionForm() {
                             getFieldValue('transaction_type') === 'rental' ? (
                                 <>
                                     <BaseForm.Item
+                                        className="span-6"
                                         name="rental_start_at"
                                         label="Bắt đầu thuê"
                                         rules={[{ required: true }]}
@@ -187,6 +227,7 @@ export default function TransactionForm() {
                                         />
                                     </BaseForm.Item>
                                     <BaseForm.Item
+                                        className="span-6"
                                         name="rental_end_at"
                                         label="Kết thúc thuê"
                                         rules={[{ required: true }]}
@@ -200,30 +241,28 @@ export default function TransactionForm() {
                             ) : null
                         }
                     </BaseForm.Item>
-                    <BaseForm.Item name="status" label="Trạng thái">
-                        <Select options={TRANSACTION_STATUS_OPTIONS} />
-                    </BaseForm.Item>
                     <BaseForm.Item
+                        className="span-6"
                         name="payment_method"
                         label="Phương thức thanh toán"
                     >
                         <Input />
                     </BaseForm.Item>
-                    <BaseForm.Item name="note" label="Ghi chú">
-                        <Input.TextArea />
-                    </BaseForm.Item>
-                    <BaseButton
-                        type="primary"
-                        htmlType="submit"
-                        loading={loading}
+                    <BaseForm.Item
+                        className="span-12"
+                        name="note"
+                        label="Ghi chú"
                     >
-                        Lưu
-                    </BaseButton>{' '}
-                    <BaseButton onClick={() => n('/transactions')}>
-                        Hủy
-                    </BaseButton>
-                </BaseForm>
-            </Card>
-        </div>
+                        <Input.TextArea rows={4} />
+                    </BaseForm.Item>
+                </div>
+                <BaseFormFooter
+                    cancelText="Hủy"
+                    loading={loading}
+                    onCancel={() => n('/transactions')}
+                    submitText="Lưu giao dịch"
+                />
+            </BaseForm>
+        </BaseFormPage>
     )
 }

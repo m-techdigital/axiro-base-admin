@@ -3,6 +3,7 @@
 AXIRO cha là chuẩn kiến trúc cho Mini. Mini chỉ rút gọn phạm vi nghiệp vụ, không tạo một kiến trúc UI/API thứ hai.
 
 ## Frontend Admin
+
 - Layout owner: `src/layouts/AdminLayout.jsx` và `src/layouts/components/*`.
 - Menu owner: `src/config/adminMenu.jsx`.
 - UI dùng chung: `src/components/base/index.js`.
@@ -11,6 +12,7 @@ AXIRO cha là chuẩn kiến trúc cho Mini. Mini chỉ rút gọn phạm vi ngh
 - Không nhập trực tiếp `Table`, `Modal`, `Drawer` hoặc `Form` của Ant Design trong module khi base tương ứng đáp ứng được nhu cầu.
 
 ## Backend API
+
 Xem tài liệu canonical tương ứng trong repo API. Mini giữ response envelope, FormRequest, Resource/presenter, service lifecycle và audit conventions của AXIRO cha, nhưng không kéo RBAC/company/project vào.
 
 - `TRANSACTION_DOCUMENT_DISPUTE_CLOSURE_20260802.md`: chuẩn hóa key hồ sơ giao dịch và outcome tranh chấp cuối.
@@ -21,3 +23,4 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 - `ADMIN_NOTIFICATION_RENTAL_SETTLEMENT_CLOSURE_20260803.md`: admin notification center, rental operation queues và settlement audit/export.
 - `ADMIN_NOTIFICATION_SETTLEMENT_FILTER_BUNDLE_CLOSURE_20260803.md`: notification detail drawer, settlement filters/export và route bundle splitting.
 - `OPERATIONS_PRESETS_EXPORT_QUEUE_20260803.md`: saved filter presets, unread notification counter và queued rental settlement export.
+- `ADMIN_BASE_CRUD_ACTION_ALIGNMENT_20260803.md`: chuẩn hóa Admin CRUD form/detail action theo base owner và parent pattern.

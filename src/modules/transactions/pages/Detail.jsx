@@ -1,4 +1,10 @@
-import { BaseModal, BaseButton, BaseView } from '@/components/base'
+import {
+    BaseConfirmActionButton,
+    BaseModal,
+    BaseButton,
+    BasePageHeader,
+    BaseView,
+} from '@/components/base'
 import {
     statusColor,
     statusLabel,
@@ -20,7 +26,6 @@ import {
 } from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
 import documentService from '../../generated-documents/service'
 import service from '../service'
@@ -151,6 +156,10 @@ export default function TransactionDetail() {
             await documentService.ensure(id)
             message.success('Đã đồng bộ bộ tài liệu theo trạng thái giao dịch')
             await load()
+        } catch (error) {
+            message.error(
+                error.message || 'Không thể đồng bộ tài liệu giao dịch',
+            )
         } finally {
             setActing('')
         }
@@ -168,8 +177,9 @@ export default function TransactionDetail() {
     }
     return (
         <div className="page">
-            <PageHeader
+            <BasePageHeader
                 title={`Giao dịch ${data?.code || ''}`}
+                description="Theo dõi thanh toán, tài liệu, tranh chấp và các hành động khép vòng giao dịch."
                 actions={
                     <Space>
                         <BaseButton onClick={() => navigate('/transactions')}>
@@ -343,21 +353,24 @@ export default function TransactionDetail() {
                                             item.status,
                                         )
                                             ? [
-                                                  <BaseButton
+                                                  <BaseConfirmActionButton
                                                       key="confirm"
+                                                      title="Xác nhận thanh toán"
+                                                      content="Chỉ xác nhận khi đã đối soát chứng từ và số tiền thực nhận."
+                                                      okText="Xác nhận"
                                                       type="link"
                                                       loading={
                                                           acting ===
                                                           `payment-${item.id}`
                                                       }
-                                                      onClick={() =>
+                                                      onConfirm={() =>
                                                           confirmPayment(
                                                               item.id,
                                                           )
                                                       }
                                                   >
                                                       Xác nhận
-                                                  </BaseButton>,
+                                                  </BaseConfirmActionButton>,
                                               ]
                                             : []),
                                     ]}
@@ -375,13 +388,16 @@ export default function TransactionDetail() {
                         title="Hồ sơ tài liệu"
                         style={{ marginTop: 16 }}
                         extra={
-                            <BaseButton
+                            <BaseConfirmActionButton
                                 type="primary"
                                 loading={acting === 'documents'}
-                                onClick={ensureDocuments}
+                                title="Đồng bộ tài liệu"
+                                content="Hệ thống sẽ tạo hoặc cập nhật bộ tài liệu theo trạng thái hiện tại của giao dịch."
+                                okText="Đồng bộ"
+                                onConfirm={ensureDocuments}
                             >
                                 Đồng bộ tài liệu
-                            </BaseButton>
+                            </BaseConfirmActionButton>
                         }
                     >
                         <List
