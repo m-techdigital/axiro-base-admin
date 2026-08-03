@@ -32,7 +32,6 @@ export const ACTIONS = {
     // organization chart
     MOVE: 'move',
     CHANGE_MANAGER: 'change_manager',
-    CHANGE_DEPARTMENT: 'change_department',
     MANAGE_ORGANIZATION: 'manage_organization',
 
     // Xuất dữ liệu
