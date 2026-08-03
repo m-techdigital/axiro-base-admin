@@ -12,7 +12,7 @@ const required = [
     'src/components/base/index.js',
     'src/config/adminMenu.jsx',
     'src/styles/tokens/admin-tokens.css',
-    'src/styles/primitives/admin-foundation.css',
+    'src/styles/primitives/admin-foundation.scss',
     'docs/canonical/README.md',
     'docs/adr/0001-parent-aligned-foundation.md',
 ]

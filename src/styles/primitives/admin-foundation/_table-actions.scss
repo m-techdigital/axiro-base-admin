@@ -1,0 +1,93 @@
+.base-action-group,
+.base-table-action-list {
+    display: flex;
+    width: max-content;
+    max-width: 100%;
+    align-items: center;
+    gap: 8px;
+    margin-inline: auto;
+}
+
+.base-action-group > *,
+.base-table-action-list > * {
+    flex: 0 0 auto;
+}
+
+.base-icon-action.ant-btn,
+.base-action-group .ant-btn,
+.base-table-action-list .ant-btn {
+    min-width: 28px;
+    height: 28px;
+    padding-inline: 7px;
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+.base-icon-action.ant-btn {
+    width: 28px;
+    padding-inline: 0;
+}
+
+.base-table {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.base-table .ant-table-wrapper,
+.base-table .ant-spin-nested-loading,
+.base-table .ant-spin-container {
+    min-width: 0;
+}
+
+.base-table .ant-table-container {
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.base-table .ant-table-body {
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+.base-table .ant-table-thead > tr > th {
+    padding: 12px 14px;
+    background: #f8f9fc;
+    color: #4b5563;
+    font-weight: 700;
+}
+
+.base-table .ant-table-tbody > tr > td {
+    padding: 12px 14px;
+    vertical-align: middle;
+}
+
+.base-table .ant-table-tbody > tr:hover > td {
+    background: #f7faff;
+}
+
+.base-table__actions {
+    width: 1%;
+    min-width: 1px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.base-table .ant-pagination {
+    margin: 16px 0 0;
+}
+.base-table .ant-table-content {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+}
+
+.base-table .ant-table-body {
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+.base-table__actions .base-table-action-list,
+.base-table__actions .base-action-group {
+    width: max-content;
+    margin-inline: auto;
+}

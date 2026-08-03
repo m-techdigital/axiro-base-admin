@@ -2,7 +2,7 @@
 @import './styles/tokens/layout.css';
 @import './styles/primitives/responsive.css';
 @import './styles/tokens/admin-tokens.css';
-@import './styles/primitives/admin-foundation.css';
+@import './styles/primitives/admin-foundation.scss';
 @import './styles/primitives/parent-base-modal.css';
 @import './styles/primitives/parent-develop-neutral.css';
 * {

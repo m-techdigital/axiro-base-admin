@@ -4,12 +4,7 @@ export * from './formatters'
 export * from './notification'
 export * from './params'
 export * from './resolveActionProp'
-export {
-    formatNumber,
-    formatCompactCurrency,
-    formatPercent,
-    formatReportValue,
-} from './format'
+export { formatNumber, formatCompactCurrency, formatPercent } from './format'
 export * from './date'
 export * from './options'
 export * from './resolveFieldValue'

@@ -5,6 +5,7 @@ const root = process.cwd()
 const required = [
     'src/components/base/BaseTabs.jsx',
     'src/components/base/BaseStatusSummaryBar.jsx',
+    'src/modules/payment-settings/formConfig.js',
     'src/modules/payment-settings/pages/Index.jsx',
 ]
 
@@ -18,15 +19,25 @@ const page = fs.readFileSync(
     path.join(root, 'src/modules/payment-settings/pages/Index.jsx'),
     'utf8',
 )
+const formConfig = fs.readFileSync(
+    path.join(root, 'src/modules/payment-settings/formConfig.js'),
+    'utf8',
+)
 for (const token of [
     'BaseTabs',
     'BaseStatusSummaryBar',
-    'BaseFormFooter',
+    'showFooter',
+    'submitText="Lưu cấu hình"',
+    'cancelText="Xem trước mã QR"',
     'service.history()',
     'service.activate',
 ]) {
     if (!page.includes(token))
         throw new Error(`Payment settings is missing ${token}`)
+}
+for (const token of ['paymentConfigFields', 'QR_TEMPLATE_OPTIONS']) {
+    if (!formConfig.includes(token))
+        throw new Error(`Payment settings config is missing ${token}`)
 }
 
 const service = fs.readFileSync(

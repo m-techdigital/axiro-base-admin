@@ -38,6 +38,35 @@ for (const file of walk(modulesRoot).filter((candidate) =>
     ) {
         failures.push(`${relative}: action column renders a raw DOM button`)
     }
+
+    if (/src\/modules\/[^/]+\/pages\/Form\.jsx$/.test(relative)) {
+        if (!/<BaseForm[\s\S]{0,600}\b(fields|sections|tabs)=/.test(source)) {
+            failures.push(
+                `${relative}: CRUD form must pass schema config to BaseForm`,
+            )
+        }
+    }
+
+    if (/<BaseForm\.Item\b/.test(source)) {
+        failures.push(
+            `${relative}: module forms must use BaseForm schema config instead of direct BaseForm.Item blocks`,
+        )
+    }
+
+    if (/Input\.Search\b/.test(source)) {
+        failures.push(
+            `${relative}: list search must use BaseFilter instead of raw Input.Search`,
+        )
+    }
+
+    if (
+        /<BaseForm[\s\S]{0,600}\bfields=\{\[/.test(source) &&
+        !/formConfig\.(jsx?|tsx?)$/.test(relative)
+    ) {
+        failures.push(
+            `${relative}: BaseForm field schema must be extracted to module formConfig like AXIRO parent tabs/fields files`,
+        )
+    }
 }
 
 if (failures.length) {

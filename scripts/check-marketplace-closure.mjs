@@ -3,6 +3,7 @@ const files = [
     'src/routes/adminRoutes.jsx',
     'src/config/adminMenu.jsx',
     'src/modules/marketplace-operations/pages/Index.jsx',
+    'src/modules/marketplace-operations/config/options.js',
 ]
 const text = files.map((f) => fs.readFileSync(f, 'utf8')).join('\n')
 const missing = [

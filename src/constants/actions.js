@@ -21,18 +21,12 @@ export const ACTIONS = {
     // Không được assign tiếp quyền assign
     ADD: 'add',
     ASSIGN: 'assign',
-    ASSIGN_ROLE: 'assign_role',
 
     // duyệt record
     APPROVE: 'approve',
 
     // chuyển đổi deal thành giao dịch
     CONVERT: 'convert',
-
-    // organization chart
-    MOVE: 'move',
-    CHANGE_MANAGER: 'change_manager',
-    MANAGE_ORGANIZATION: 'manage_organization',
 
     // Xuất dữ liệu
     EXPORT: 'export',

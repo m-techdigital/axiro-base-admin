@@ -1,28 +1,19 @@
 import { EyeOutlined } from '@ant-design/icons'
 import {
     BaseDrawer,
+    BaseFilter,
     BaseForm,
     BaseIconAction,
     BaseModal,
     BaseTable,
     BaseButton,
 } from '@/components/base'
-import {
-    Card,
-    Col,
-    Input,
-    InputNumber,
-    Row,
-    Select,
-    Space,
-    Statistic,
-    Tag,
-    message,
-} from 'antd'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Card, Col, Row, Space, Statistic, Tag, message } from 'antd'
+import { useCallback, useEffect, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
 import Money from '../../../components/base/Money'
 import service from '../service'
+import { walletAdjustDefaultValues, walletAdjustFields } from '../formConfig'
 
 const typeLabel = {
     deposit_confirmed: 'Nạp tiền đã xác nhận',
@@ -36,31 +27,35 @@ const typeLabel = {
     transaction_refund_debit: 'Giảm tiền đang giữ để hoàn',
     admin_adjustment: 'Điều chỉnh quản trị',
 }
+const filterFields = [
+    {
+        name: 'keyword',
+        placeholder: 'Tìm khách hàng',
+        type: 'search',
+        span: { xs: 24, md: 8 },
+    },
+]
+
 export default function WalletList() {
     const [rows, setRows] = useState([]),
         [loading, setLoading] = useState(true),
         [selected, setSelected] = useState(null),
         [ledger, setLedger] = useState(null),
         [drawer, setDrawer] = useState(false),
-        [keyword, setKeyword] = useState('')
-    const keywordRef = useRef(keyword)
-
-    useEffect(() => {
-        keywordRef.current = keyword
-    }, [keyword])
+        [filters, setFilters] = useState({ keyword: '' })
 
     const load = useCallback(async () => {
         setLoading(true)
         try {
             const r = await service.list({
-                keyword: keywordRef.current,
+                keyword: filters.keyword,
                 per_page: 100,
             })
             setRows(r.data?.data?.data || r.data?.data || [])
         } finally {
             setLoading(false)
         }
-    }, [])
+    }, [filters.keyword])
     useEffect(() => {
         load()
     }, [load])
@@ -136,11 +131,14 @@ export default function WalletList() {
                 title="Ví và dòng tiền khách hàng"
                 actions={
                     <Space>
-                        <Input.Search
-                            value={keyword}
-                            onChange={(e) => setKeyword(e.target.value)}
-                            onSearch={load}
-                            placeholder="Tìm khách hàng"
+                        <BaseFilter
+                            fields={filterFields}
+                            loading={loading}
+                            onReset={() => setFilters({ keyword: '' })}
+                            onSearch={(values) =>
+                                setFilters({ keyword: values.keyword || '' })
+                            }
+                            values={filters}
                         />
                         <BaseButton onClick={load}>Tải lại</BaseButton>
                     </Space>
@@ -271,52 +269,13 @@ function AdjustForm({ onSubmit }) {
     const [form] = BaseForm.useForm()
     return (
         <BaseForm
+            fields={walletAdjustFields}
             form={form}
-            layout="vertical"
+            initialValues={walletAdjustDefaultValues}
+            isCancel={false}
             onFinish={onSubmit}
-            initialValues={{ direction: 'credit', bucket: 'available' }}
-        >
-            <BaseForm.Item
-                name="direction"
-                label="Hướng điều chỉnh"
-                rules={[{ required: true }]}
-            >
-                <Select
-                    options={[
-                        { value: 'credit', label: 'Cộng' },
-                        { value: 'debit', label: 'Trừ' },
-                    ]}
-                />
-            </BaseForm.Item>
-            <BaseForm.Item
-                name="bucket"
-                label="Khoản số dư"
-                rules={[{ required: true }]}
-            >
-                <Select
-                    options={[
-                        { value: 'available', label: 'Khả dụng' },
-                        { value: 'held', label: 'Tạm giữ' },
-                    ]}
-                />
-            </BaseForm.Item>
-            <BaseForm.Item
-                name="amount"
-                label="Số tiền"
-                rules={[{ required: true }]}
-            >
-                <InputNumber min={1} style={{ width: '100%' }} />
-            </BaseForm.Item>
-            <BaseForm.Item
-                name="note"
-                label="Lý do"
-                rules={[{ required: true }]}
-            >
-                <Input.TextArea rows={3} />
-            </BaseForm.Item>
-            <BaseButton type="primary" htmlType="submit" block>
-                Xác nhận điều chỉnh
-            </BaseButton>
-        </BaseForm>
+            showFooter
+            submitText="Xác nhận điều chỉnh"
+        />
     )
 }

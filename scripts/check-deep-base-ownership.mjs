@@ -9,6 +9,17 @@ const required = [
     'src/components/base/BaseListView.jsx',
     'src/components/base/BaseModalForm/index.jsx',
 ]
+const readAdminFoundation = () =>
+    [
+        'src/styles/primitives/admin-foundation.scss',
+        ...fs
+            .readdirSync('src/styles/primitives/admin-foundation')
+            .filter((file) => file.endsWith('.scss'))
+            .sort()
+            .map((file) => `src/styles/primitives/admin-foundation/${file}`),
+    ]
+        .map((file) => fs.readFileSync(file, 'utf8'))
+        .join('\n')
 
 for (const file of required) {
     if (!fs.existsSync(file)) throw new Error(`Thiếu base owner: ${file}`)
@@ -29,10 +40,7 @@ if (
     throw new Error('BaseTable chưa sở hữu pagination/action column')
 }
 
-const foundationCss = fs.readFileSync(
-    'src/styles/primitives/admin-foundation.css',
-    'utf8',
-)
+const foundationCss = readAdminFoundation()
 const modalCss = fs.readFileSync(
     'src/styles/primitives/parent-base-modal.css',
     'utf8',
@@ -59,7 +67,7 @@ for (const token of ['.base-modal-form-footer', '.base-form-sections']) {
 }
 if (foundationCss.includes('.base-modal ')) {
     throw new Error(
-        'admin-foundation.css không được cạnh tranh modal CSS owner',
+        'admin-foundation.scss không được cạnh tranh modal CSS owner',
     )
 }
 

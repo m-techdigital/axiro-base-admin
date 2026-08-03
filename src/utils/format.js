@@ -105,15 +105,3 @@ export const formatPercent = (input, options = {}) => {
 
     return `${formatNumber(number, locale, { maximumFractionDigits })}%`
 }
-
-export const formatReportValue = (value, format, options = {}) => {
-    if (format === 'currency' || format === 'money') {
-        return formatCompactCurrency(value, options)
-    }
-
-    if (format === 'percent') {
-        return formatPercent(value, options)
-    }
-
-    return formatNumber(value, options.locale || 'vi-VN', options)
-}

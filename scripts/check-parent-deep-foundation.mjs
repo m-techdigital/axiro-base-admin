@@ -7,6 +7,11 @@ const required = [
     'src/utils/params.js',
     'src/utils/notification.js',
     'src/services/axios.js',
+    'src/components/base/BaseForm/formChange.js',
+    'src/components/base/BaseForm/formComputed.js',
+    'src/components/base/BaseForm/formErrors.js',
+    'src/components/base/BaseForm/formSubmit.js',
+    'src/components/base/BaseForm/formUtils.js',
 ]
 
 for (const file of required) {
@@ -41,6 +46,22 @@ for (const marker of [
 ]) {
     if (!filterSource.includes(marker)) {
         throw new Error(`useBaseFilters missing ${marker}`)
+    }
+}
+
+const baseFormSource = fs.readFileSync(
+    'src/components/base/BaseForm.jsx',
+    'utf8',
+)
+for (const marker of [
+    'mapLaravelErrorsToFields',
+    'buildSubmitPayload',
+    'useComputedFields',
+    'normalizeGroups',
+    'focusFirstError',
+]) {
+    if (!baseFormSource.includes(marker)) {
+        throw new Error(`BaseForm bounded foundation missing ${marker}`)
     }
 }
 

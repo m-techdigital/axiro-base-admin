@@ -63,12 +63,49 @@
         {
             "mini_path": "src/components/base/BaseFilter.jsx",
             "mode": "bounded_adapter",
-            "note": "Bounded adapter: giữ field schema đơn giản của Mini; không port relation/cascade/RBAC của cha."
+            "note": "Bounded adapter: giữ field schema đơn giản của Mini; relation fields now use parent relation option cache/cascade via RelationSelect/useRelationOptions; không port RBAC/domain filters của cha."
         },
         {
             "mini_path": "src/components/base/BaseForm.jsx",
             "mode": "bounded_adapter",
-            "note": "Bounded adapter trên Ant Form cho form thủ công hiện tại; chưa tuyên bố parity với dynamic form engine cha."
+            "parent_path": "src/components/base/BaseForm.jsx",
+            "note": "Bounded adapter theo lifecycle BaseForm cha: fields/tabs/sections, default/record merge, submit payload, 409/422 mapping, focus tab lỗi, computed/change helpers, relation config extraction, relation cache/cascade/hydrate; giữ children legacy cho form thủ công Mini và không port RBAC."
+        },
+        {
+            "mini_path": "src/components/base/BaseForm/formChange.js",
+            "parent_path": "src/components/base/BaseForm/formChange.js",
+            "mode": "bounded_adapter",
+            "note": "Giữ contract change handler/dependent reset và relation watch reset của cha."
+        },
+        {
+            "mini_path": "src/components/base/BaseForm/formComputed.js",
+            "parent_path": "src/components/base/BaseForm/formComputed.js",
+            "mode": "bounded_adapter",
+            "note": "Giữ computed field lifecycle của cha cho schema form Mini."
+        },
+        {
+            "mini_path": "src/components/base/BaseForm/formErrors.js",
+            "parent_path": "src/components/base/BaseForm/formErrors.js",
+            "mode": "bounded_adapter",
+            "note": "Giữ server-error summary contract của cha."
+        },
+        {
+            "mini_path": "src/components/base/BaseForm/formSubmit.js",
+            "parent_path": "src/components/base/BaseForm/formSubmit.js",
+            "mode": "bounded_adapter",
+            "note": "Giữ submit payload owner của cha; Mini không tính lại nghiệp vụ ngoài scope."
+        },
+        {
+            "mini_path": "src/components/base/BaseForm/formUtils.js",
+            "parent_path": "src/components/base/BaseForm/formUtils.js",
+            "mode": "bounded_adapter",
+            "note": "Giữ normalize/flatten/path helpers của cha cho schema form Mini."
+        },
+        {
+            "mini_path": "src/components/base/BaseFormModal.jsx",
+            "parent_path": "src/components/base/BaseFormModal.jsx",
+            "mode": "bounded_adapter",
+            "note": "Delegates schema rendering to BaseForm like AXIRO parent; Mini keeps modal prop compatibility and does not self-render form controls."
         },
         {
             "mini_path": "src/components/base/BaseTable.jsx",
@@ -105,6 +142,37 @@
             "mode": "mechanical_conversion",
             "sha256": "1fe35fe876e59771ab9b571ebed2eaaf866391b656eca2ce982ffa223a947e6e",
             "note": "Declaration-preserving SCSS-to-CSS conversion; no Mini visual redesign."
+        },
+        {
+            "mini_path": "src/components/base/RelationSelect.jsx",
+            "parent_path": "src/components/base/RelationSelect.jsx",
+            "mode": "bounded_adapter",
+            "sha256": "4e2bf0481dd0bb9ddbf8696e2d663371ce51c17e528cfd89e62d798884f9bb1c",
+            "note": "Source-derived from AXIRO parent; keeps dynamic load/search/open contract with Mini prop pass-through compatibility."
+        },
+        {
+            "mini_path": "src/hooks/useRelationOptions.jsx",
+            "parent_path": "src/hooks/useRelationOptions.jsx",
+            "mode": "bounded_adapter",
+            "note": "Parent relation cache/cascade/hydrate owner with a legacy Mini service/list compatibility path while forms are converted to relation source configs."
+        },
+        {
+            "mini_path": "src/hooks/useModule.js",
+            "parent_path": "src/hooks/useModule.js",
+            "mode": "bounded_adapter",
+            "note": "Parent module action resolver pattern backed only by the Mini module registry."
+        },
+        {
+            "mini_path": "src/modules/registry.js",
+            "mode": "mini_bounded",
+            "note": "Mini-only service registry for relation source resolution; deliberately excludes company, department, HR, project and RBAC modules."
+        },
+        {
+            "mini_path": "src/utils/extractRelationConfigs.js",
+            "parent_path": "src/utils/extractRelationConfigs.js",
+            "mode": "bounded_adapter",
+            "sha256": "dd456eebc17f80bdf24547fe0493311435a5ea52dd0d32029c754980dc3ea0bf",
+            "note": "Formatted source-derived relation config extractor from AXIRO parent."
         }
     ],
     "excluded": [
@@ -246,28 +314,28 @@
         },
         {
             "parent_path": "src/components/base/BaseForm/formChange.js",
-            "mode": "excluded",
-            "reason": "No current Mini consumer; port only when a real second consumer appears."
+            "mode": "bounded_adapter",
+            "reason": "Mini BaseForm now consumes change handler owner without parent relation cascade."
         },
         {
             "parent_path": "src/components/base/BaseForm/formComputed.js",
-            "mode": "excluded",
-            "reason": "No current Mini consumer; port only when a real second consumer appears."
+            "mode": "bounded_adapter",
+            "reason": "Mini BaseForm now consumes computed field owner for schema parity."
         },
         {
             "parent_path": "src/components/base/BaseForm/formErrors.js",
-            "mode": "excluded",
-            "reason": "No current Mini consumer; port only when a real second consumer appears."
+            "mode": "bounded_adapter",
+            "reason": "Mini BaseForm now consumes server error summary owner."
         },
         {
             "parent_path": "src/components/base/BaseForm/formSubmit.js",
-            "mode": "excluded",
-            "reason": "No current Mini consumer; port only when a real second consumer appears."
+            "mode": "bounded_adapter",
+            "reason": "Mini BaseForm now consumes submit payload owner."
         },
         {
             "parent_path": "src/components/base/BaseForm/formUtils.js",
-            "mode": "excluded",
-            "reason": "No current Mini consumer; port only when a real second consumer appears."
+            "mode": "bounded_adapter",
+            "reason": "Mini BaseForm now consumes group/path utility owner."
         },
         {
             "parent_path": "src/components/base/BaseForm.jsx",
@@ -491,8 +559,8 @@
         },
         {
             "parent_path": "src/components/base/RelationSelect.jsx",
-            "mode": "excluded",
-            "reason": "Domain/capability not owned by Mini."
+            "mode": "bounded_adapter",
+            "reason": "Mini now uses the parent relation select contract for BaseForm/BaseFilter relation fields without importing unrelated parent relation domains."
         },
         {
             "parent_path": "src/components/base/SavedViewsBar.jsx",

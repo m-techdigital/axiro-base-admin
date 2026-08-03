@@ -1,10 +1,11 @@
-import { BaseForm, BaseButton } from '@/components/base'
-import { Card, Input, Typography, message } from 'antd'
+import { BaseForm } from '@/components/base'
+import { Card, Typography, message } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import service from '../service'
 import { setAuth } from '../../../utils/auth'
 import { useAuth } from '../../../hooks/useAuth'
+import { loginDefaultValues, loginFormFields } from '../formConfig'
 export default function Login() {
     const [loading, setLoading] = useState(false),
         n = useNavigate(),
@@ -35,33 +36,14 @@ export default function Login() {
                     <b>Tài khoản mẫu:</b> admin / change-me
                 </Typography.Paragraph>
                 <BaseForm
-                    layout="vertical"
+                    fields={loginFormFields}
+                    initialValues={loginDefaultValues}
+                    isCancel={false}
+                    loading={loading}
                     onFinish={submit}
-                    initialValues={{ username: 'admin' }}
-                >
-                    <BaseForm.Item
-                        name="username"
-                        label="Tên đăng nhập"
-                        rules={[{ required: true }]}
-                    >
-                        <Input />
-                    </BaseForm.Item>
-                    <BaseForm.Item
-                        name="password"
-                        label="Mật khẩu"
-                        rules={[{ required: true }]}
-                    >
-                        <Input.Password />
-                    </BaseForm.Item>
-                    <BaseButton
-                        block
-                        type="primary"
-                        htmlType="submit"
-                        loading={loading}
-                    >
-                        Đăng nhập
-                    </BaseButton>
-                </BaseForm>
+                    showFooter
+                    submitText="Đăng nhập"
+                />
             </Card>
         </div>
     )

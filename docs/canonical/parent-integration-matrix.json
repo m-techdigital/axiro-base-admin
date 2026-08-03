@@ -1,94 +1,119 @@
 {
-  "version": "2026-08-02",
-  "parent_sources": {
-    "admin": "mylands-admin-develop-data-quality-20260802-190905.zip",
-    "api": "mylands-api-develop-data-quality-20260802-190905.zip"
-  },
-  "product": {
-    "shared": [
-      "product_type",
-      "offer_modes:sell,rent",
-      "approval_status",
-      "is_published",
-      "availability_status",
-      "selection_context",
-      "hold_history_version"
+    "version": "2026-08-02",
+    "parent_sources": {
+        "admin": "mylands-admin-develop-data-quality-20260802-190905.zip",
+        "api": "mylands-api-develop-data-quality-20260802-190905.zip"
+    },
+    "product": {
+        "shared": [
+            "product_type",
+            "offer_modes:sell,rent",
+            "approval_status",
+            "is_published",
+            "availability_status",
+            "selection_context",
+            "hold_history_version"
+        ],
+        "mini_specific": [
+            "game_code",
+            "server_name",
+            "level",
+            "installment_enabled",
+            "installment_terms",
+            "rental_rates",
+            "customer_owner"
+        ],
+        "excluded": [
+            "company_id",
+            "project_id",
+            "assigned_to",
+            "crm_reservation",
+            "accounting",
+            "reports",
+            "hr_payroll"
+        ]
+    },
+    "classification": [
+        "exact_source",
+        "mechanical_conversion",
+        "bounded_adapter",
+        "mini_bounded",
+        "deferred",
+        "excluded"
     ],
-    "mini_specific": [
-      "game_code",
-      "server_name",
-      "level",
-      "installment_enabled",
-      "installment_terms",
-      "rental_rates",
-      "customer_owner"
-    ],
-    "excluded": [
-      "company_id",
-      "project_id",
-      "assigned_to",
-      "crm_reservation",
-      "accounting",
-      "reports",
-      "hr_payroll"
-    ]
-  },
-  "classification": [
-    "exact_source",
-    "mechanical_conversion",
-    "bounded_adapter",
-    "mini_bounded",
-    "deferred",
-    "excluded"
-  ],
-  "required_checks": {
-    "admin": [
-      "format",
-      "source-closure",
-      "check-all",
-      "lint",
-      "build"
-    ],
-    "api": [
-      "pint",
-      "php-l",
-      "migrate-fresh-seed",
-      "targeted-tests",
-      "integrity",
-      "full-tests"
-    ],
-    "mbn": [
-      "format",
-      "base-first",
-      "api-contract",
-      "check-all",
-      "lint",
-      "build"
-    ]
-  },
-  "transaction_document_dispute": {
-    "classification": "bounded_adapter",
-    "parent_patterns": [
-      "enum_options",
-      "form_request_mutation_boundary",
-      "row_lock_lifecycle",
-      "notification_service",
-      "history_event"
-    ],
-    "mini_owners": [
-      "DocumentType",
-      "DisputeOutcome",
-      "MarketplaceOptionsController",
-      "TransactionLifecycleService"
-    ],
-    "excluded": [
-      "approval_center",
-      "document_compliance",
-      "accounting_sync",
-      "generic_sla_engine",
-      "fraud_engine",
-      "company_scope",
-      "rbac"
-    ]
-  }
+    "required_checks": {
+        "admin": ["format", "source-closure", "check-all", "lint", "build"],
+        "api": [
+            "pint",
+            "php-l",
+            "migrate-fresh-seed",
+            "targeted-tests",
+            "integrity",
+            "full-tests"
+        ],
+        "mbn": [
+            "format",
+            "base-first",
+            "api-contract",
+            "check-all",
+            "lint",
+            "build"
+        ]
+    },
+    "transaction_document_dispute": {
+        "classification": "bounded_adapter",
+        "parent_patterns": [
+            "enum_options",
+            "form_request_mutation_boundary",
+            "row_lock_lifecycle",
+            "notification_service",
+            "history_event"
+        ],
+        "mini_owners": [
+            "DocumentType",
+            "DisputeOutcome",
+            "MarketplaceOptionsController",
+            "TransactionLifecycleService"
+        ],
+        "excluded": [
+            "approval_center",
+            "document_compliance",
+            "accounting_sync",
+            "generic_sla_engine",
+            "fraud_engine",
+            "company_scope",
+            "rbac"
+        ]
+    },
+    "admin_base_form": {
+        "classification": "bounded_adapter",
+        "parent_patterns": [
+            "BaseForm fields/tabs/sections owner",
+            "formChange dependent field lifecycle",
+            "formComputed computed field lifecycle",
+            "formErrors server error summary",
+            "formSubmit payload builder",
+            "Laravel 409/422 field mapping",
+            "relation config extraction",
+            "relation option cache/cascade/hydrate",
+            "module action resolver for relation sources"
+        ],
+        "mini_owners": [
+            "src/components/base/BaseForm.jsx",
+            "src/components/base/BaseForm/formChange.js",
+            "src/components/base/BaseForm/formComputed.js",
+            "src/components/base/BaseForm/formErrors.js",
+            "src/components/base/BaseForm/formSubmit.js",
+            "src/components/base/BaseForm/formUtils.js",
+            "src/components/base/RelationSelect.jsx",
+            "src/hooks/useRelationOptions.jsx",
+            "src/hooks/useModule.js",
+            "src/modules/registry.js",
+            "src/utils/extractRelationConfigs.js"
+        ],
+        "excluded": [
+            "parent RBAC permission gate",
+            "company/project scope"
+        ]
+    }
 }

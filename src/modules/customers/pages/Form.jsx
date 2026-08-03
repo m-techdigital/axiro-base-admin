@@ -1,105 +1,57 @@
-import { CUSTOMER_STATUS_OPTIONS } from '@/constants/options'
-import { BaseForm, BaseFormFooter, BaseFormPage } from '@/components/base'
-import { Input, Select, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { BaseForm, BaseFormPage } from '@/components/base'
+import { message } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { createCustomerFormFields, customerDefaultValues } from '../formConfig'
 import service from '../service'
+
 export default function CustomerForm() {
-    const { id } = useParams(),
-        n = useNavigate(),
-        [f] = BaseForm.useForm(),
-        [loading, setLoading] = useState(false)
+    const { id } = useParams()
+    const navigate = useNavigate()
+    const [form] = BaseForm.useForm()
+    const [loading, setLoading] = useState(false)
+    const [record, setRecord] = useState(null)
+    const fields = useMemo(
+        () => createCustomerFormFields({ isEdit: Boolean(id) }),
+        [id],
+    )
+
     useEffect(() => {
-        if (id) service.get(id).then((r) => f.setFieldsValue(r.data))
-    }, [id, f])
-    const save = async (v) => {
+        if (!id) {
+            setRecord(null)
+            return
+        }
+
+        service.get(id).then((response) => setRecord(response.data))
+    }, [id])
+
+    const save = async (values) => {
         setLoading(true)
         try {
-            id ? await service.update(id, v) : await service.create(v)
+            await (id ? service.update(id, values) : service.create(values))
             message.success('Đã lưu')
-            n('/customers')
-        } catch (e) {
-            if (e.errors)
-                f.setFields(
-                    Object.entries(e.errors).map(([name, errors]) => ({
-                        name,
-                        errors,
-                    })),
-                )
-            message.error(e.message)
+            navigate('/customers')
         } finally {
             setLoading(false)
         }
     }
+
     return (
         <BaseFormPage
             description="Hồ sơ khách hàng trong phạm vi một admin quản lý nhiều khách hàng."
             title={id ? 'Cập nhật khách hàng' : 'Tạo khách hàng'}
         >
             <BaseForm
-                form={f}
-                layout="vertical"
+                fields={fields}
+                form={form}
+                initialValues={customerDefaultValues}
+                loading={loading}
+                onCancel={() => navigate('/customers')}
                 onFinish={save}
-                initialValues={{ status: 'active' }}
-            >
-                <div className="base-form-grid">
-                    <BaseForm.Item
-                        className="span-6"
-                        name="username"
-                        label="Tên đăng nhập"
-                        rules={[{ required: true }]}
-                    >
-                        <Input />
-                    </BaseForm.Item>
-                    <BaseForm.Item
-                        className="span-6"
-                        name="name"
-                        label="Tên khách hàng"
-                        rules={[{ required: true }]}
-                    >
-                        <Input />
-                    </BaseForm.Item>
-                    <BaseForm.Item
-                        className="span-6"
-                        name="email"
-                        label="Email"
-                    >
-                        <Input />
-                    </BaseForm.Item>
-                    <BaseForm.Item
-                        className="span-6"
-                        name="phone"
-                        label="Điện thoại"
-                    >
-                        <Input />
-                    </BaseForm.Item>
-                    <BaseForm.Item
-                        className="span-8"
-                        name="password"
-                        label={
-                            id
-                                ? 'Mật khẩu mới (để trống nếu không đổi)'
-                                : 'Mật khẩu'
-                        }
-                        rules={id ? [] : [{ required: true }, { min: 8 }]}
-                    >
-                        <Input.Password />
-                    </BaseForm.Item>
-                    <BaseForm.Item
-                        className="span-4"
-                        name="status"
-                        label="Trạng thái"
-                    >
-                        <Select options={CUSTOMER_STATUS_OPTIONS} />
-                    </BaseForm.Item>
-                </div>
-                <BaseFormFooter
-                    cancelText="Hủy"
-                    loading={loading}
-                    onCancel={() => n('/customers')}
-                    submitText="Lưu khách hàng"
-                />
-            </BaseForm>
+                record={record}
+                showFooter
+                submitText="Lưu khách hàng"
+            />
         </BaseFormPage>
     )
 }

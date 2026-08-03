@@ -18,8 +18,8 @@
         "check:base-ownership": "node scripts/check-base-ownership.mjs",
         "check:parent-parallel-structure": "node scripts/check-parent-parallel-structure.mjs",
         "check:parent-ui-parity": "node scripts/check-parent-ui-parity.mjs",
-        "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"scripts/*.mjs\" \"*.{js,json}\"",
-        "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"scripts/*.mjs\" \"*.{js,json}\"",
+        "format": "prettier --write \"src/**/*.{js,jsx,css,scss}\" \"scripts/*.mjs\" \"*.{js,json}\"",
+        "format:check": "prettier --check \"src/**/*.{js,jsx,css,scss}\" \"scripts/*.mjs\" \"*.{js,json}\"",
         "check:parent-deep-foundation": "node scripts/check-parent-deep-foundation.mjs",
         "check:base-interaction-parity": "node scripts/check-base-interaction-parity.mjs",
         "check:deep-base-ownership": "node scripts/check-deep-base-ownership.mjs",
@@ -49,10 +49,10 @@
         "@ant-design/icons": "^6.2.2",
         "antd": "^6.3.7",
         "axios": "^1.16.0",
+        "dayjs": "^1.11.20",
         "react": "^19.2.6",
         "react-dom": "^19.2.6",
-        "react-router-dom": "^7.15.0",
-        "dayjs": "^1.11.20"
+        "react-router-dom": "^7.15.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
@@ -63,7 +63,8 @@
         "eslint-plugin-react-hooks": "^7.1.1",
         "eslint-plugin-react-refresh": "^0.5.2",
         "globals": "^17.6.0",
-        "vite": "^8.0.12",
-        "prettier": "^3.8.3"
+        "prettier": "^3.8.3",
+        "sass-embedded": "^1.100.0",
+        "vite": "^8.0.12"
     }
 }

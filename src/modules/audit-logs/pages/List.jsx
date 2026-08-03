@@ -3,23 +3,12 @@ import { EyeOutlined, ReloadOutlined } from '@ant-design/icons'
 import {
     BaseButton,
     BaseDrawer,
+    BaseFilter,
     BaseIconAction,
     BaseTable,
 } from '@/components/base'
 import { statusLabel, valueLabel } from '@/contracts/marketplaceLabels'
-import {
-    Button,
-    Card,
-    Col,
-    Descriptions,
-    Input,
-    Row,
-    Select,
-    Space,
-    Statistic,
-    Tag,
-    Typography,
-} from 'antd'
+import { Card, Col, Descriptions, Row, Statistic, Tag, Typography } from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
 import service from '../service'
@@ -45,6 +34,31 @@ const riskColors = {
     critical: 'magenta',
 }
 const pretty = (value) => (value ? JSON.stringify(value, null, 2) : '—')
+const filterFields = [
+    {
+        name: 'keyword',
+        placeholder: 'Tìm nội dung, đường dẫn',
+        type: 'search',
+        span: { xs: 24, md: 8 },
+    },
+    {
+        name: 'audit_type',
+        placeholder: 'Nhóm nhật ký',
+        type: 'select',
+        options: Object.entries(typeLabels).map(([value, label]) => ({
+            value,
+            label,
+        })),
+        span: { xs: 12, md: 6 },
+    },
+    {
+        name: 'risk_level',
+        placeholder: 'Mức độ',
+        type: 'select',
+        options: AUDIT_RISK_OPTIONS,
+        span: { xs: 12, md: 4 },
+    },
+]
 
 export default function AuditLogList() {
     const [rows, setRows] = useState([])
@@ -194,36 +208,19 @@ export default function AuditLogList() {
                 </Col>
             </Row>
             <Card>
-                <Space wrap style={{ marginBottom: 16 }}>
-                    <Input.Search
-                        allowClear
-                        placeholder="Tìm nội dung, đường dẫn"
-                        style={{ width: 280 }}
-                        onSearch={(keyword) =>
-                            setParams((p) => ({ ...p, page: 1, keyword }))
-                        }
-                    />
-                    <Select
-                        allowClear
-                        placeholder="Nhóm nhật ký"
-                        style={{ width: 190 }}
-                        options={Object.entries(typeLabels).map(
-                            ([value, label]) => ({ value, label }),
-                        )}
-                        onChange={(audit_type) =>
-                            setParams((p) => ({ ...p, page: 1, audit_type }))
-                        }
-                    />
-                    <Select
-                        allowClear
-                        placeholder="Mức độ"
-                        style={{ width: 150 }}
-                        options={AUDIT_RISK_OPTIONS}
-                        onChange={(risk_level) =>
-                            setParams((p) => ({ ...p, page: 1, risk_level }))
-                        }
-                    />
-                </Space>
+                <BaseFilter
+                    fields={filterFields}
+                    loading={loading}
+                    onReset={() => setParams({ page: 1, per_page: 30 })}
+                    onSearch={(values) =>
+                        setParams((current) => ({
+                            ...current,
+                            ...values,
+                            page: 1,
+                        }))
+                    }
+                    values={params}
+                />
                 <BaseTable
                     rowKey="id"
                     loading={loading}

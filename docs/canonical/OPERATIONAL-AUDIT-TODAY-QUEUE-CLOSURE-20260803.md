@@ -51,4 +51,6 @@ Không port RBAC, company/project/team, Accounting, Reports, generic workflow/SL
 
 - `npm run check:maintainability` blocks V55/V66-style temporary file names and protects the transaction-detail split owners.
 - The guard blocks company/department runtime scope keys such as `change_department`, `company_id` and `department_id` from returning to `src`.
+- Parent-only organization actions, report formatter branches and report CSS hooks were removed from the Mini admin base.
+- The maintainability guard also blocks HR/employee/attendance/recruitment/resignation keys from returning to `src`.
 - `check:all` now runs this guard after runtime closure so oversized route pages and missing hook/config/modal owners are caught before merge.

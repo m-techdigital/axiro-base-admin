@@ -2,37 +2,19 @@ import {
     BaseButton,
     BaseConfirmActionButton,
     BaseForm,
-    BaseFormFooter,
     BaseStatusSummaryBar,
     BaseTable,
     BaseTabs,
 } from '@/components/base'
 import { CheckCircleOutlined, ReloadOutlined } from '@ant-design/icons'
-import {
-    Card,
-    Col,
-    Image,
-    Input,
-    Row,
-    Select,
-    Space,
-    Tag,
-    Typography,
-    message,
-} from 'antd'
+import { Card, Col, Image, Row, Space, Tag, Typography, message } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
+import { paymentConfigFields, QR_TEMPLATE_OPTIONS } from '../formConfig'
 import service from '../service'
 
 const { Text } = Typography
-
-const QR_TEMPLATE_OPTIONS = [
-    { value: 'compact2', label: 'Gọn có thông tin' },
-    { value: 'compact', label: 'Gọn' },
-    { value: 'qr_only', label: 'Chỉ mã QR' },
-    { value: 'print', label: 'Bản in' },
-]
 
 export default function PaymentSettings() {
     const [form] = BaseForm.useForm()
@@ -170,71 +152,16 @@ export default function PaymentSettings() {
         <Row gutter={[16, 16]}>
             <Col xs={24} xl={15}>
                 <Card loading={loading} title="Thông tin nhận chuyển khoản">
-                    <BaseForm form={form} layout="vertical" onFinish={save}>
-                        <div className="base-form-grid">
-                            <BaseForm.Item
-                                className="span-4"
-                                name="bank_id"
-                                label="Mã ngân hàng"
-                                rules={[{ required: true }]}
-                            >
-                                <Input placeholder="Ví dụ: MB" maxLength={32} />
-                            </BaseForm.Item>
-                            <BaseForm.Item
-                                className="span-8"
-                                name="bank_name"
-                                label="Tên ngân hàng"
-                                rules={[{ required: true }]}
-                            >
-                                <Input maxLength={120} />
-                            </BaseForm.Item>
-                            <BaseForm.Item
-                                className="span-6"
-                                name="account_no"
-                                label="Số tài khoản"
-                                rules={[{ required: true }]}
-                            >
-                                <Input maxLength={80} />
-                            </BaseForm.Item>
-                            <BaseForm.Item
-                                className="span-6"
-                                name="account_name"
-                                label="Tên chủ tài khoản"
-                                rules={[{ required: true }]}
-                            >
-                                <Input maxLength={180} />
-                            </BaseForm.Item>
-                            <BaseForm.Item
-                                className="span-6"
-                                name="qr_template"
-                                label="Mẫu mã QR"
-                                rules={[{ required: true }]}
-                            >
-                                <Select options={QR_TEMPLATE_OPTIONS} />
-                            </BaseForm.Item>
-                            <BaseForm.Item
-                                className="span-6"
-                                name="transfer_prefix"
-                                label="Tiền tố nội dung chuyển khoản"
-                                extra="Chỉ dùng chữ in hoa, số, dấu gạch ngang hoặc gạch dưới."
-                                rules={[
-                                    { required: true },
-                                    {
-                                        pattern: /^[A-Z0-9_-]+$/,
-                                        message: 'Tiền tố chưa đúng định dạng.',
-                                    },
-                                ]}
-                            >
-                                <Input placeholder="MBN" maxLength={32} />
-                            </BaseForm.Item>
-                        </div>
-                        <BaseFormFooter
-                            loading={saving}
-                            submitText="Lưu cấu hình"
-                            cancelText="Xem trước mã QR"
-                            onCancel={showPreview}
-                        />
-                    </BaseForm>
+                    <BaseForm
+                        cancelText="Xem trước mã QR"
+                        fields={paymentConfigFields}
+                        form={form}
+                        loading={saving}
+                        onCancel={showPreview}
+                        onFinish={save}
+                        showFooter
+                        submitText="Lưu cấu hình"
+                    />
                 </Card>
             </Col>
             <Col xs={24} xl={9}>

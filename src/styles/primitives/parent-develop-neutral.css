@@ -208,14 +208,12 @@
     filter: drop-shadow(0 20px 36px rgba(15, 45, 90, 0.18));
 }
 
-.base-widget-grid__item > .ant-card,
-.base-widget-grid__item > .report-card {
+.base-widget-grid__item > .ant-card {
     height: 100%;
     overflow: auto;
 }
 
-.base-widget-grid__item .ant-card-body,
-.base-widget-grid__item .report-card {
+.base-widget-grid__item .ant-card-body {
     min-height: 0;
     max-height: 100%;
 }

@@ -13,6 +13,19 @@ const manifest = JSON.parse(
 const failures = []
 const read = (relativePath) =>
     fs.readFileSync(path.join(root, relativePath), 'utf8')
+const readAdminFoundation = () =>
+    [
+        'src/styles/primitives/admin-foundation.scss',
+        ...fs
+            .readdirSync(
+                path.join(root, 'src/styles/primitives/admin-foundation'),
+            )
+            .filter((file) => file.endsWith('.scss'))
+            .sort()
+            .map((file) => `src/styles/primitives/admin-foundation/${file}`),
+    ]
+        .map(read)
+        .join('\n')
 const hash = (relativePath) =>
     crypto
         .createHash('sha256')
@@ -65,11 +78,11 @@ if (
     failures.push('usePageHeaderActions chưa giữ lifecycle/context nguồn cha')
 }
 
-const foundationCss = read('src/styles/primitives/admin-foundation.css')
+const foundationCss = readAdminFoundation()
 for (const owner of ['.base-modal ', '.base-modal\n', '.base-form-footer {']) {
     if (foundationCss.includes(owner)) {
         failures.push(
-            `admin-foundation.css còn cạnh tranh owner ${owner.trim()}`,
+            `admin-foundation.scss còn cạnh tranh owner ${owner.trim()}`,
         )
     }
 }

@@ -70,9 +70,13 @@ if (
 for (const file of tracked.filter((entry) => entry.startsWith('src/'))) {
     if (!/\.(js|jsx|ts|tsx|json)$/.test(file)) continue
     const source = fs.readFileSync(file, 'utf8')
-    if (/\b(change_department|company_id|department_id)\b/i.test(source)) {
+    if (
+        /\b(change_department|assign_role|manage_organization|change_manager|company_id|department_id|payroll|accounting|reports|crm|reservation|opportunity|inventory|employee|employees|attendance|payslip|salary|recruitment|resignation|onboarding|offboarding)\b/i.test(
+            source,
+        )
+    ) {
         failures.push(
-            `${file}: Mini admin không được giữ company/department runtime scope.`,
+            `${file}: Mini admin không được giữ parent-only runtime scope.`,
         )
     }
 }

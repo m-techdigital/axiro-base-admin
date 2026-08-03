@@ -15,7 +15,7 @@ Các owner mới hoặc được chuẩn hóa:
 - `BaseListView`: tách filter surface và data surface thống nhất.
 - `BaseTable`: luôn sở hữu horizontal scroll và empty state.
 
-Bốn danh sách lõi `customers`, `products`, `contracts`, `transactions` đã bỏ `Input.Search`, `Card`, `Popconfirm` tự dựng và chuyển sang base owner.
+Các danh sách lõi `customers`, `products`, `transactions` và các màn hình vận hành marketplace liên quan đã bỏ `Input.Search`, `Card`, `Popconfirm` tự dựng và chuyển sang base owner. Mini không còn module CRUD `contracts`; tài liệu giao dịch được xử lý trong ngữ cảnh transaction/document.
 
 ## CSS foundation
 
@@ -25,7 +25,7 @@ Bốn danh sách lõi `customers`, `products`, `contracts`, `transactions` đã 
 - `styles/tokens/layout.css`
 - `styles/primitives/responsive.css`
 
-`admin-foundation.css` bổ sung contract cho filter grid, action group, list surface, table density và mobile stacking.
+`admin-foundation.scss` gom contract cho filter grid, action group, list surface, table density và mobile stacking; phần triển khai được tách theo owner trong `styles/primitives/admin-foundation/`.
 
 ## API foundation
 
@@ -34,7 +34,7 @@ Bốn danh sách lõi `customers`, `products`, `contracts`, `transactions` đã 
 - `ListQueryRequest`: validate keyword, status, listing type, pagination và sorting.
 - `AppliesListQuery`: một pipeline dùng chung cho keyword, exact filter và sort allowlist.
 
-Các controller lõi Product, Customer, Contract, Transaction và Listing đã dùng chung pipeline này.
+Các controller lõi Product, Customer và Transaction dùng chung pipeline này ở phạm vi Mini. Contract/Listing CRUD độc lập không thuộc phạm vi hiện tại.
 
 ## Formatting
 

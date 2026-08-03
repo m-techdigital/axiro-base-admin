@@ -29,3 +29,4 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 - `NEXT-BACKLOG.md`: backlog tiếp theo để khép vòng vận hành mà không phình module.
 - `NOTIFICATION-PAYOUT-JOURNEY-CLOSURE-20260803.md`
 - `OPERATIONAL-AUDIT-TODAY-QUEUE-CLOSURE-20260803.md`
+- [Large file domain ownership closure](./LARGE_FILE_DOMAIN_OWNERSHIP_20260803.md)

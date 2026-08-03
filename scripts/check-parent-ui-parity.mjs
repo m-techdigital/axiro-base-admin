@@ -3,6 +3,19 @@ import path from 'node:path'
 import process from 'node:process'
 
 const root = process.cwd()
+const readAdminFoundation = () =>
+    [
+        'src/styles/primitives/admin-foundation.scss',
+        ...fs
+            .readdirSync(
+                path.join(root, 'src/styles/primitives/admin-foundation'),
+            )
+            .filter((file) => file.endsWith('.scss'))
+            .sort()
+            .map((file) => `src/styles/primitives/admin-foundation/${file}`),
+    ]
+        .map((file) => fs.readFileSync(path.join(root, file), 'utf8'))
+        .join('\n')
 const requiredFiles = [
     'src/components/base/BaseFilter.jsx',
     'src/components/base/BaseActionGroup.jsx',
@@ -41,10 +54,7 @@ for (const file of coreLists) {
     }
 }
 
-const css = fs.readFileSync(
-    path.join(root, 'src/styles/primitives/admin-foundation.css'),
-    'utf8',
-)
+const css = readAdminFoundation()
 for (const selector of [
     '.base-filter-row',
     '.base-filter-actions',

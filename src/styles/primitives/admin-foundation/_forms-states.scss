@@ -1,0 +1,97 @@
+.base-form .ant-form-item {
+    margin-bottom: 18px;
+}
+
+.base-button {
+    border-radius: 8px;
+}
+
+.base-async-state {
+    display: grid;
+    min-height: 180px;
+    place-items: center;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.center {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+}
+
+.money {
+    font-variant-numeric: tabular-nums;
+}
+
+.login {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    background:
+        radial-gradient(
+            circle at 20% 0%,
+            rgba(28, 140, 255, 0.28),
+            transparent 32%
+        ),
+        linear-gradient(180deg, #03183f 0%, #03122f 54%, #061b45 100%);
+}
+
+.login-card {
+    width: min(400px, calc(100vw - 32px));
+}
+
+.form-card {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.document-preview {
+    max-height: 72vh;
+    overflow: auto;
+}
+.base-form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0 16px;
+}
+
+.base-form-grid > .span-12 {
+    grid-column: span 12;
+}
+.base-form-grid > .span-8 {
+    grid-column: span 8;
+}
+.base-form-grid > .span-6 {
+    grid-column: span 6;
+}
+.base-form-grid > .span-4 {
+    grid-column: span 4;
+}
+.base-form-grid > .span-3 {
+    grid-column: span 3;
+}
+
+@media (max-width: 991px) {
+    .base-form-grid > * {
+        grid-column: span 6 !important;
+    }
+}
+
+@media (max-width: 575px) {
+    .base-form-grid > * {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+.admin-menu-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+}

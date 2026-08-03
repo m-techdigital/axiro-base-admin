@@ -1,6 +1,17 @@
 import fs from 'node:fs'
 
 const read = (file) => fs.readFileSync(file, 'utf8')
+const readAdminFoundation = () =>
+    [
+        'src/styles/primitives/admin-foundation.scss',
+        ...fs
+            .readdirSync('src/styles/primitives/admin-foundation')
+            .filter((file) => file.endsWith('.scss'))
+            .sort()
+            .map((file) => `src/styles/primitives/admin-foundation/${file}`),
+    ]
+        .map(read)
+        .join('\n')
 const fail = (message) => {
     console.error(message)
     process.exit(1)
@@ -12,7 +23,7 @@ const filter = read('src/components/base/BaseFilter.jsx')
 const table = read('src/components/base/BaseTable.jsx')
 const layout = read('src/layouts/AdminLayout.jsx')
 const header = read('src/layouts/components/AdminHeader.jsx')
-const css = read('src/styles/primitives/admin-foundation.css')
+const css = readAdminFoundation()
 const parentActionRenderer = read('src/utils/renderActionsColumn.jsx')
 
 if (css.includes('.base-action-group__item + .base-action-group__item')) {

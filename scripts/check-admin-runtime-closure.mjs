@@ -45,7 +45,7 @@ const requiredPatterns = new Map([
     ],
     [
         'src/modules/wallets/pages/List.jsx',
-        ['useCallback', 'keywordRef', '[load]'],
+        ['useCallback', 'BaseFilter', 'filters.keyword', '[load]'],
     ],
 ])
 

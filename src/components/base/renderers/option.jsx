@@ -30,9 +30,7 @@ export const renderOption = (options, value, config = {}) => {
             )
         }
 
-        // =========================
-        // NEW: TEXT MODE (SAFE CRM STYLE)
-        // =========================
+        // Text mode keeps option rendering lightweight for read-only fields.
         if (mode === 'text') {
             return <span>{opt.label}</span>
         }

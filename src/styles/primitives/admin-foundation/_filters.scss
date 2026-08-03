@@ -1,0 +1,172 @@
+.base-filter {
+    width: 100%;
+}
+
+.base-filter-row {
+    align-items: flex-start;
+}
+
+.base-filter-field.ant-form-item {
+    margin-bottom: 0;
+}
+
+.base-filter
+    :where(
+        .ant-input,
+        .ant-input-affix-wrapper,
+        .ant-picker,
+        .ant-select-selector
+    ) {
+    min-height: var(--app-control-height) !important;
+    height: var(--app-control-height) !important;
+    border-radius: 8px !important;
+}
+
+.base-filter
+    :where(
+        .ant-input,
+        .ant-input-affix-wrapper,
+        .ant-picker,
+        .ant-select-selector,
+        .ant-btn
+    ) {
+    font-size: 14px;
+    line-height: calc(var(--app-control-height) - 2px);
+}
+
+.base-filter .ant-input,
+.base-filter .ant-input-affix-wrapper,
+.base-filter .ant-picker {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.base-filter .ant-input-affix-wrapper,
+.base-filter .ant-picker,
+.base-filter .ant-select-selector {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.base-filter .ant-input-affix-wrapper > input.ant-input,
+.base-filter .ant-picker-input > input {
+    height: calc(var(--app-control-height) - 2px) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: calc(var(--app-control-height) - 2px) !important;
+}
+
+.base-filter .ant-input-prefix,
+.base-filter .ant-input-suffix,
+.base-filter .ant-picker-prefix,
+.base-filter .ant-picker-suffix,
+.base-filter .ant-picker-clear,
+.base-filter .ant-picker-separator,
+.base-filter .ant-select-arrow,
+.base-filter .ant-select-clear {
+    display: inline-flex;
+    align-items: center;
+    min-height: 0;
+    line-height: 1;
+}
+
+.base-filter .ant-select,
+.base-filter .ant-select-single,
+.base-filter .ant-select-multiple {
+    min-height: var(--app-control-height);
+}
+
+.base-filter .ant-select-single .ant-select-selector {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.base-filter .ant-select-selection-wrap {
+    align-self: stretch;
+    min-height: 0;
+}
+
+.base-filter .ant-select-selection-item,
+.base-filter .ant-select-selection-placeholder {
+    display: inline-flex;
+    align-items: center;
+    line-height: calc(var(--app-control-height) - 2px) !important;
+}
+
+.base-filter .ant-select-multiple .ant-select-selector {
+    height: auto !important;
+    min-height: var(--app-control-height) !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+.base-filter .ant-select-multiple .ant-select-selection-item {
+    min-height: calc(var(--app-control-height) - 8px);
+    line-height: calc(var(--app-control-height) - 10px) !important;
+}
+
+.base-filter-actions-col {
+    display: flex;
+    align-items: flex-start;
+    margin-left: auto;
+}
+
+.base-filter-actions {
+    display: inline-flex;
+    height: var(--app-control-height);
+    align-items: center;
+    gap: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(7, 28, 77, 0.04);
+}
+
+.base-filter-action.ant-btn {
+    display: inline-flex;
+    min-width: 38px;
+    height: var(--app-control-height);
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+}
+
+.base-filter-action--reset.ant-btn {
+    background: #fff;
+    color: var(--axiro-text-secondary);
+}
+
+.base-filter-action--search.ant-btn {
+    width: 40px;
+    box-shadow: none;
+}
+
+.base-filter-action--sort.ant-btn.is-active {
+    background: #eff6ff;
+    color: var(--ant-color-primary);
+}
+
+.base-filter-action + .base-filter-action {
+    border-left: 1px solid #e5e7eb;
+}
+/* Parent-aligned runtime polish */
+.base-filter .ant-input-search .ant-input-group-addon {
+    display: none;
+}
+
+.base-filter .ant-form-item {
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.base-filter .ant-input,
+.base-filter .ant-select-selector,
+.base-filter .ant-picker {
+    min-height: var(--app-control-height);
+    height: var(--app-control-height);
+}

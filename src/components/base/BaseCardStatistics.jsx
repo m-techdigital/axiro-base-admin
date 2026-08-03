@@ -1,11 +1,6 @@
 import { useMemo } from 'react'
 
-import {
-    formatCompactCurrency,
-    formatNumber,
-    formatPercent,
-    formatReportValue,
-} from '@/utils'
+import { formatCompactCurrency, formatNumber, formatPercent } from '@/utils'
 import './BaseCardStatistics.css'
 
 const defaultColumns = {
@@ -57,10 +52,6 @@ function formatValue(value, item) {
 
     if (valueType === 'percent') {
         return formatPercent(value, item.formatOptions)
-    }
-
-    if (valueType === 'report') {
-        return formatReportValue(value, item.format, item.formatOptions)
     }
 
     if (valueType === 'text' || valueType === 'string' || valueType === 'raw') {

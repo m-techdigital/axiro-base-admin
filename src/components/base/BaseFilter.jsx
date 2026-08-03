@@ -8,7 +8,11 @@ import { Col, DatePicker, Dropdown, Form, Input, Row, Select } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo } from 'react'
 
+import { useRelationOptions } from '@/hooks/useRelationOptions'
+import { extractRelationConfigs } from '@/utils/extractRelationConfigs'
+
 import BaseButton from './BaseButton'
+import RelationSelect from './RelationSelect'
 
 const CONTROL_BY_TYPE = {
     date: DatePicker,
@@ -45,11 +49,30 @@ function normalizeOutgoingValue(field, value) {
     return value
 }
 
-function renderControl(field) {
+const getFieldKey = (name) => (Array.isArray(name) ? name.join('.') : name)
+
+function renderControl(field, context = {}) {
     const Control = CONTROL_BY_TYPE[field.type || 'text'] || Input
     const placeholder = field.placeholder || field.label
 
     if (field.render) return field.render(field)
+    if (field.type === 'relation') {
+        const key = getFieldKey(field.name)
+
+        return (
+            <RelationSelect
+                allowClear={field.allowClear !== false}
+                field={field}
+                form={context.form}
+                loadOptions={context.loadOptions}
+                mode={field.mode}
+                options={context.relationOptions?.[key] || []}
+                placeholder={placeholder}
+                showSearch={field.showSearch !== false}
+                {...field.controlProps}
+            />
+        )
+    }
     if (field.type === 'select') {
         return (
             <Control
@@ -125,6 +148,16 @@ export default function BaseFilter({
         () => flattenFields(fields, filters),
         [fields, filters],
     )
+    const relationConfigs = useMemo(
+        () => extractRelationConfigs(allFields, 'name'),
+        [allFields],
+    )
+    const { relationOptions, loadOptions, runCascade } = useRelationOptions(
+        relationConfigs,
+        form,
+        null,
+        {},
+    )
     const groups = useMemo(
         () => (filters?.length ? filters : [{ key: 'default', fields }]),
         [fields, filters],
@@ -148,6 +181,11 @@ export default function BaseFilter({
     useEffect(() => {
         form.setFieldsValue(resolvedValues)
     }, [form, resolvedValues])
+
+    useEffect(() => {
+        if (!relationConfigs.length) return
+        runCascade(resolvedValues)
+    }, [relationConfigs.length, resolvedValues, runCascade])
 
     const normalizeValues = (rawValues) =>
         Object.fromEntries(
@@ -250,7 +288,11 @@ export default function BaseFilter({
                                         }
                                         name={field.name}
                                     >
-                                        {renderControl(field)}
+                                        {renderControl(field, {
+                                            form,
+                                            loadOptions,
+                                            relationOptions,
+                                        })}
                                     </Form.Item>
                                 </Col>
                             ))}

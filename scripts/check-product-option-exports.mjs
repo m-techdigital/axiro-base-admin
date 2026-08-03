@@ -3,9 +3,9 @@ import path from 'node:path'
 
 const root = process.cwd()
 const optionsPath = path.join(root, 'src/constants/options.js')
-const formPath = path.join(root, 'src/modules/products/pages/Form.jsx')
+const formConfigPath = path.join(root, 'src/modules/products/formConfig.jsx')
 const optionsSource = fs.readFileSync(optionsPath, 'utf8')
-const formSource = fs.readFileSync(formPath, 'utf8')
+const formConfigSource = fs.readFileSync(formConfigPath, 'utf8')
 
 for (const name of [
     'GAME_OPTIONS',
@@ -17,8 +17,8 @@ for (const name of [
             `Missing named export ${name} in src/constants/options.js`,
         )
     }
-    if (!formSource.includes(name)) {
-        throw new Error(`Product form no longer consumes ${name}`)
+    if (!formConfigSource.includes(name)) {
+        throw new Error(`Product form config no longer consumes ${name}`)
     }
 }
 
