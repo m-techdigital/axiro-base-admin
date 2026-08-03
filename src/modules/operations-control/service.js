@@ -2,6 +2,9 @@ import api from '../../services/axios'
 
 export default {
     overview: () => api.get('/operations-dashboard/overview'),
+    today: () => api.get('/operations-dashboard/today'),
+    timeline: (subjectType, subjectId) =>
+        api.get(`/operations-dashboard/timeline/${subjectType}/${subjectId}`),
     holds: (params = {}) => api.get('/operations-dashboard/holds', { params }),
     releaseHold: (id, payload) =>
         api.post(`/operations-dashboard/holds/${id}/release`, payload),

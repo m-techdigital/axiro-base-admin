@@ -28,3 +28,4 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 - `OPERATOR-GUIDE.md`: hướng dẫn admin/customer dùng command center, next action và checklist.
 - `NEXT-BACKLOG.md`: backlog tiếp theo để khép vòng vận hành mà không phình module.
 - `NOTIFICATION-PAYOUT-JOURNEY-CLOSURE-20260803.md`
+- `OPERATIONAL-AUDIT-TODAY-QUEUE-CLOSURE-20260803.md`

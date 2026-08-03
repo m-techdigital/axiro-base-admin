@@ -4,7 +4,6 @@ import {
     ReloadOutlined,
     SafetyCertificateOutlined,
     SyncOutlined,
-    UnlockOutlined,
     WarningOutlined,
 } from '@ant-design/icons'
 import {
@@ -24,7 +23,6 @@ import { useNavigate } from 'react-router-dom'
 import {
     BaseButton,
     BaseFilter,
-    BaseIconAction,
     BaseModal,
     BasePageHeader,
     BaseTable,
@@ -37,6 +35,12 @@ import {
 } from '@/contracts/marketplaceLabels'
 
 import FilterPresetBar from '../components/FilterPresetBar'
+import {
+    createHoldColumns,
+    createQueueColumns,
+    MetricCard,
+} from '../components/operationsColumns'
+import { holdFilters, queueFilters, settlementFilters } from '../config/filters'
 import service from '../service'
 
 const unwrap = (response) => response?.data?.data || response?.data || {}
@@ -45,79 +49,11 @@ const rowsOf = (response) => {
     return Array.isArray(payload) ? payload : payload?.data || []
 }
 
-const holdFilters = [
-    {
-        name: 'state',
-        label: 'Tình trạng hold',
-        type: 'select',
-        options: [
-            { value: 'active', label: 'Đang giữ' },
-            { value: 'expiring_soon', label: 'Sắp hết hạn' },
-            { value: 'expired', label: 'Đã hết hạn' },
-            { value: 'released', label: 'Đã nhả' },
-        ],
-    },
-]
-
-const queueFilters = [
-    {
-        name: 'queue',
-        label: 'Hàng đợi',
-        type: 'select',
-        options: [
-            { value: 'pending_payment', label: 'Chờ thanh toán' },
-            { value: 'delivery', label: 'Chờ bàn giao' },
-            { value: 'acceptance', label: 'Chờ xác nhận/hoàn trả' },
-            { value: 'dispute', label: 'Đang tranh chấp' },
-            { value: 'overdue_rental', label: 'Thuê quá hạn' },
-            { value: 'pending_return', label: 'Chờ hoàn trả' },
-            { value: 'deposit_deduction_review', label: 'Chờ quyết toán cọc' },
-        ],
-    },
-    {
-        name: 'age_minutes',
-        label: 'Kẹt quá',
-        type: 'select',
-        options: [
-            { value: 30, label: '30 phút' },
-            { value: 120, label: '2 giờ' },
-            { value: 1440, label: '24 giờ' },
-        ],
-    },
-]
-
-const settlementFilters = [
-    { name: 'date_from', label: 'Từ ngày', type: 'date' },
-    { name: 'date_to', label: 'Đến ngày', type: 'date' },
-    { name: 'customer_id', label: 'ID khách hàng', type: 'number' },
-    {
-        name: 'status',
-        label: 'Trạng thái',
-        type: 'select',
-        options: [
-            { value: 'completed', label: 'Hoàn tất' },
-            { value: 'cancelled', label: 'Đã hủy' },
-        ],
-    },
-]
-
-function MetricCard({ title, value, suffix, danger }) {
-    return (
-        <Card size="small">
-            <Statistic
-                title={title}
-                value={value ?? 0}
-                suffix={suffix}
-                valueStyle={danger ? { color: '#cf1322' } : undefined}
-            />
-        </Card>
-    )
-}
-
 export default function OperationsControlPage() {
     const navigate = useNavigate()
     const [tab, setTab] = useState('overview')
     const [overview, setOverview] = useState({})
+    const [today, setToday] = useState({})
     const [reconciliation, setReconciliation] = useState({})
     const [rows, setRows] = useState([])
     const [loading, setLoading] = useState(false)
@@ -175,7 +111,12 @@ export default function OperationsControlPage() {
         setLoading(true)
         try {
             if (tab === 'overview') {
-                setOverview(unwrap(await service.overview()))
+                const [overviewResponse, todayResponse] = await Promise.all([
+                    service.overview(),
+                    service.today(),
+                ])
+                setOverview(unwrap(overviewResponse))
+                setToday(unwrap(todayResponse))
             } else if (tab === 'holds') {
                 setRows(rowsOf(await service.holds(holdParams)))
             } else if (tab === 'queues') {
@@ -195,140 +136,35 @@ export default function OperationsControlPage() {
     }, [load])
 
     const holdColumns = useMemo(
-        () => [
-            {
-                title: 'Sản phẩm',
-                render: (_, row) => (
-                    <BaseButton
-                        type="link"
-                        onClick={async () => {
-                            setTimeline(
-                                unwrap(
-                                    await service.availabilityTimeline(
-                                        row.product_id,
-                                    ),
-                                ),
-                            )
-                        }}
-                    >
-                        {row.product?.code || `#${row.product_id}`}
-                    </BaseButton>
-                ),
-            },
-            {
-                title: 'Người giữ',
-                render: (_, row) => row.customer?.name || 'Hệ thống',
-            },
-            {
-                title: 'Trạng thái',
-                dataIndex: 'status',
-                render: (value, row) => {
-                    const expired =
-                        value === 'active' &&
-                        row.hold_until &&
-                        new Date(row.hold_until) <= new Date()
-                    return (
-                        <Tag color={expired ? 'red' : statusColor(value)}>
-                            {expired
-                                ? 'Đã quá hạn chưa nhả'
-                                : statusLabel(value, valueLabel(value))}
-                        </Tag>
+        () =>
+            createHoldColumns({
+                loadTimeline: async (row) => {
+                    setTimeline(
+                        unwrap(
+                            await service.availabilityTimeline(row.product_id),
+                        ),
                     )
                 },
-            },
-            { title: 'Hết hạn', dataIndex: 'hold_until', width: 180 },
-            {
-                title: 'Phiên bản',
-                render: (_, row) => row.product?.availability_version || '—',
-            },
-            {
-                title: 'Nguồn',
-                render: (_, row) =>
-                    row.source_type
-                        ? `${row.source_type.split('\\').pop()} #${row.source_id}`
-                        : '—',
-            },
-            {
-                title: 'Thao tác',
-                fixed: 'right',
-                width: 90,
-                render: (_, row) =>
-                    row.status === 'active' ? (
-                        <BaseIconAction
-                            danger
-                            icon={<UnlockOutlined />}
-                            label="Nhả hold thủ công"
-                            onClick={() => {
-                                setReleaseNote('')
-                                setReleaseRecord(row)
-                            }}
-                        />
-                    ) : null,
-            },
-        ],
+                openRelease: (row) => {
+                    setReleaseNote('')
+                    setReleaseRecord(row)
+                },
+            }),
         [],
     )
 
-    const queueColumns = [
-        { title: 'Mã', dataIndex: 'code', width: 150 },
-        {
-            title: 'Sản phẩm',
-            render: (_, row) => row.product?.name || row.product?.code || '—',
-        },
-        {
-            title: 'Người mua',
-            render: (_, row) => row.buyer?.name || '—',
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            render: (value) => (
-                <Tag color={statusColor(value)}>
-                    {statusLabel(value, valueLabel(value))}
-                </Tag>
-            ),
-        },
-        {
-            title: 'Việc tiếp theo',
-            render: (_, row) =>
-                row.lifecycle?.next_action ? (
-                    <Tag color="blue">{row.lifecycle.next_action.label}</Tag>
-                ) : (
-                    '—'
-                ),
-        },
-        { title: 'Cập nhật cuối', dataIndex: 'updated_at', width: 180 },
-        {
-            title: 'Chứng từ',
-            render: (_, row) => (
-                <BaseButton
-                    type="link"
-                    onClick={async () =>
-                        setChecklist({
-                            transaction: row,
-                            rows: unwrap(
-                                await service.documentChecklist(row.id),
-                            ),
-                        })
-                    }
-                >
-                    Kiểm tra
-                </BaseButton>
-            ),
-        },
-        {
-            title: 'Thao tác',
-            fixed: 'right',
-            render: (_, row) => (
-                <BaseButton
-                    type="link"
-                    onClick={() => navigate(`/transactions/${row.id}`)}
-                >
-                    Mở hồ sơ
-                </BaseButton>
-            ),
-        },
-    ]
+    const queueColumns = useMemo(
+        () =>
+            createQueueColumns({
+                navigate,
+                inspectDocuments: async (row) =>
+                    setChecklist({
+                        transaction: row,
+                        rows: unwrap(await service.documentChecklist(row.id)),
+                    }),
+            }),
+        [navigate],
+    )
 
     const release = async () => {
         if (releaseNote.trim().length < 10) {

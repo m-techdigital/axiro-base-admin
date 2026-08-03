@@ -1,5 +1,5 @@
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons'
-import { Descriptions, Tag, Timeline, message } from 'antd'
+import { Descriptions, Input, Tag, Timeline, message } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -36,6 +36,7 @@ export default function NotificationList() {
     const navigate = useNavigate()
     const [detail, setDetail] = useState(null)
     const [detailLoading, setDetailLoading] = useState(false)
+    const [handlingNote, setHandlingNote] = useState('')
     const list = useList(service, { page: 1, per_page: 20 })
     const filters = useBaseFilters({
         defaultParams: { page: 1, per_page: 20 },
@@ -57,6 +58,7 @@ export default function NotificationList() {
         try {
             const response = await service.show(record.id)
             setDetail(response?.data || response)
+            setHandlingNote('')
             if (!record.read_at) {
                 await service.read(record.id)
                 await list.reload()
@@ -242,6 +244,54 @@ export default function NotificationList() {
                                     ))}
                             </div>
                         ) : null}
+                        {!detail.handled_at ? (
+                            <div style={{ marginTop: 20 }}>
+                                <h3>Hoàn tất xử lý thông báo</h3>
+                                <Input.TextArea
+                                    rows={3}
+                                    value={handlingNote}
+                                    placeholder="Ghi rõ kết quả hoặc lý do xử lý"
+                                    onChange={(event) =>
+                                        setHandlingNote(event.target.value)
+                                    }
+                                />
+                                <BaseButton
+                                    style={{ marginTop: 12 }}
+                                    disabled={handlingNote.trim().length < 5}
+                                    onClick={async () => {
+                                        try {
+                                            await service.handle(
+                                                detail.id,
+                                                handlingNote.trim(),
+                                            )
+                                            message.success(
+                                                'Đã đánh dấu thông báo đã xử lý.',
+                                            )
+                                            setDetail({
+                                                ...detail,
+                                                handled_at:
+                                                    new Date().toISOString(),
+                                                handling_note:
+                                                    handlingNote.trim(),
+                                            })
+                                            await list.reload()
+                                        } catch (error) {
+                                            message.error(
+                                                error.message ||
+                                                    'Không thể hoàn tất xử lý thông báo.',
+                                            )
+                                        }
+                                    }}
+                                >
+                                    Đánh dấu đã xử lý
+                                </BaseButton>
+                            </div>
+                        ) : (
+                            <Tag color="green" style={{ marginTop: 20 }}>
+                                Đã xử lý:{' '}
+                                {detail.handling_note || 'Đã hoàn tất'}
+                            </Tag>
+                        )}
                         {detail.action_context?.deep_link ? (
                             <BaseButton
                                 style={{ marginTop: 16 }}

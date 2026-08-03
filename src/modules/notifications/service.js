@@ -8,4 +8,5 @@ export default {
     show: (id) => api.get(`/notifications/${id}`),
     read: (id) => api.post(`/notifications/${id}/read`),
     readAll: () => api.post('/notifications/read-all'),
+    handle: (id, note) => api.post(`/notifications/${id}/handle`, { note }),
 }
