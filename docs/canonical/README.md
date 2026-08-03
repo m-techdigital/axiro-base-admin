@@ -27,3 +27,4 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 - `ARCHITECTURE-CANONICAL.md`: transaction là lifecycle owner, document chỉ là hồ sơ giao dịch.
 - `OPERATOR-GUIDE.md`: hướng dẫn admin/customer dùng command center, next action và checklist.
 - `NEXT-BACKLOG.md`: backlog tiếp theo để khép vòng vận hành mà không phình module.
+- `NOTIFICATION-PAYOUT-JOURNEY-CLOSURE-20260803.md`

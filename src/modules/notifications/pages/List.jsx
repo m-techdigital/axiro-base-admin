@@ -227,15 +227,31 @@ export default function NotificationList() {
                                 />
                             </div>
                         ) : null}
-                        {detail.transaction_id ? (
+                        {detail.action_context?.next_action ? (
+                            <div style={{ marginTop: 20 }}>
+                                <Tag color="blue">
+                                    Việc tiếp theo:{' '}
+                                    {detail.action_context.next_action.label}
+                                </Tag>
+                                {(detail.action_context.blocking_reasons || [])
+                                    .slice(0, 2)
+                                    .map((reason) => (
+                                        <div key={reason}>
+                                            <small>{reason}</small>
+                                        </div>
+                                    ))}
+                            </div>
+                        ) : null}
+                        {detail.action_context?.deep_link ? (
                             <BaseButton
+                                style={{ marginTop: 16 }}
                                 onClick={() =>
-                                    navigate(
-                                        `/transactions/${detail.transaction_id}`,
-                                    )
+                                    navigate(detail.action_context.deep_link)
                                 }
                             >
-                                Mở hồ sơ giao dịch
+                                {detail.action_context?.next_action?.label
+                                    ? `Mở hồ sơ để ${detail.action_context.next_action.label.toLowerCase()}`
+                                    : 'Mở hồ sơ liên quan'}
                             </BaseButton>
                         ) : null}
                     </>

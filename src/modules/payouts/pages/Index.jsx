@@ -4,8 +4,19 @@ import {
     BaseModal,
     BaseTable,
     BaseButton,
+    BaseConfirmActionButton,
 } from '@/components/base'
-import { Card, Input, Space, Tabs, Tag, message } from 'antd'
+import {
+    Alert,
+    Card,
+    Descriptions,
+    Input,
+    Space,
+    Tabs,
+    Tag,
+    Typography,
+    message,
+} from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import {
     statusColor,
@@ -111,6 +122,13 @@ export default function PayoutCenter() {
         },
         { title: 'Trạng thái', dataIndex: 'status', render: status },
         {
+            title: 'Việc tiếp theo',
+            render: (_, r) =>
+                r.journey?.next_action?.label ||
+                r.journey?.blocked_reason ||
+                'Không còn thao tác',
+        },
+        {
             title: 'Thao tác',
             key: 'actions',
             render: (_, r) => (
@@ -156,6 +174,72 @@ export default function PayoutCenter() {
                 title="Xử lý yêu cầu"
             >
                 <Space direction="vertical" style={{ width: '100%' }}>
+                    {active === 'withdrawals' && selected?.journey ? (
+                        <>
+                            <Alert
+                                showIcon
+                                type={
+                                    selected.journey.next_action
+                                        ? 'info'
+                                        : 'success'
+                                }
+                                message={
+                                    selected.journey.next_action?.label ||
+                                    selected.journey.blocked_reason
+                                }
+                            />
+                            <Descriptions
+                                bordered
+                                size="small"
+                                column={1}
+                                items={[
+                                    {
+                                        key: 'verification',
+                                        label: 'Xác minh người bán',
+                                        children:
+                                            selected.journey.customer_context
+                                                ?.verification_status || '—',
+                                    },
+                                    {
+                                        key: 'account',
+                                        label: 'Tài khoản nhận tiền',
+                                        children:
+                                            selected.journey.customer_context
+                                                ?.payout_account_status || '—',
+                                    },
+                                    {
+                                        key: 'available',
+                                        label: 'Số dư khả dụng',
+                                        children: (
+                                            <Money
+                                                value={
+                                                    selected.journey
+                                                        .customer_context
+                                                        ?.available_balance
+                                                }
+                                            />
+                                        ),
+                                    },
+                                    {
+                                        key: 'held',
+                                        label: 'Đang tạm giữ',
+                                        children: (
+                                            <Money
+                                                value={
+                                                    selected.journey
+                                                        .customer_context
+                                                        ?.held_balance
+                                                }
+                                            />
+                                        ),
+                                    },
+                                ]}
+                            />
+                        </>
+                    ) : null}
+                    <Typography.Text type="secondary">
+                        Mọi quyết định sẽ được ghi nhận để đối soát.
+                    </Typography.Text>
                     <Input.TextArea
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
@@ -171,9 +255,12 @@ export default function PayoutCenter() {
                     <Space wrap>
                         {active === 'verifications' && (
                             <>
-                                <BaseButton
+                                <BaseConfirmActionButton
                                     type="primary"
-                                    onClick={() =>
+                                    title="Xác minh người bán"
+                                    content="Xác nhận hồ sơ người bán đã hợp lệ để tiếp tục luồng nhận tiền."
+                                    okText="Xác minh"
+                                    onConfirm={() =>
                                         act(() =>
                                             service.reviewVerification(
                                                 selected.id,
@@ -184,10 +271,13 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Xác minh
-                                </BaseButton>
-                                <BaseButton
+                                </BaseConfirmActionButton>
+                                <BaseConfirmActionButton
                                     danger
-                                    onClick={() =>
+                                    title="Từ chối hồ sơ người bán"
+                                    content="Hồ sơ bị từ chối sẽ yêu cầu khách hàng cập nhật và gửi lại."
+                                    okText="Từ chối"
+                                    onConfirm={() =>
                                         act(() =>
                                             service.reviewVerification(
                                                 selected.id,
@@ -198,14 +288,17 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Từ chối
-                                </BaseButton>
+                                </BaseConfirmActionButton>
                             </>
                         )}
                         {active === 'accounts' && (
                             <>
-                                <BaseButton
+                                <BaseConfirmActionButton
                                     type="primary"
-                                    onClick={() =>
+                                    title="Xác minh tài khoản nhận tiền"
+                                    content="Tài khoản đã xác minh có thể được dùng để tạo yêu cầu rút tiền."
+                                    okText="Xác minh"
+                                    onConfirm={() =>
                                         act(() =>
                                             service.reviewAccount(
                                                 selected.id,
@@ -216,10 +309,13 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Xác minh
-                                </BaseButton>
-                                <BaseButton
+                                </BaseConfirmActionButton>
+                                <BaseConfirmActionButton
                                     danger
-                                    onClick={() =>
+                                    title="Từ chối tài khoản nhận tiền"
+                                    content="Tài khoản bị từ chối sẽ không được dùng để rút tiền."
+                                    okText="Từ chối"
+                                    onConfirm={() =>
                                         act(() =>
                                             service.reviewAccount(
                                                 selected.id,
@@ -230,22 +326,28 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Từ chối
-                                </BaseButton>
+                                </BaseConfirmActionButton>
                             </>
                         )}
                         {active === 'withdrawals' && (
                             <>
-                                <BaseButton
-                                    onClick={() =>
+                                <BaseConfirmActionButton
+                                    title="Duyệt yêu cầu rút tiền"
+                                    content="Chỉ duyệt khi điều kiện xác minh, tài khoản nhận và số dư khả dụng đã phù hợp."
+                                    okText="Duyệt"
+                                    onConfirm={() =>
                                         act(() => service.approve(selected.id))
                                     }
                                 >
                                     Duyệt
-                                </BaseButton>
-                                <BaseButton
+                                </BaseConfirmActionButton>
+                                <BaseConfirmActionButton
                                     type="primary"
                                     disabled={!reference}
-                                    onClick={() =>
+                                    title="Xác nhận đã chi trả"
+                                    content="Hành động này xác nhận tiền đã được chuyển theo mã tham chiếu đã nhập."
+                                    okText="Xác nhận đã chi"
+                                    onConfirm={() =>
                                         act(() =>
                                             service.paid(
                                                 selected.id,
@@ -255,10 +357,13 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Xác nhận đã chi
-                                </BaseButton>
-                                <BaseButton
+                                </BaseConfirmActionButton>
+                                <BaseConfirmActionButton
                                     danger
-                                    onClick={() =>
+                                    title="Từ chối yêu cầu rút tiền"
+                                    content="Yêu cầu bị từ chối sẽ không được chi trả trong lượt xử lý này."
+                                    okText="Từ chối"
+                                    onConfirm={() =>
                                         act(() =>
                                             service.reject(
                                                 selected.id,
@@ -268,7 +373,7 @@ export default function PayoutCenter() {
                                     }
                                 >
                                     Từ chối
-                                </BaseButton>
+                                </BaseConfirmActionButton>
                             </>
                         )}
                     </Space>
