@@ -26,6 +26,7 @@ export const MARKETPLACE_OPTIONS_CONTRACT_VERSION = ${quote(contract.contract_ve
 export const MARKETPLACE_OPTIONS_VERSION = ${quote(catalog.version)}
 export const MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS = ${Number(catalog.cache_ttl_seconds || 300)}
 export const MARKETPLACE_DOCUMENT_TYPES = ${options(catalog.document_types)}
+export const MARKETPLACE_DOCUMENT_TEMPLATE_STATUSES = ${options(catalog.document_template_statuses)}
 export const MARKETPLACE_DISPUTE_OUTCOMES = ${options(catalog.dispute_outcomes)}
 export const MARKETPLACE_TRANSACTION_STATUSES = ${options(catalog.transaction_statuses)}
 `

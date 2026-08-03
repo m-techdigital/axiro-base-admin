@@ -3,10 +3,27 @@ import path from 'node:path'
 import { execSync } from 'node:child_process'
 
 const failures = []
-const tracked = execSync('git ls-files', { encoding: 'utf8' })
-    .trim()
-    .split(/\r?\n/)
-    .filter(Boolean)
+const walkFiles = (directory, prefix = '') =>
+    fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+        if (['.git', 'node_modules', 'dist', 'build'].includes(entry.name))
+            return []
+        const relative = path.posix.join(prefix, entry.name)
+        const absolute = path.join(directory, entry.name)
+        return entry.isDirectory() ? walkFiles(absolute, relative) : [relative]
+    })
+const tracked = (() => {
+    try {
+        return execSync('git ls-files', {
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        })
+            .trim()
+            .split(/\r?\n/)
+            .filter(Boolean)
+    } catch {
+        return walkFiles(process.cwd())
+    }
+})()
 
 for (const file of tracked) {
     if (/(^|[-_])v\d{2,}([-_.]|$)/i.test(path.basename(file))) {

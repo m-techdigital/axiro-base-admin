@@ -30,8 +30,14 @@ export default defineConfig(({ mode }) => {
                             id.includes('/react-router')
                         )
                             return 'react-vendor'
-                        if (id.includes('/antd/') || id.includes('@ant-design'))
-                            return 'antd-vendor'
+                        if (id.includes('@ant-design/icons'))
+                            return 'antd-icons'
+                        if (
+                            id.includes('/rc-') ||
+                            id.includes('/@rc-component/')
+                        )
+                            return 'antd-rc'
+                        if (id.includes('/antd/')) return 'antd-core'
                         if (id.includes('/axios/')) return 'http-vendor'
                         if (id.includes('/dayjs/')) return 'date-vendor'
                         return 'vendor'

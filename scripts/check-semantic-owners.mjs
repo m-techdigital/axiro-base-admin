@@ -74,6 +74,73 @@ if (!detail.includes('TransactionDetailSections')) {
     )
 }
 
+const documentForm = fs.readFileSync(
+    path.join(root, 'src/modules/document-templates/formConfig.jsx'),
+    'utf8',
+)
+const generatedOptions = fs.readFileSync(
+    path.join(root, 'src/generated/marketplaceOptions.js'),
+    'utf8',
+)
+if (!documentForm.includes('MARKETPLACE_DOCUMENT_TEMPLATE_STATUSES'))
+    failures.push(
+        'document templates: shared generated status contract is missing.',
+    )
+for (const status of ['draft', 'published', 'deprecated']) {
+    if (!generatedOptions.includes(`value: '${status}'`))
+        failures.push(`document templates: missing ${status} status.`)
+}
+const documentColumns = fs.readFileSync(
+    path.join(root, 'src/modules/document-templates/columns.jsx'),
+    'utf8',
+)
+if (!documentColumns.includes('generated_documents_count'))
+    failures.push('document templates: used count column is missing.')
+const crudSmoke = fs.readFileSync(
+    path.join(root, 'scripts/e2e-browser-crud.mjs'),
+    'utf8',
+)
+for (const marker of [
+    '/products/new',
+    '/transactions/new',
+    '/customers/new',
+    '/document-templates',
+    '/payouts',
+]) {
+    if (!crudSmoke.includes(marker))
+        failures.push(`admin CRUD smoke: missing ${marker}.`)
+}
+
+const viteConfig = fs.readFileSync(path.join(root, 'vite.config.js'), 'utf8')
+if (viteConfig.includes("return 'antd-vendor'"))
+    failures.push('bundle ownership: monolithic antd-vendor must not return.')
+for (const chunk of ['antd-core', 'antd-icons', 'antd-rc']) {
+    if (!viteConfig.includes(`return '${chunk}'`))
+        failures.push(`bundle ownership: missing ${chunk}.`)
+}
+const actionCenter = fs.readFileSync(
+    path.join(root, 'src/modules/action-center/pages/Index.jsx'),
+    'utf8',
+)
+for (const queue of ['rental_deposits', 'payouts', 'holds']) {
+    if (!actionCenter.includes(`data?.${queue}`))
+        failures.push(`action center: missing ${queue} queue.`)
+}
+const rentalPresentation = fs.readFileSync(
+    path.join(root, 'src/modules/transactions/config/detailPresentation.js'),
+    'utf8',
+)
+for (const label of [
+    'Tiền thuê',
+    'Tiền cọc',
+    'Cần thanh toán ban đầu',
+    'Khấu trừ tiền cọc',
+    'Cọc dự kiến hoàn lại',
+]) {
+    if (!rentalPresentation.includes(label))
+        failures.push(`rental detail: missing ${label}.`)
+}
+
 if (failures.length) {
     console.error(failures.join('\n'))
     process.exit(1)

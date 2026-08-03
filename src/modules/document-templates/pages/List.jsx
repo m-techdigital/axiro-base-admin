@@ -92,7 +92,13 @@ export default function DocumentTemplateList() {
                 onOk={save}
                 confirmLoading={saving}
                 width={900}
-                title={editing ? 'Chỉnh sửa mẫu tài liệu' : 'Tạo mẫu tài liệu'}
+                title={
+                    editing
+                        ? editing.generated_documents_count > 0
+                            ? `Tạo phiên bản mới từ v${editing.version}`
+                            : 'Chỉnh sửa mẫu tài liệu'
+                        : 'Tạo mẫu tài liệu'
+                }
                 okText="Lưu"
                 cancelText="Hủy"
             >

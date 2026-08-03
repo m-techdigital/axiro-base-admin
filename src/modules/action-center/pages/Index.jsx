@@ -13,6 +13,8 @@ const statusLabel = {
     open: 'Đang mở',
     handover_pending: 'Chờ xác nhận nhận',
     return_pending: 'Chờ xác nhận hoàn trả',
+    returned: 'Chờ đối soát cọc',
+    approved: 'Đã duyệt',
 }
 export default function ActionCenter() {
     const navigate = useNavigate()
@@ -103,6 +105,30 @@ export default function ActionCenter() {
                         <Statistic
                             title="Bàn giao cần theo dõi"
                             value={counts.handover_pending || 0}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={12} lg={4}>
+                    <Card>
+                        <Statistic
+                            title="Đối soát cọc thuê"
+                            value={counts.rental_deposit_review || 0}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={12} lg={4}>
+                    <Card>
+                        <Statistic
+                            title="Payout chờ xử lý"
+                            value={counts.pending_payouts || 0}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={12} lg={4}>
+                    <Card>
+                        <Statistic
+                            title="Giữ chỗ quá hạn"
+                            value={counts.expired_holds || 0}
                         />
                     </Card>
                 </Col>
@@ -247,6 +273,87 @@ export default function ActionCenter() {
                                             navigate(`/transactions/${r.id}`)
                                         }
                                     />
+                                ),
+                            },
+                        ])}
+                    </Card>
+                </Col>
+                <Col xs={24} xl={12}>
+                    <Card title="Hoàn cọc / khấu trừ cần quyết định">
+                        {compact(data?.rental_deposits, [
+                            { title: 'Mã', dataIndex: 'code' },
+                            {
+                                title: 'Sản phẩm',
+                                render: (_, r) => r.product?.name,
+                            },
+                            { title: 'Tiền cọc', dataIndex: 'deposit_amount' },
+                            {
+                                title: '',
+                                render: (_, r) => (
+                                    <BaseButton
+                                        type="link"
+                                        onClick={() =>
+                                            navigate(`/transactions/${r.id}`)
+                                        }
+                                    >
+                                        Đối soát
+                                    </BaseButton>
+                                ),
+                            },
+                        ])}
+                    </Card>
+                </Col>
+                <Col xs={24} xl={12}>
+                    <Card title="Payout chờ duyệt / chi">
+                        {compact(data?.payouts, [
+                            { title: 'Mã', dataIndex: 'code' },
+                            {
+                                title: 'Khách hàng',
+                                render: (_, r) => r.customer?.name,
+                            },
+                            { title: 'Số tiền', dataIndex: 'amount' },
+                            {
+                                title: 'Trạng thái',
+                                dataIndex: 'status',
+                                render: (v) => (
+                                    <Tag
+                                        color={
+                                            v === 'approved' ? 'blue' : 'gold'
+                                        }
+                                    >
+                                        {statusLabel[v] || v}
+                                    </Tag>
+                                ),
+                            },
+                        ])}
+                    </Card>
+                </Col>
+                <Col xs={24} xl={12}>
+                    <Card title="Sản phẩm đang giữ chỗ / quá hạn">
+                        {compact(data?.holds, [
+                            {
+                                title: 'Sản phẩm',
+                                render: (_, r) => r.product?.name,
+                            },
+                            {
+                                title: 'Khách hàng',
+                                render: (_, r) => r.customer?.name,
+                            },
+                            { title: 'Giữ đến', dataIndex: 'hold_until' },
+                            {
+                                title: 'Trạng thái',
+                                render: (_, r) => (
+                                    <Tag
+                                        color={
+                                            new Date(r.hold_until) < new Date()
+                                                ? 'red'
+                                                : 'blue'
+                                        }
+                                    >
+                                        {new Date(r.hold_until) < new Date()
+                                            ? 'Quá hạn'
+                                            : 'Đang giữ'}
+                                    </Tag>
                                 ),
                             },
                         ])}

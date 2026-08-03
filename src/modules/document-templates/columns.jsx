@@ -1,6 +1,6 @@
 import { BaseIconAction } from '@/components/base'
 import { EditOutlined } from '@ant-design/icons'
-import { Tag } from 'antd'
+import { Tag, Tooltip } from 'antd'
 
 export const createDocumentTemplateColumns = ({ onEdit, typeLabel = {} }) => [
     { title: 'Mã', dataIndex: 'code' },
@@ -10,15 +10,37 @@ export const createDocumentTemplateColumns = ({ onEdit, typeLabel = {} }) => [
         dataIndex: 'type',
         render: (value) => typeLabel[value] || value,
     },
-    { title: 'Phiên bản', dataIndex: 'version' },
+    {
+        title: 'Phiên bản',
+        dataIndex: 'version',
+        render: (value, row) => (
+            <Tooltip
+                title={
+                    row.supersedes_template_id
+                        ? `Kế tiếp mẫu #${row.supersedes_template_id}`
+                        : 'Phiên bản đầu'
+                }
+            >
+                <span>v{value}</span>
+            </Tooltip>
+        ),
+    },
+    {
+        title: 'Đã dùng',
+        dataIndex: 'generated_documents_count',
+        render: (value = 0) => value,
+    },
     {
         title: 'Trạng thái',
         dataIndex: 'status',
-        render: (value) => (
-            <Tag color={value === 'approved' ? 'green' : 'gold'}>
-                {value === 'approved' ? 'Đang áp dụng' : value}
-            </Tag>
-        ),
+        render: (value) => {
+            const status = {
+                draft: { label: 'Bản nháp', color: 'gold' },
+                published: { label: 'Đã phát hành', color: 'green' },
+                deprecated: { label: 'Ngừng sử dụng', color: 'default' },
+            }[value] || { label: value, color: 'default' }
+            return <Tag color={status.color}>{status.label}</Tag>
+        },
     },
     {
         title: 'Thao tác',

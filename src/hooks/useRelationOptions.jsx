@@ -366,6 +366,7 @@ export function useRelationOptions(
             if (!lastParamsRef.current[instanceKey]) {
                 lastParamsRef.current[instanceKey] = {}
             }
+            const lastParamsForInstance = lastParamsRef.current[instanceKey]
 
             for (const config of activeConfigs) {
                 const key = config.key || config.name
@@ -410,7 +411,7 @@ export function useRelationOptions(
                     __module: source.module,
                     __method: source.method,
                 }
-                const previousParams = lastParamsRef.current[instanceKey][key]
+                const previousParams = lastParamsForInstance[key]
                 const cacheKey = buildRelationCacheKey(
                     source.module,
                     source.method,
@@ -428,7 +429,7 @@ export function useRelationOptions(
                     continue
                 }
 
-                lastParamsRef.current[instanceKey][key] = compareValue
+                lastParamsForInstance[key] = compareValue
 
                 if (isForce || (shouldForce && paramsChanged)) {
                     forceInvalidate(cacheKey)

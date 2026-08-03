@@ -48,7 +48,10 @@
         "check:release-package": "node scripts/check-release-package.mjs",
         "check:semantic-owners": "node scripts/check-semantic-owners.mjs",
         "analyze:bundle": "node scripts/analyze-bundle.mjs",
-        "build:analyze": "npm run build && npm run analyze:bundle"
+        "build:analyze": "npm run build && npm run analyze:bundle",
+        "e2e:browser-crud": "node scripts/e2e-browser-crud.mjs",
+        "check:release-readiness": "npm run check:all && npm run build:analyze",
+        "release:all": "bash ../axiro-base-api/scripts/release-all.sh"
     },
     "dependencies": {
         "@ant-design/icons": "^6.2.2",

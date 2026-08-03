@@ -60,6 +60,9 @@ export default function Dashboard() {
         ['Thanh toán chờ xác nhận', d.pending_payments || 0],
         ['Nạp tiền chờ xác nhận', d.pending_deposits || 0],
         ['Tranh chấp đang mở', d.open_disputes || 0],
+        ['Payout chờ xử lý', d.pending_withdrawals || 0],
+        ['Hoàn cọc / khấu trừ', d.rental_deposit_review || 0],
+        ['Giữ chỗ quá hạn', d.expired_holds || 0],
         ['Tài liệu phát hành', d.generated_documents || 0],
     ]
     return (

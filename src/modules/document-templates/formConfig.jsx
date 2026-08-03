@@ -1,20 +1,18 @@
 import { Alert } from 'antd'
+import { MARKETPLACE_DOCUMENT_TEMPLATE_STATUSES } from '@/generated/marketplaceOptions'
 
 export const emptyDocumentTemplate = {
     code: '',
     name: '',
     type: 'sale_record',
     target_module: 'transactions',
-    status: 'approved',
+    status: 'draft',
     content_html: '',
     description: '',
 }
 
-export const documentTemplateStatusOptions = [
-    { value: 'draft', label: 'Bản nháp' },
-    { value: 'approved', label: 'Đang áp dụng' },
-    { value: 'archived', label: 'Lưu trữ' },
-]
+export const documentTemplateStatusOptions =
+    MARKETPLACE_DOCUMENT_TEMPLATE_STATUSES
 
 export const createDocumentTemplateFields = ({
     documentTypes = [],
@@ -53,7 +51,7 @@ export const createDocumentTemplateFields = ({
         key: 'template-contract-note',
         render: () => (
             <Alert
-                message="Mẫu đang áp dụng phải có đầy đủ thông tin các bên, đối tượng, giá trị, quyền và nghĩa vụ, bảo mật, tranh chấp và xác nhận điện tử. Khi sửa mẫu đã dùng, hãy tăng phiên bản và phát hành lại tài liệu thay vì thay đổi bản cũ."
+                message="Mẫu đang áp dụng phải có đầy đủ thông tin các bên, đối tượng, giá trị, quyền và nghĩa vụ, bảo mật, tranh chấp và xác nhận điện tử. Mẫu đã phát sinh tài liệu là bất biến. Khi sửa, hệ thống tạo phiên bản mới; tài liệu lịch sử vẫn trỏ phiên bản cũ và tài liệu phát sinh sau đó dùng phiên bản đã phát hành mới nhất."
                 showIcon
                 type="warning"
             />

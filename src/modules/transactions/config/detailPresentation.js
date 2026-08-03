@@ -1,3 +1,4 @@
+import { rentalMoneyBreakdown } from './rentalMoney'
 import { statusColor, statusLabel } from '../../../contracts/marketplaceLabels'
 
 export const transactionLabels = {
@@ -101,6 +102,47 @@ export const buildTransactionDetailFields = (data) => [
     },
     ...(data?.transaction_type === 'rental'
         ? [
+              {
+                  name: 'transaction_value',
+                  label: 'Tiền thuê',
+                  type: 'money',
+                  span: { xs: 24, md: 12 },
+              },
+              {
+                  name: 'deposit_amount',
+                  label: 'Tiền cọc',
+                  type: 'money',
+                  span: { xs: 24, md: 12 },
+              },
+              {
+                  name: 'initial_payment_amount',
+                  label: 'Cần thanh toán ban đầu',
+                  render: (_, record) =>
+                      rentalMoneyBreakdown({
+                          rentalAmount: record?.transaction_value,
+                          depositAmount: record?.deposit_amount,
+                      }).initialAmount,
+                  type: 'money',
+                  span: { xs: 24, md: 12 },
+              },
+              {
+                  name: 'rental_deposit_deduction_amount',
+                  label: 'Khấu trừ tiền cọc',
+                  type: 'money',
+                  span: { xs: 24, md: 12 },
+              },
+              {
+                  name: 'rental_deposit_refund_preview',
+                  label: 'Cọc dự kiến hoàn lại',
+                  render: (_, record) =>
+                      rentalMoneyBreakdown({
+                          depositAmount: record?.deposit_amount,
+                          deductionAmount:
+                              record?.rental_deposit_deduction_amount,
+                      }).refundableAmount,
+                  type: 'money',
+                  span: { xs: 24, md: 12 },
+              },
               {
                   name: 'rental_period_count',
                   label: 'Kỳ hạn thuê',
