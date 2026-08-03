@@ -46,3 +46,8 @@ Không port RBAC, company/project/team, Accounting, Reports, generic workflow/SL
 - The page remains the presentation/orchestration owner; the hook is the transaction-detail runtime owner.
 - Existing routes and API payloads are unchanged.
 - Transaction detail presentation labels, modals and runtime side effects are separated so follow-up UI parity work can move through base components without rebuilding the route page.
+
+## Regression guards
+
+- `npm run check:maintainability` blocks V55/V66-style temporary file names and protects the transaction-detail split owners.
+- `check:all` now runs this guard after runtime closure so oversized route pages and missing hook/config/modal owners are caught before merge.
