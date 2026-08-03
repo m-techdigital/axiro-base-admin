@@ -16,12 +16,17 @@ export const createDocumentTemplateColumns = ({ onEdit, typeLabel = {} }) => [
         render: (value, row) => (
             <Tooltip
                 title={
-                    row.supersedes_template_id
-                        ? `Kế tiếp mẫu #${row.supersedes_template_id}`
-                        : 'Phiên bản đầu'
+                    row.supersedes
+                        ? `Kế tiếp ${row.supersedes.code} v${row.supersedes.version}`
+                        : row.supersedes_template_id
+                          ? `Kế tiếp mẫu #${row.supersedes_template_id}`
+                          : 'Phiên bản đầu'
                 }
             >
-                <span>v{value}</span>
+                <span>
+                    v{value}
+                    {row.supersedes ? ` · từ v${row.supersedes.version}` : ''}
+                </span>
             </Tooltip>
         ),
     },

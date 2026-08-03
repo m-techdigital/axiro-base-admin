@@ -1,9 +1,13 @@
 import { BaseTable } from '@/components/base'
 import { Card, Tabs } from 'antd'
+import { lazy, Suspense } from 'react'
 import PageHeader from '@/components/base/PageHeader'
-import PayoutDecisionModal from '../components/PayoutDecisionModal'
 import { payoutTabs } from '../config/options'
 import { usePayoutCenter } from '../hooks/usePayoutCenter'
+
+const PayoutDecisionModal = lazy(
+    () => import('../components/PayoutDecisionModal'),
+)
 
 export default function PayoutCenter() {
     const center = usePayoutCenter()
@@ -25,16 +29,20 @@ export default function PayoutCenter() {
                     scroll={{ x: 900 }}
                 />
             </Card>
-            <PayoutDecisionModal
-                active={center.active}
-                selected={center.selected}
-                note={center.note}
-                reference={center.reference}
-                onNoteChange={center.setNote}
-                onReferenceChange={center.setReference}
-                onAct={center.act}
-                onClose={center.close}
-            />
+            {center.selected ? (
+                <Suspense fallback={null}>
+                    <PayoutDecisionModal
+                        active={center.active}
+                        selected={center.selected}
+                        note={center.note}
+                        reference={center.reference}
+                        onNoteChange={center.setNote}
+                        onReferenceChange={center.setReference}
+                        onAct={center.act}
+                        onClose={center.close}
+                    />
+                </Suspense>
+            ) : null}
         </div>
     )
 }

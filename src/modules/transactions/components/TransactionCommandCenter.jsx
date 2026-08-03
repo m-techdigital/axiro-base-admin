@@ -19,17 +19,18 @@ export default function TransactionCommandCenter({
         (item) => item.status === 'completed',
     ).length
     const pendingPayments = center.pending_payments || []
+    const guidance = lifecycle.guidance || []
 
     return (
         <div className="transaction-command-center">
             <Typography.Title level={4}>
                 Trung tâm xử lý giao dịch
             </Typography.Title>
-            <Space direction="vertical" size={16} style={{ width: '100%' }}>
+            <Space orientation="vertical" size={16} style={{ width: '100%' }}>
                 <Alert
                     showIcon
                     type={lifecycle.next_action ? 'info' : 'success'}
-                    message={
+                    title={
                         lifecycle.next_action
                             ? `Việc cần làm: ${lifecycle.next_action.label}`
                             : 'Không còn thao tác bắt buộc'
@@ -40,6 +41,79 @@ export default function TransactionCommandCenter({
                             : undefined
                     }
                 />
+                {!!guidance.length && (
+                    <List
+                        size="small"
+                        header={
+                            <Typography.Text strong>
+                                Thông tin vận hành cần theo dõi
+                            </Typography.Text>
+                        }
+                        dataSource={guidance}
+                        renderItem={(item) => (
+                            <List.Item>
+                                <div>
+                                    <Typography.Text strong>
+                                        {item.label}
+                                    </Typography.Text>
+                                    {item.message ? (
+                                        <Typography.Paragraph
+                                            type="secondary"
+                                            style={{ marginBottom: 4 }}
+                                        >
+                                            {item.message}
+                                        </Typography.Paragraph>
+                                    ) : null}
+                                    <Space wrap>
+                                        {item.value != null ? (
+                                            <Tag color="blue">
+                                                Cần trả:{' '}
+                                                {formatCurrency(item.value)}
+                                            </Tag>
+                                        ) : null}
+                                        {item.rental_amount != null ? (
+                                            <Tag>
+                                                Tiền thuê:{' '}
+                                                {formatCurrency(
+                                                    item.rental_amount,
+                                                )}
+                                            </Tag>
+                                        ) : null}
+                                        {item.deposit_amount != null ? (
+                                            <Tag>
+                                                Tiền cọc:{' '}
+                                                {formatCurrency(
+                                                    item.deposit_amount,
+                                                )}
+                                            </Tag>
+                                        ) : null}
+                                        {item.deduction_amount != null ? (
+                                            <Tag color="orange">
+                                                Khấu trừ:{' '}
+                                                {formatCurrency(
+                                                    item.deduction_amount,
+                                                )}
+                                            </Tag>
+                                        ) : null}
+                                        {item.refundable_amount != null ? (
+                                            <Tag color="green">
+                                                Hoàn lại:{' '}
+                                                {formatCurrency(
+                                                    item.refundable_amount,
+                                                )}
+                                            </Tag>
+                                        ) : null}
+                                        {item.due_at ? (
+                                            <Tag color="purple">
+                                                Hạn: {item.due_at}
+                                            </Tag>
+                                        ) : null}
+                                    </Space>
+                                </div>
+                            </List.Item>
+                        )}
+                    />
+                )}
                 <div>
                     <Typography.Text strong>Tiến độ hồ sơ</Typography.Text>
                     <Progress

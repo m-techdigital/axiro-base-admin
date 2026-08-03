@@ -14,7 +14,7 @@
         "check:marketplace-trust": "node scripts/check-marketplace-trust.mjs",
         "check:system-contract": "node scripts/check-system-contract.mjs",
         "check:parent-foundation": "node scripts/check-parent-foundation.mjs",
-        "check:all": "npm run check:release-package && npm run check:semantic-owners && npm run check:core-flow-contract && npm run check:marketplace-options-sync && npm run check:product-option-exports && npm run check:parent-offer-mode-alignment && npm run check:parent-view-foundation && npm run check:parent-develop-neutral-sync && npm run check:admin-operational-readiness && npm run check:base-consumer-adoption && npm run check:source-closure && npm run check:parent-ui-source-alignment && npm run check:renderer-closure && npm run check:admin-runtime-closure && npm run check:maintainability && npm run check:table-action-scroll && npm run check:parent-dependency-closure && npm run check:parent-source-parity && npm run check:parent-base-parity && npm run check:parent-parallel-structure && npm run check:parent-foundation && npm run check:base-ownership && npm run check:parent-ui-parity && npm run check:parent-deep-foundation && npm run check:route-meta && npm run check:api-contract && npm run check:payout-flow && npm run check:marketplace-closure && npm run check:marketplace-trust && npm run check:system-contract && npm run check:base-interaction-parity && npm run check:deep-base-ownership && npm run check:notification-payout-journey && npm run format:check && npm run lint",
+        "check:all": "npm run check:release-package && npm run check:semantic-owners && npm run check:react-warning-closure && npm run check:bundle-lazy-owners && npm run check:core-flow-contract && npm run check:marketplace-options-sync && npm run check:product-option-exports && npm run check:parent-offer-mode-alignment && npm run check:parent-view-foundation && npm run check:parent-develop-neutral-sync && npm run check:admin-operational-readiness && npm run check:base-consumer-adoption && npm run check:source-closure && npm run check:parent-ui-source-alignment && npm run check:renderer-closure && npm run check:admin-runtime-closure && npm run check:maintainability && npm run check:table-action-scroll && npm run check:parent-dependency-closure && npm run check:parent-source-parity && npm run check:parent-base-parity && npm run check:parent-parallel-structure && npm run check:parent-foundation && npm run check:base-ownership && npm run check:parent-ui-parity && npm run check:parent-deep-foundation && npm run check:route-meta && npm run check:api-contract && npm run check:payout-flow && npm run check:marketplace-closure && npm run check:marketplace-trust && npm run check:system-contract && npm run check:base-interaction-parity && npm run check:deep-base-ownership && npm run check:notification-payout-journey && npm run format:check && npm run lint",
         "check:base-ownership": "node scripts/check-base-ownership.mjs",
         "check:parent-parallel-structure": "node scripts/check-parent-parallel-structure.mjs",
         "check:parent-ui-parity": "node scripts/check-parent-ui-parity.mjs",
@@ -48,10 +48,13 @@
         "check:release-package": "node scripts/check-release-package.mjs",
         "check:semantic-owners": "node scripts/check-semantic-owners.mjs",
         "analyze:bundle": "node scripts/analyze-bundle.mjs",
-        "build:analyze": "npm run build && npm run analyze:bundle",
+        "build:analyze": "npm run analyze:imports && npm run build && npm run analyze:bundle",
         "e2e:browser-crud": "node scripts/e2e-browser-crud.mjs",
         "check:release-readiness": "npm run check:all && npm run build:analyze",
-        "release:all": "bash ../axiro-base-api/scripts/release-all.sh"
+        "release:all": "bash ../axiro-base-api/scripts/release-all.sh",
+        "analyze:imports": "node scripts/analyze-import-graph.mjs",
+        "check:bundle-lazy-owners": "node scripts/check-bundle-lazy-owners.mjs",
+        "check:react-warning-closure": "node scripts/check-react-warning-closure.mjs"
     },
     "dependencies": {
         "@ant-design/icons": "^6.2.2",

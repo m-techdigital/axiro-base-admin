@@ -7,13 +7,13 @@ import { MetricCard } from '../operationsColumns'
 
 export default function OverviewTab({ overview }) {
     return (
-        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+        <Space orientation="vertical" size={16} style={{ width: '100%' }}>
             <Alert
                 showIcon
                 type={
                     overview.holds?.expired_unreleased ? 'warning' : 'success'
                 }
-                message="Tình trạng vận hành"
+                title="Tình trạng vận hành"
                 description={`Có ${overview.holds?.expired_unreleased || 0} hold quá hạn chưa được nhả và ${overview.queues?.dispute || 0} hồ sơ tranh chấp đang mở.`}
             />
             <div className="base-statistics-grid">

@@ -31,7 +31,7 @@ export default function BaseAsyncState({
                     ) : null
                 }
                 description={error?.message || String(error)}
-                message="Không thể tải dữ liệu"
+                title="Không thể tải dữ liệu"
                 showIcon
                 type="error"
             />

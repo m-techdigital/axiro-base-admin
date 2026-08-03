@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
             },
         },
         build: {
+            manifest: true,
             rollupOptions: {
                 output: {
                     manualChunks(id) {
@@ -37,7 +38,8 @@ export default defineConfig(({ mode }) => {
                             id.includes('/@rc-component/')
                         )
                             return 'antd-rc'
-                        if (id.includes('/antd/')) return 'antd-core'
+                        // Keep route-only AntD modules inside their lazy route chunks.
+                        // Forcing all antd/** modules into one shared chunk made lazy routes ineffective.
                         if (id.includes('/axios/')) return 'http-vendor'
                         if (id.includes('/dayjs/')) return 'date-vendor'
                         return 'vendor'

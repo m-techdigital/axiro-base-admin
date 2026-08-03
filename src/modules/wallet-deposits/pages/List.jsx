@@ -139,7 +139,7 @@ export default function WalletDepositList() {
             >
                 {selected ? (
                     <Space
-                        direction="vertical"
+                        orientation="vertical"
                         size={14}
                         style={{ width: '100%' }}
                     >

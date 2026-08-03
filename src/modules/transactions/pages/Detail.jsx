@@ -1,11 +1,15 @@
 import { BaseButton, BasePageHeader } from '@/components/base'
 import { Alert, Space } from 'antd'
+import { lazy, Suspense } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import TransactionCommandCenter from '../components/TransactionCommandCenter'
-import TransactionDetailModals from '../components/TransactionDetailModals'
 import TransactionDetailSections from '../components/TransactionDetailSections'
 import { transactionLabels } from '../config/detailPresentation'
 import useTransactionDetail from '../hooks/useTransactionDetail'
+
+const TransactionDetailModals = lazy(
+    () => import('../components/TransactionDetailModals'),
+)
 
 export default function TransactionDetail() {
     const { id } = useParams()
@@ -51,7 +55,7 @@ export default function TransactionDetail() {
                 <Alert
                     type="warning"
                     showIcon
-                    message="Giao dịch đang tranh chấp"
+                    title="Giao dịch đang tranh chấp"
                     description="Không nên hoàn tất hoặc hủy trước khi đối chiếu đầy đủ bằng chứng."
                 />
             )}
@@ -79,19 +83,23 @@ export default function TransactionDetail() {
                 act={act}
                 onOpenRentalCompletion={() => setDeductionModalOpen(true)}
             />
-            <TransactionDetailModals
-                data={data}
-                acting={acting}
-                deductionModalOpen={deductionModalOpen}
-                deductionAmount={deductionAmount}
-                deductionNote={deductionNote}
-                preview={preview}
-                onCloseDeduction={closeDeductionModal}
-                onCompleteRental={completeRental}
-                onDeductionAmountChange={setDeductionAmount}
-                onDeductionNoteChange={setDeductionNote}
-                onClosePreview={() => setPreview(null)}
-            />
+            {deductionModalOpen || preview ? (
+                <Suspense fallback={null}>
+                    <TransactionDetailModals
+                        data={data}
+                        acting={acting}
+                        deductionModalOpen={deductionModalOpen}
+                        deductionAmount={deductionAmount}
+                        deductionNote={deductionNote}
+                        preview={preview}
+                        onCloseDeduction={closeDeductionModal}
+                        onCompleteRental={completeRental}
+                        onDeductionAmountChange={setDeductionAmount}
+                        onDeductionNoteChange={setDeductionNote}
+                        onClosePreview={() => setPreview(null)}
+                    />
+                </Suspense>
+            ) : null}
         </div>
     )
 }

@@ -35,7 +35,7 @@ export default function OperationsModals({
                 <Alert
                     showIcon
                     type="warning"
-                    message="Thao tác ảnh hưởng trực tiếp đến khả năng giao dịch sản phẩm"
+                    title="Thao tác ảnh hưởng trực tiếp đến khả năng giao dịch sản phẩm"
                     description="Chỉ nhả khi đã xác minh giao dịch nguồn không còn quyền giữ sản phẩm. Ghi chú sẽ được lưu vào timeline và audit log."
                 />
                 <Input.TextArea
@@ -54,11 +54,11 @@ export default function OperationsModals({
                 footer={null}
                 onCancel={onTimelineClose}
             >
-                <Space direction="vertical" style={{ width: '100%' }}>
+                <Space orientation="vertical" style={{ width: '100%' }}>
                     <Alert
                         showIcon
                         icon={<ClockCircleOutlined />}
-                        message={`${timeline?.product?.code || ''} · ${statusLabel(timeline?.product?.availability_status, valueLabel(timeline?.product?.availability_status))} · phiên bản ${timeline?.product?.availability_version || ''}`}
+                        title={`${timeline?.product?.code || ''} · ${statusLabel(timeline?.product?.availability_status, valueLabel(timeline?.product?.availability_status))} · phiên bản ${timeline?.product?.availability_version || ''}`}
                     />
                     <BaseTable
                         columns={[

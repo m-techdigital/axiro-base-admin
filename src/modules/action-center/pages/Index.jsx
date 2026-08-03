@@ -66,7 +66,7 @@ export default function ActionCenter() {
                     </BaseButton>
                 }
             />
-            {error && <Alert type="error" message={error} showIcon />}
+            {error && <Alert type="error" title={error} showIcon />}
             <Row gutter={[16, 16]} className="action-center-stats">
                 <Col xs={12} lg={4}>
                     <Card>

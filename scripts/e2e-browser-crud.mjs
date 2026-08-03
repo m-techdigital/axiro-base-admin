@@ -227,13 +227,65 @@ try {
         () => evaluate('!document.body?.innerText?.includes("Đang tải")'),
         'document templates loaded',
     )
-    await clickText('Tạo mẫu')
-    await assertText('Tạo mẫu tài liệu')
-    await assertText('Bản nháp')
-    await assertText('Mẫu đã phát sinh tài liệu là bất biến')
+    await assertAction('Chỉnh sửa', 'document template edit action')
+    await clickText('Chỉnh sửa')
+    await assertText(
+        'Mẫu đã phát sinh tài liệu là bất biến',
+        'used template immutable note',
+    )
+    await assertText(
+        'Tạo phiên bản mới từ v',
+        'document versioning modal title',
+    )
     await evaluate(
         `document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`,
     )
+    await clickText('Tạo mẫu')
+    await assertText('Tạo mẫu tài liệu')
+    await assertText('Bản nháp')
+    await evaluate(
+        `document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`,
+    )
+    const templates = await api('/document-templates?per_page=100')
+    const issuedTemplate = (Array.isArray(templates) ? templates : []).find(
+        (item) => Number(item.generated_documents_count || 0) > 0,
+    )
+    if (!issuedTemplate)
+        throw new Error(
+            'Thiếu document template đã phát hành để smoke versioning.',
+        )
+    const currentTemplate = await api(
+        `/document-templates/${issuedTemplate.id}`,
+    )
+    const nextTemplate = await api(`/document-templates/${issuedTemplate.id}`, {
+        method: 'PUT',
+        body: {
+            code: currentTemplate.code,
+            name: currentTemplate.name,
+            type: currentTemplate.type,
+            target_module: currentTemplate.target_module,
+            status: 'published',
+            version: currentTemplate.version,
+            merge_fields: currentTemplate.merge_fields || [],
+            content_html: currentTemplate.content_html.replace(
+                '</body>',
+                '<p>Browser version smoke</p></body>',
+            ),
+            description: currentTemplate.description,
+        },
+    })
+    if (Number(nextTemplate.version) !== Number(currentTemplate.version) + 1)
+        throw new Error(
+            'Document template không tăng version sau khi sửa mẫu đã dùng.',
+        )
+    if (
+        Number(nextTemplate.supersedes_template_id) !==
+        Number(currentTemplate.id)
+    )
+        throw new Error(
+            'Document template version mới không trỏ mẫu bị thay thế.',
+        )
+    console.log('PASS document template immutable version mutation')
     await navigate('/payouts')
     await wait(
         () => evaluate('!document.body?.innerText?.includes("Đang tải")'),

@@ -1,60 +1,45 @@
-import { BaseForm, BaseModal, BaseButton } from '@/components/base'
+import { BaseButton, BaseTable } from '@/components/base'
 import { PlusOutlined } from '@ant-design/icons'
-import { message } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
-import BaseTable from '../../../components/base/BaseTable'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import PageHeader from '../../../components/base/PageHeader'
 import { useList } from '../../../hooks/useList'
-import service from '../service'
 import {
     loadMarketplaceOptions,
     optionMap,
 } from '@/services/marketplaceOptions'
-import {
-    createDocumentTemplateFields,
-    emptyDocumentTemplate,
-} from '../formConfig'
 import { createDocumentTemplateColumns } from '../columns'
+import service from '../service'
+
+const DocumentTemplateEditorModal = lazy(
+    () => import('../components/DocumentTemplateEditorModal'),
+)
 
 export default function DocumentTemplateList() {
     const list = useList(service.list)
     const [documentTypes, setDocumentTypes] = useState([])
+    const [open, setOpen] = useState(false)
+    const [editing, setEditing] = useState(null)
     const typeLabel = useMemo(() => optionMap(documentTypes), [documentTypes])
+
     useEffect(() => {
         loadMarketplaceOptions().then((options) =>
             setDocumentTypes(options.document_types || []),
         )
     }, [])
-    const [open, setOpen] = useState(false),
-        [editing, setEditing] = useState(null),
-        [saving, setSaving] = useState(false)
-    const [form] = BaseForm.useForm()
-    const formFields = useMemo(
-        () => createDocumentTemplateFields({ documentTypes, editing }),
-        [documentTypes, editing],
-    )
+
     const edit = (row = null) => {
         setEditing(row)
         setOpen(true)
     }
-    const save = async () => {
-        const values = await form.validateFields()
-        setSaving(true)
-        try {
-            editing
-                ? await service.update(editing.id, values)
-                : await service.create(values)
-            message.success('Đã lưu mẫu tài liệu')
-            setOpen(false)
-            list.reload()
-        } finally {
-            setSaving(false)
-        }
+    const close = () => {
+        setOpen(false)
+        setEditing(null)
     }
     const columns = useMemo(
         () => createDocumentTemplateColumns({ onEdit: edit, typeLabel }),
         [typeLabel],
     )
+
     return (
         <div className="page">
             <PageHeader
@@ -78,37 +63,28 @@ export default function DocumentTemplateList() {
                     current: list.meta.pagination?.current_page,
                     pageSize: list.meta.pagination?.per_page,
                 }}
-                onChange={(p) =>
-                    list.setParams((v) => ({
-                        ...v,
-                        page: p.current,
-                        per_page: p.pageSize,
+                onChange={(pagination) =>
+                    list.setParams((value) => ({
+                        ...value,
+                        page: pagination.current,
+                        per_page: pagination.pageSize,
                     }))
                 }
             />
-            <BaseModal
-                open={open}
-                onCancel={() => setOpen(false)}
-                onOk={save}
-                confirmLoading={saving}
-                width={900}
-                title={
-                    editing
-                        ? editing.generated_documents_count > 0
-                            ? `Tạo phiên bản mới từ v${editing.version}`
-                            : 'Chỉnh sửa mẫu tài liệu'
-                        : 'Tạo mẫu tài liệu'
-                }
-                okText="Lưu"
-                cancelText="Hủy"
-            >
-                <BaseForm
-                    fields={formFields}
-                    form={form}
-                    initialValues={emptyDocumentTemplate}
-                    record={editing || emptyDocumentTemplate}
-                />
-            </BaseModal>
+            {open ? (
+                <Suspense fallback={null}>
+                    <DocumentTemplateEditorModal
+                        open
+                        editing={editing}
+                        documentTypes={documentTypes}
+                        onClose={close}
+                        onSaved={() => {
+                            close()
+                            list.reload()
+                        }}
+                    />
+                </Suspense>
+            ) : null}
         </div>
     )
 }

@@ -25,7 +25,7 @@ export default function ReconciliationTab({
     }
 
     return (
-        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+        <Space orientation="vertical" size={16} style={{ width: '100%' }}>
             <FilterPresetBar
                 storageKey="operations.settlement-presets"
                 values={params}
@@ -43,7 +43,7 @@ export default function ReconciliationTab({
             </BaseButton>
             {exportState.request ? (
                 <Card size="small" title="Tiến độ tệp xuất">
-                    <Space direction="vertical" style={{ width: '100%' }}>
+                    <Space orientation="vertical" style={{ width: '100%' }}>
                         <Progress
                             percent={
                                 exportState.request.status === 'completed'
@@ -129,7 +129,7 @@ export default function ReconciliationTab({
                         ? 'error'
                         : 'success'
                 }
-                message="Kiểm tra mất cân đối"
+                title="Kiểm tra mất cân đối"
                 description={`Ví âm: ${reconciliation.imbalances?.wallet_negative || 0}; giao dịch trả thừa: ${reconciliation.imbalances?.transaction_overpaid || 0}; giải ngân vượt escrow: ${reconciliation.imbalances?.release_exceeds_escrow || 0}.`}
             />
         </Space>

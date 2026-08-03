@@ -20,7 +20,7 @@ export default function PayoutDecisionModal({
             footer={null}
             title="Xử lý yêu cầu"
         >
-            <Space direction="vertical" style={{ width: '100%' }}>
+            <Space orientation="vertical" style={{ width: '100%' }}>
                 {active === 'withdrawals' && selected?.journey ? (
                     <>
                         <Alert
@@ -30,7 +30,7 @@ export default function PayoutDecisionModal({
                                     ? 'info'
                                     : 'success'
                             }
-                            message={
+                            title={
                                 selected.journey.next_action?.label ||
                                 selected.journey.blocked_reason
                             }

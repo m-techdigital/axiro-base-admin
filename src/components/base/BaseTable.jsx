@@ -1,6 +1,21 @@
 import { Empty, Table } from 'antd'
 import { useMemo } from 'react'
 
+function stableRecordKey(record) {
+    const source = Object.entries(record || {})
+        .filter(([, value]) =>
+            ['string', 'number', 'boolean'].includes(typeof value),
+        )
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, value]) => `${key}:${String(value)}`)
+        .join('|')
+    let hash = 5381
+    for (const character of source || 'empty-record') {
+        hash = (hash * 33) ^ character.charCodeAt(0)
+    }
+    return `record-${(hash >>> 0).toString(36)}`
+}
+
 function normalizePagination(pagination, meta, onPaginationChange) {
     if (pagination === false) return false
     const source = pagination || meta?.pagination || meta || {}
@@ -36,7 +51,7 @@ export default function BaseTable({
     const resolvedData = dataSource ?? data ?? []
     const resolvedRowKey = useMemo(() => {
         if (typeof rowKey === 'function') return rowKey
-        return (record, index) => {
+        return (record) => {
             const candidate =
                 record?.[rowKey] ??
                 record?.id ??
@@ -47,7 +62,7 @@ export default function BaseTable({
                 candidate !== null &&
                 candidate !== ''
                 ? String(candidate)
-                : `row-${index}`
+                : stableRecordKey(record)
         }
     }, [rowKey])
 

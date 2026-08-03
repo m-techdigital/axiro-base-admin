@@ -32,7 +32,7 @@ export default function TransactionDetailModals({
                 loading={acting === 'complete'}
                 title="Quyết toán tiền cọc thuê"
             >
-                <Space direction="vertical" style={{ width: '100%' }}>
+                <Space orientation="vertical" style={{ width: '100%' }}>
                     <Typography.Text>
                         Tiền thuê: <Money value={rentalMoney.rentalAmount} />
                     </Typography.Text>

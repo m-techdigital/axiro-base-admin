@@ -12,7 +12,7 @@ export default function TransactionAdminActionsPanel({
     const actions = data?.admin_actions || []
     return (
         <Card title="Can thiệp quản trị" style={{ marginTop: 16 }}>
-            <Space direction="vertical" style={{ width: '100%' }}>
+            <Space orientation="vertical" style={{ width: '100%' }}>
                 {actions.includes('force_handover') && (
                     <BaseButton
                         block

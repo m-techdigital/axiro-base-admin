@@ -28,6 +28,14 @@ const theme = {
     },
 }
 
+ConfigProvider.config({
+    holderRender: (children) => (
+        <ConfigProvider locale={viVN} theme={theme}>
+            {children}
+        </ConfigProvider>
+    ),
+})
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <ConfigProvider locale={viVN} theme={theme}>

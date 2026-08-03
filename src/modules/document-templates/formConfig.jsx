@@ -51,7 +51,7 @@ export const createDocumentTemplateFields = ({
         key: 'template-contract-note',
         render: () => (
             <Alert
-                message="Mẫu đang áp dụng phải có đầy đủ thông tin các bên, đối tượng, giá trị, quyền và nghĩa vụ, bảo mật, tranh chấp và xác nhận điện tử. Mẫu đã phát sinh tài liệu là bất biến. Khi sửa, hệ thống tạo phiên bản mới; tài liệu lịch sử vẫn trỏ phiên bản cũ và tài liệu phát sinh sau đó dùng phiên bản đã phát hành mới nhất."
+                title="Mẫu đang áp dụng phải có đầy đủ thông tin các bên, đối tượng, giá trị, quyền và nghĩa vụ, bảo mật, tranh chấp và xác nhận điện tử. Mẫu đã phát sinh tài liệu là bất biến. Khi sửa, hệ thống tạo phiên bản mới; tài liệu lịch sử vẫn trỏ phiên bản cũ và tài liệu phát sinh sau đó dùng phiên bản đã phát hành mới nhất."
                 showIcon
                 type="warning"
             />
