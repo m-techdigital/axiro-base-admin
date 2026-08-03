@@ -10,6 +10,7 @@ import {
     Tabs,
     message,
 } from 'antd'
+import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { buildDefaultValues, mergeFormValues } from '@/utils/formDefaults'
@@ -33,8 +34,10 @@ import { buildFormErrorMessages } from './BaseForm/formErrors'
 import { buildSubmitPayload } from './BaseForm/formSubmit'
 import {
     flattenFields,
+    getValueAtPath,
     normalizeGroups,
     resolveHidden,
+    setValueAtPath,
     toNamePath,
 } from './BaseForm/formUtils'
 
@@ -127,6 +130,22 @@ const buildItemProps = (field) => {
     }
 }
 
+const normalizeDateFormValues = (values = {}, fields = []) => {
+    const next = { ...values }
+
+    fields.forEach((field) => {
+        if (field.type !== 'date' || !field.name) return
+
+        const value = getValueAtPath(next, field.name)
+        if (value === undefined || value === null || value === '') return
+        if (dayjs.isDayjs(value)) return
+
+        setValueAtPath(next, field.name, dayjs(value))
+    })
+
+    return next
+}
+
 function BaseForm({
     autoComplete = 'off',
     autoInitialize = true,
@@ -194,11 +213,14 @@ function BaseForm({
     const initialFormValues = useMemo(() => {
         const defaults = initialValues || defaultValues
 
-        return mergeFormValues({
-            defaults,
-            record,
-            fields: allFields,
-        })
+        return normalizeDateFormValues(
+            mergeFormValues({
+                defaults,
+                record,
+                fields: allFields,
+            }),
+            allFields,
+        )
     }, [allFields, defaultValues, initialValues, record])
 
     useComputedFields({ fields: allFields, values, form, record })
@@ -451,7 +473,7 @@ function BaseForm({
             const span = field.span || 24
             const gridColumn =
                 typeof span === 'number'
-                    ? `span ${Math.min(12, Math.max(1, span / 2))}`
+                    ? `span ${Math.min(12, Math.max(1, Math.ceil(span / 2)))}`
                     : undefined
 
             return (

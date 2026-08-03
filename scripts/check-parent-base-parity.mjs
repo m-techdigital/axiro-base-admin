@@ -70,9 +70,11 @@ expect(
     formModal.includes('fields={fields || []}') &&
         formModal.includes('tabs={tabs}') &&
         formModal.includes('sections={sections}') &&
+        formModal.includes('resolvedForm.submit()') &&
+        formModal.includes('showFooter={false}') &&
         !formModal.includes('BaseForm.Item') &&
         !formModal.includes('CONTROL_BY_TYPE'),
-    'BaseFormModal phải delegate schema cho BaseForm, không tự render control riêng',
+    'BaseFormModal phải delegate schema cho BaseForm và giữ modal submit contract, không tự render control riêng',
 )
 expect(
     formChange.includes('runFieldChangeHandlers') &&
@@ -82,6 +84,13 @@ expect(
         formSubmit.includes('buildSubmitPayload') &&
         formUtils.includes('normalizeGroups'),
     'BaseForm thiếu helper owner change/computed/errors/submit/utils theo AXIRO cha',
+)
+expect(
+    form.includes('normalizeDateFormValues') &&
+        form.includes('dayjs.isDayjs') &&
+        formSubmit.includes("field.type === 'date'") &&
+        formSubmit.includes("value.format('YYYY-MM-DD')"),
+    'BaseForm phải normalize DatePicker value và submit date mặc định để tránh runtime crash',
 )
 expect(
     relationSelect.includes('optionFilterProp="label"') &&
