@@ -1,15 +1,4 @@
-import {
-    Alert,
-    Checkbox,
-    DatePicker,
-    Form,
-    Input,
-    InputNumber,
-    Select,
-    Switch,
-    Tabs,
-    message,
-} from 'antd'
+import { Alert, Form, Input, Tabs, message } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -23,7 +12,7 @@ import { extractRelationConfigs } from '@/utils/extractRelationConfigs'
 import { useRelationOptions } from '@/hooks/useRelationOptions'
 
 import BaseFormFooter from './BaseFormFooter'
-import RelationSelect from './RelationSelect'
+import BaseFormControl from './BaseFormControl'
 import {
     buildDependentResetFields,
     clearChangedErrors,
@@ -43,73 +32,6 @@ import {
 
 const normalizeServerErrors = (errors = {}) =>
     mapLaravelErrorsToFields(errors || {})
-
-const renderInputByType = (field, context = {}) => {
-    if (typeof field.render === 'function') return field.render(field, context)
-    if (field.component) return field.component
-
-    const commonProps = field.props || {}
-
-    switch (field.type) {
-        case 'textarea':
-            return <Input.TextArea rows={field.rows || 4} {...commonProps} />
-
-        case 'number':
-        case 'money':
-        case 'number_formatter':
-            return <InputNumber className="w-full" {...commonProps} />
-
-        case 'relation':
-            return (
-                <RelationSelect
-                    allowClear={field.allowClear ?? true}
-                    field={field}
-                    form={context.form}
-                    loadOptions={context.loadOptions}
-                    mode={field.mode}
-                    options={context.relationOptions?.[field.name] || []}
-                    placeholder={field.placeholder}
-                    showSearch={field.showSearch ?? true}
-                    {...commonProps}
-                />
-            )
-
-        case 'select':
-            return (
-                <Select
-                    allowClear={field.allowClear ?? true}
-                    options={field.options || []}
-                    placeholder={field.placeholder}
-                    showSearch={field.showSearch ?? true}
-                    {...commonProps}
-                />
-            )
-
-        case 'multiple-select':
-            return (
-                <Select
-                    allowClear={field.allowClear ?? true}
-                    mode="multiple"
-                    options={field.options || []}
-                    placeholder={field.placeholder}
-                    showSearch={field.showSearch ?? true}
-                    {...commonProps}
-                />
-            )
-
-        case 'switch':
-            return <Switch {...commonProps} />
-
-        case 'checkbox':
-            return <Checkbox {...commonProps}>{field.text}</Checkbox>
-
-        case 'date':
-            return <DatePicker className="w-full" {...commonProps} />
-
-        default:
-            return <Input placeholder={field.placeholder} {...commonProps} />
-    }
-}
 
 const buildItemProps = (field) => {
     const itemProps = field.itemProps || {}
@@ -504,14 +426,17 @@ function BaseForm({
                     style={{ gridColumn: `span ${gridSpan}` }}
                 >
                     <Form.Item {...buildItemProps(field)}>
-                        {renderInputByType(field, {
-                            context,
-                            form,
-                            loadOptions,
-                            record,
-                            relationOptions,
-                            values,
-                        })}
+                        <BaseFormControl
+                            context={{
+                                context,
+                                form,
+                                loadOptions,
+                                record,
+                                relationOptions,
+                                values,
+                            }}
+                            field={field}
+                        />
                     </Form.Item>
                 </div>
             )

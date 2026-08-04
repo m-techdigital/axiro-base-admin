@@ -1,12 +1,16 @@
 import './reconciliation.css'
-import { Progress, message } from 'antd'
+import { message } from 'antd'
+import { lazy, Suspense } from 'react'
 
 import BaseButton from '@/components/base/BaseButton'
 import BaseFilter from '@/components/base/BaseFilter'
-import { valueLabel } from '@/contracts/marketplaceLabels'
 
 import { settlementFilters } from '../../config/filters'
 import FilterPresetBar from '../FilterPresetBar'
+
+const ReconciliationExportProgress = lazy(
+    () => import('./ReconciliationExportProgress'),
+)
 
 export default function ReconciliationExportWorkspace({
     exportState,
@@ -23,15 +27,6 @@ export default function ReconciliationExportWorkspace({
             )
         }
     }
-
-    const progress =
-        exportState.request?.status === 'completed'
-            ? 100
-            : exportState.request?.status === 'processing'
-              ? 60
-              : exportState.request?.status === 'failed'
-                ? 100
-                : 20
 
     return (
         <div className="operations-reconciliation-stack">
@@ -51,28 +46,19 @@ export default function ReconciliationExportWorkspace({
                 Xuất quyết toán giao dịch thuê
             </BaseButton>
             {exportState.request ? (
-                <section className="operations-reconciliation-surface">
-                    <h3>Tiến độ tệp xuất</h3>
-                    <Progress
-                        percent={progress}
-                        status={
-                            exportState.request.status === 'failed'
-                                ? 'exception'
-                                : undefined
-                        }
-                    />
-                    <p>
-                        Trạng thái: {valueLabel(exportState.request.status)}
-                        {exportState.request.row_count
-                            ? ` · ${exportState.request.row_count} dòng`
-                            : ''}
-                    </p>
-                    {exportState.request.status === 'completed' ? (
-                        <BaseButton onClick={exportState.download}>
-                            Tải tệp CSV
-                        </BaseButton>
-                    ) : null}
-                </section>
+                <Suspense
+                    fallback={
+                        <section
+                            aria-live="polite"
+                            className="operations-reconciliation-surface"
+                        >
+                            <h3>Tiến độ tệp xuất</h3>
+                            <p>Đang tải trạng thái tệp xuất…</p>
+                        </section>
+                    }
+                >
+                    <ReconciliationExportProgress exportState={exportState} />
+                </Suspense>
             ) : null}
         </div>
     )

@@ -4,7 +4,7 @@ import {
     SortAscendingOutlined,
     SortDescendingOutlined,
 } from '@ant-design/icons'
-import { DatePicker, Dropdown, Form, Input, Select } from 'antd'
+import { Dropdown, Form } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef } from 'react'
 
@@ -12,15 +12,7 @@ import { useRelationOptions } from '@/hooks/useRelationOptions'
 import { extractRelationConfigs } from '@/utils/extractRelationConfigs'
 
 import BaseButton from './BaseButton'
-import RelationSelect from './RelationSelect'
-
-const CONTROL_BY_TYPE = {
-    date: DatePicker,
-    dateRange: DatePicker.RangePicker,
-    select: Select,
-    search: Input,
-    text: Input,
-}
+import BaseFilterControl from './BaseFilterControl'
 
 function flattenFields(fields = [], filters = []) {
     if (filters?.length) return filters.flatMap((group) => group.fields || [])
@@ -47,74 +39,6 @@ function normalizeOutgoingValue(field, value) {
         )
     }
     return value
-}
-
-const getFieldKey = (name) => (Array.isArray(name) ? name.join('.') : name)
-
-function renderControl(field, context = {}) {
-    const Control = CONTROL_BY_TYPE[field.type || 'text'] || Input
-    const placeholder = field.placeholder || field.label
-
-    if (field.render) return field.render(field)
-    if (field.type === 'relation') {
-        const key = getFieldKey(field.name)
-
-        return (
-            <RelationSelect
-                allowClear={field.allowClear !== false}
-                field={field}
-                form={context.form}
-                loadOptions={context.loadOptions}
-                mode={field.mode}
-                options={context.relationOptions?.[key] || []}
-                placeholder={placeholder}
-                showSearch={field.showSearch !== false}
-                {...field.controlProps}
-            />
-        )
-    }
-    if (field.type === 'select') {
-        return (
-            <Control
-                allowClear={field.allowClear !== false}
-                loading={field.loading}
-                mode={field.mode}
-                optionFilterProp="label"
-                options={field.options || []}
-                placeholder={placeholder}
-                showSearch={field.showSearch !== false}
-                {...field.controlProps}
-            />
-        )
-    }
-    if (field.type === 'dateRange') {
-        return (
-            <Control
-                allowClear
-                format="DD/MM/YYYY"
-                placeholder={field.placeholder || ['Từ ngày', 'Đến ngày']}
-                {...field.controlProps}
-            />
-        )
-    }
-    if (field.type === 'date') {
-        return (
-            <Control
-                allowClear
-                format="DD/MM/YYYY"
-                placeholder={placeholder}
-                {...field.controlProps}
-            />
-        )
-    }
-    return (
-        <Control
-            allowClear={field.allowClear !== false}
-            placeholder={placeholder}
-            type={field.inputType}
-            {...field.controlProps}
-        />
-    )
 }
 
 function normalizeSortItems(sortFields = []) {
@@ -317,11 +241,14 @@ export default function BaseFilter({
                                         }
                                         name={field.name}
                                     >
-                                        {renderControl(field, {
-                                            form,
-                                            loadOptions,
-                                            relationOptions,
-                                        })}
+                                        <BaseFilterControl
+                                            context={{
+                                                form,
+                                                loadOptions,
+                                                relationOptions,
+                                            }}
+                                            field={field}
+                                        />
                                     </Form.Item>
                                 </div>
                             ))}

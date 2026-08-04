@@ -22,7 +22,9 @@ const expect = (condition, message) => {
 
 const modal = read('src/components/base/ParentBaseModal.jsx')
 const filter = read('src/components/base/BaseFilter.jsx')
+const filterControl = read('src/components/base/BaseFilterControl.jsx')
 const form = read('src/components/base/BaseForm.jsx')
+const formControl = read('src/components/base/BaseFormControl.jsx')
 const formModal = read('src/components/base/BaseFormModal.jsx')
 const formChange = read('src/components/base/BaseForm/formChange.js')
 const formComputed = read('src/components/base/BaseForm/formComputed.js')
@@ -49,7 +51,7 @@ expect(
     'ParentBaseModal phải sở hữu close/mask policy',
 )
 expect(
-    filter.includes('filters = []') && filter.includes('dateRange'),
+    filter.includes('filters = []') && filterControl.includes('dateRange'),
     'BaseFilter phải hỗ trợ group và date range',
 )
 expect(filter.includes('onValuesChange'), 'BaseFilter phải có change contract')
@@ -62,7 +64,8 @@ expect(
         form.includes('useComputedFields') &&
         form.includes('extractRelationConfigs') &&
         form.includes('useRelationOptions') &&
-        form.includes('RelationSelect') &&
+        form.includes('BaseFormControl') &&
+        formControl.includes('RelationSelect') &&
         form.includes('buildDependentResetFields') &&
         form.includes('tabs') &&
         form.includes('sections') &&

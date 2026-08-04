@@ -1,5 +1,7 @@
-import { Empty, Table } from 'antd'
+import { Table } from 'antd'
 import { useMemo } from 'react'
+
+import BaseTableEmptyState from './BaseTableEmptyState'
 
 function stableRecordKey(record) {
     const source = Object.entries(record || {})
@@ -88,12 +90,7 @@ export default function BaseTable({
                 dataSource={resolvedData}
                 loading={loading}
                 locale={{
-                    emptyText: (
-                        <Empty
-                            description="Chưa có dữ liệu"
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        />
-                    ),
+                    emptyText: <BaseTableEmptyState />,
                     ...locale,
                 }}
                 onChange={onChange}

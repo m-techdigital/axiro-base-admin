@@ -24,8 +24,38 @@ const documentTemplates = read('src/modules/document-templates/pages/List.jsx')
 const editor = read(
     'src/modules/document-templates/components/DocumentTemplateEditorModal.jsx',
 )
+const baseForm = read('src/components/base/BaseForm.jsx')
+const baseFilter = read('src/components/base/BaseFilter.jsx')
+const baseTable = read('src/components/base/BaseTable.jsx')
+const reconciliationExport = read(
+    'src/modules/operations-control/components/tabs/ReconciliationExportWorkspace.jsx',
+)
 
 const checks = [
+    [
+        baseForm.includes('BaseFormControl') &&
+            !baseForm.includes('InputNumber') &&
+            !baseForm.includes('DatePicker') &&
+            !baseForm.includes('RelationSelect'),
+        'BaseForm must delegate field controls to BaseFormControl',
+    ],
+    [
+        baseFilter.includes('BaseFilterControl') &&
+            !baseFilter.includes('DatePicker') &&
+            !baseFilter.includes('RelationSelect'),
+        'BaseFilter must delegate filter controls to BaseFilterControl',
+    ],
+    [
+        baseTable.includes('BaseTableEmptyState') &&
+            !baseTable.includes('import { Empty'),
+        'BaseTable empty presentation must stay in its semantic owner',
+    ],
+    [
+        reconciliationExport.includes('lazy(') &&
+            reconciliationExport.includes('ReconciliationExportProgress') &&
+            reconciliationExport.includes('Đang tải trạng thái tệp xuất'),
+        'reconciliation export progress must stay lazy with a visible fallback',
+    ],
     [
         !main.includes('ConfigProvider') &&
             !main.includes('antd/locale') &&
