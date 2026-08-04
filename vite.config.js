@@ -31,8 +31,15 @@ export default defineConfig(({ mode }) => {
                             id.includes('/react-router')
                         )
                             return 'react-vendor'
-                        // Do not force AntD, icon or rc-* packages into shared chunks.
-                        // Rollup can then keep route-only UI dependencies with their lazy owners.
+                        // Keep AntD, icons and rc-* packages route-local. Returning
+                        // undefined here is required; otherwise the generic vendor branch
+                        // below would still force them into one shared initial dependency.
+                        if (
+                            id.includes('/antd/') ||
+                            id.includes('/@ant-design/') ||
+                            id.includes('/rc-')
+                        )
+                            return undefined
                         if (id.includes('/axios/')) return 'http-vendor'
                         if (id.includes('/dayjs/')) return 'date-vendor'
                         return 'vendor'

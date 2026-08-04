@@ -114,6 +114,16 @@ for (const marker of [
 const viteConfig = fs.readFileSync(path.join(root, 'vite.config.js'), 'utf8')
 if (viteConfig.includes("return 'antd-vendor'"))
     failures.push('bundle ownership: monolithic antd-vendor must not return.')
+
+if (
+    !viteConfig.includes("id.includes('/antd/')") ||
+    !viteConfig.includes("id.includes('/@ant-design/')") ||
+    !viteConfig.includes("id.includes('/rc-')")
+) {
+    failures.push(
+        'bundle ownership: AntD/@ant-design/rc packages must bypass the generic vendor chunk.',
+    )
+}
 for (const chunk of ['antd-vendor', 'antd-core', 'antd-icons', 'antd-rc']) {
     if (viteConfig.includes(`return '${chunk}'`))
         failures.push(

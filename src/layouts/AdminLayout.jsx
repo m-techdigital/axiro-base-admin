@@ -1,10 +1,13 @@
 import { Layout } from 'antd'
-import { Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import AdminSidebar from './components/AdminSidebar'
-import AdminHeader from './components/AdminHeader'
+import { Outlet } from 'react-router-dom'
+
+import AdminThemeProvider from '../app/providers/AdminThemeProvider'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { useRouteMeta } from '../hooks/useRouteMeta'
+import AdminHeader from './components/AdminHeader'
+import AdminSidebar from './components/AdminSidebar'
+
 const { Content } = Layout
 
 export default function AdminLayout() {
@@ -14,36 +17,40 @@ export default function AdminLayout() {
     const collapsed = isMobile ? mobileCollapsed : desktopCollapsed
     const setCollapsed = isMobile ? setMobileCollapsed : setDesktopCollapsed
     const routeMeta = useRouteMeta()
+
     useEffect(() => {
         if (isMobile) setMobileCollapsed(true)
     }, [isMobile])
+
     return (
-        <Layout className="admin-layout">
-            <AdminSidebar
-                collapsed={collapsed}
-                setCollapsed={setCollapsed}
-                isMobile={isMobile}
-            />
-            {isMobile && !collapsed && (
-                <button
-                    type="button"
-                    className="admin-sidebar-backdrop"
-                    aria-label="Đóng menu"
-                    onClick={() => setCollapsed(true)}
-                />
-            )}
-            <Layout className="admin-main-layout">
-                <AdminHeader
+        <AdminThemeProvider>
+            <Layout className="admin-layout">
+                <AdminSidebar
                     collapsed={collapsed}
                     setCollapsed={setCollapsed}
-                    title={routeMeta?.title}
+                    isMobile={isMobile}
                 />
-                <Content className="admin-content">
-                    <div className="admin-content-body">
-                        <Outlet />
-                    </div>
-                </Content>
+                {isMobile && !collapsed && (
+                    <button
+                        type="button"
+                        className="admin-sidebar-backdrop"
+                        aria-label="Đóng menu"
+                        onClick={() => setCollapsed(true)}
+                    />
+                )}
+                <Layout className="admin-main-layout">
+                    <AdminHeader
+                        collapsed={collapsed}
+                        setCollapsed={setCollapsed}
+                        title={routeMeta?.title}
+                    />
+                    <Content className="admin-content">
+                        <div className="admin-content-body">
+                            <Outlet />
+                        </div>
+                    </Content>
+                </Layout>
             </Layout>
-        </Layout>
+        </AdminThemeProvider>
     )
 }
