@@ -1,5 +1,16 @@
-import { BaseButton, BaseDrawer } from '@/components/base'
-import { Descriptions, Input, Tag, Timeline } from 'antd'
+import './notification-detail.css'
+import BaseButton from '@/components/base/BaseButton'
+import BaseDrawer from '@/components/base/BaseDrawer'
+import { valueLabel } from '@/contracts/marketplaceLabels'
+
+function DetailRow({ label, value }) {
+    return (
+        <div className="notification-detail-row">
+            <dt>{label}</dt>
+            <dd>{value || '—'}</dd>
+        </div>
+    )
+}
 
 export default function NotificationDetailDrawer({
     detail,
@@ -19,86 +30,75 @@ export default function NotificationDetailDrawer({
             onClose={onClose}
         >
             {detail ? (
-                <>
-                    <Descriptions
-                        bordered
-                        column={1}
-                        size="small"
-                        items={[
-                            {
-                                key: 'type',
-                                label: 'Loại',
-                                children: detail.type || '—',
-                            },
-                            {
-                                key: 'customer',
-                                label: 'Khách hàng',
-                                children: detail.customer
+                <div className="notification-detail-stack">
+                    <dl className="notification-detail-list">
+                        <DetailRow
+                            label="Loại"
+                            value={valueLabel(detail.type)}
+                        />
+                        <DetailRow
+                            label="Khách hàng"
+                            value={
+                                detail.customer
                                     ? `${detail.customer.code || ''} ${detail.customer.name || ''}`.trim()
-                                    : '—',
-                            },
-                            {
-                                key: 'transaction',
-                                label: 'Giao dịch',
-                                children:
-                                    detail.transaction_code ||
-                                    detail.transaction?.code ||
-                                    '—',
-                            },
-                            {
-                                key: 'message',
-                                label: 'Nội dung',
-                                children: detail.message || '—',
-                            },
-                            {
-                                key: 'created',
-                                label: 'Thời gian',
-                                children: detail.created_at || '—',
-                            },
-                        ]}
-                    />
+                                    : '—'
+                            }
+                        />
+                        <DetailRow
+                            label="Giao dịch"
+                            value={
+                                detail.transaction_code ||
+                                detail.transaction?.code ||
+                                '—'
+                            }
+                        />
+                        <DetailRow label="Nội dung" value={detail.message} />
+                        <DetailRow
+                            label="Thời gian"
+                            value={detail.created_at}
+                        />
+                    </dl>
+
                     {detail.transaction?.events?.length ? (
-                        <div style={{ marginTop: 20 }}>
+                        <section>
                             <h3>Tiến trình giao dịch</h3>
-                            <Timeline
-                                items={detail.transaction.events.map(
-                                    (event) => ({
-                                        children: (
-                                            <>
-                                                <b>{event.title}</b>
-                                                <div>
-                                                    {event.description ||
-                                                        event.event_type}
-                                                </div>
-                                                <small>
-                                                    {event.created_at}
-                                                </small>
-                                            </>
-                                        ),
-                                    }),
-                                )}
-                            />
-                        </div>
+                            <ol className="notification-detail-timeline">
+                                {detail.transaction.events.map((event) => (
+                                    <li key={event.id || event.created_at}>
+                                        <strong>
+                                            {event.title ||
+                                                valueLabel(event.event_type)}
+                                        </strong>
+                                        <p>
+                                            {event.description ||
+                                                valueLabel(event.event_type)}
+                                        </p>
+                                        <small>{event.created_at}</small>
+                                    </li>
+                                ))}
+                            </ol>
+                        </section>
                     ) : null}
+
                     {detail.action_context?.next_action ? (
-                        <div style={{ marginTop: 20 }}>
-                            <Tag color="blue">
+                        <section className="notification-detail-notice">
+                            <strong>
                                 Việc tiếp theo:{' '}
                                 {detail.action_context.next_action.label}
-                            </Tag>
+                            </strong>
                             {(detail.action_context.blocking_reasons || [])
                                 .slice(0, 2)
                                 .map((reason) => (
-                                    <div key={reason}>
-                                        <small>{reason}</small>
-                                    </div>
+                                    <p key={reason}>{reason}</p>
                                 ))}
-                        </div>
+                        </section>
                     ) : null}
+
                     {!detail.handled_at ? (
-                        <div style={{ marginTop: 20 }}>
+                        <section>
                             <h3>Hoàn tất xử lý thông báo</h3>
-                            <Input.TextArea
+                            <textarea
+                                className="notification-detail-textarea"
                                 rows={3}
                                 value={handlingNote}
                                 placeholder="Ghi rõ kết quả hoặc lý do xử lý"
@@ -113,15 +113,16 @@ export default function NotificationDetailDrawer({
                             >
                                 Đánh dấu đã xử lý
                             </BaseButton>
-                        </div>
+                        </section>
                     ) : (
-                        <Tag color="green" style={{ marginTop: 20 }}>
-                            Đã xử lý: {detail.handling_note || 'Đã hoàn tất'}
-                        </Tag>
+                        <section className="notification-detail-notice is-success">
+                            <strong>Đã xử lý</strong>
+                            <p>{detail.handling_note || 'Đã hoàn tất'}</p>
+                        </section>
                     )}
+
                     {detail.action_context?.deep_link ? (
                         <BaseButton
-                            style={{ marginTop: 16 }}
                             onClick={() =>
                                 onNavigate(detail.action_context.deep_link)
                             }
@@ -131,7 +132,7 @@ export default function NotificationDetailDrawer({
                                 : 'Mở hồ sơ liên quan'}
                         </BaseButton>
                     ) : null}
-                </>
+                </div>
             ) : null}
         </BaseDrawer>
     )

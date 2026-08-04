@@ -1,0 +1,43 @@
+.operations-reconciliation-stack {
+    display: grid;
+    gap: 16px;
+}
+.operations-reconciliation-surface,
+.operations-reconciliation-stat,
+.operations-reconciliation-notice {
+    min-width: 0;
+    border: 1px solid var(--color-border, #d9e2f2);
+    border-radius: 8px;
+    background: #fff;
+}
+.operations-reconciliation-surface,
+.operations-reconciliation-notice {
+    padding: 16px;
+}
+.operations-reconciliation-stat {
+    display: grid;
+    gap: 6px;
+    padding: 14px 16px;
+}
+.operations-reconciliation-stat > span {
+    color: #7b8494;
+    font-size: 13px;
+}
+.operations-reconciliation-stat > strong {
+    color: #0b234a;
+    font-size: 22px;
+}
+.operations-reconciliation-stat.is-danger > strong {
+    color: #cf1322;
+}
+.operations-reconciliation-notice p {
+    margin: 6px 0 0;
+}
+.operations-reconciliation-notice.is-success {
+    border-color: #b7eb8f;
+    background: #f6ffed;
+}
+.operations-reconciliation-notice.is-danger {
+    border-color: #ffccc7;
+    background: #fff2f0;
+}

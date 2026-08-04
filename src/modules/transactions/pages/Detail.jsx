@@ -2,11 +2,15 @@ import { BaseButton, BasePageHeader } from '@/components/base'
 import { Alert, Space } from 'antd'
 import { lazy, Suspense } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import TransactionCommandCenter from '../components/TransactionCommandCenter'
-import TransactionDetailSections from '../components/TransactionDetailSections'
 import { transactionLabels } from '../config/detailPresentation'
 import useTransactionDetail from '../hooks/useTransactionDetail'
 
+const TransactionCommandCenter = lazy(
+    () => import('../components/TransactionCommandCenter'),
+)
+const TransactionDetailSections = lazy(
+    () => import('../components/TransactionDetailSections'),
+)
 const TransactionDetailModals = lazy(
     () => import('../components/TransactionDetailModals'),
 )
@@ -59,30 +63,32 @@ export default function TransactionDetail() {
                     description="Không nên hoàn tất hoặc hủy trước khi đối chiếu đầy đủ bằng chứng."
                 />
             )}
-            <TransactionCommandCenter
-                data={data}
-                loading={loading}
-                onAction={(action) =>
-                    act(
-                        action,
-                        `Thực hiện: ${transactionLabels[action] || action}`,
-                    )
-                }
-                onConfirmPayment={(paymentId) => confirmPayment(paymentId)}
-            />
-            <TransactionDetailSections
-                data={data}
-                loading={loading}
-                acting={acting}
-                documentLabels={documentLabels}
-                disputeOutcomeLabels={disputeOutcomeLabels}
-                confirmPayment={confirmPayment}
-                ensureDocuments={ensureDocuments}
-                viewDocument={viewDocument}
-                downloadDocument={downloadDocument}
-                act={act}
-                onOpenRentalCompletion={() => setDeductionModalOpen(true)}
-            />
+            <Suspense fallback={null}>
+                <TransactionCommandCenter
+                    data={data}
+                    loading={loading}
+                    onAction={(action) =>
+                        act(
+                            action,
+                            `Thực hiện: ${transactionLabels[action] || action}`,
+                        )
+                    }
+                    onConfirmPayment={(paymentId) => confirmPayment(paymentId)}
+                />
+                <TransactionDetailSections
+                    data={data}
+                    loading={loading}
+                    acting={acting}
+                    documentLabels={documentLabels}
+                    disputeOutcomeLabels={disputeOutcomeLabels}
+                    confirmPayment={confirmPayment}
+                    ensureDocuments={ensureDocuments}
+                    viewDocument={viewDocument}
+                    downloadDocument={downloadDocument}
+                    act={act}
+                    onOpenRentalCompletion={() => setDeductionModalOpen(true)}
+                />
+            </Suspense>
             {deductionModalOpen || preview ? (
                 <Suspense fallback={null}>
                     <TransactionDetailModals

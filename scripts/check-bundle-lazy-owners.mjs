@@ -13,6 +13,12 @@ const transactionSections = read(
 const notificationList = read('src/modules/notifications/pages/List.jsx')
 const operationsControl = read('src/modules/operations-control/pages/Index.jsx')
 const transactionDetail = read('src/modules/transactions/pages/Detail.jsx')
+const reconciliationTab = read(
+    'src/modules/operations-control/components/tabs/ReconciliationTab.jsx',
+)
+const notificationDrawer = read(
+    'src/modules/notifications/components/NotificationDetailDrawer.jsx',
+)
 const payout = read('src/modules/payouts/pages/Index.jsx')
 const documentTemplates = read('src/modules/document-templates/pages/List.jsx')
 const editor = read(
@@ -87,6 +93,30 @@ const checks = [
             ) &&
             operationsControl.includes('hasOpenModal'),
         'operations tabs and modals must stay lazy and demand-loaded',
+    ],
+    [
+        transactionDetail.includes(
+            "import('../components/TransactionCommandCenter')",
+        ) &&
+            transactionDetail.includes(
+                "import('../components/TransactionDetailSections')",
+            ),
+        'transaction detail command center and sections must stay lazy route owners',
+    ],
+    [
+        reconciliationTab.includes("import('./ReconciliationSummary')") &&
+            reconciliationTab.includes(
+                "import('./ReconciliationExportWorkspace')",
+            ) &&
+            reconciliationTab.includes('destroyOnHidden'),
+        'reconciliation summary/export workspaces must stay split and demand-loaded',
+    ],
+    [
+        notificationDrawer.includes('BaseDrawer') &&
+            !notificationDrawer.includes('Descriptions') &&
+            !notificationDrawer.includes('Timeline') &&
+            !notificationDrawer.includes('Input.TextArea'),
+        'notification drawer must avoid pulling heavy AntD presentation controls',
     ],
     [
         payout.includes('lazy(') && payout.includes('PayoutDecisionModal'),
