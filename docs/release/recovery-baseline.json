@@ -30,7 +30,10 @@
     "src/components/base/BaseFormControl.jsx",
     "src/components/base/BaseFilterControl.jsx",
     "src/components/base/BaseTableEmptyState.jsx",
-    "src/modules/operations-control/components/tabs/ReconciliationExportProgress.jsx"
+    "src/modules/operations-control/components/tabs/ReconciliationExportProgress.jsx",
+    "src/modules/transactions/components/TransactionCommandGuidance.jsx",
+    "src/modules/transactions/components/TransactionCommandWorkflow.jsx",
+    "src/modules/transactions/components/TransactionPendingPayments.jsx"
   ],
   "recovered_files": [
     ".env.example",

@@ -1,8 +1,26 @@
-import { Alert, List, Progress, Space, Tag, Typography } from 'antd'
-import { BaseButton, BaseConfirmActionButton } from '../../../components/base'
-import { formatCurrency } from '../../../utils/format'
+import { Alert, List, Space, Typography } from 'antd'
+import { lazy, Suspense } from 'react'
+import { BaseButton } from '../../../components/base'
+
+const TransactionCommandGuidance = lazy(
+    () => import('./TransactionCommandGuidance'),
+)
+const TransactionCommandWorkflow = lazy(
+    () => import('./TransactionCommandWorkflow'),
+)
+const TransactionPendingPayments = lazy(
+    () => import('./TransactionPendingPayments'),
+)
 
 const actionTone = { high: 'primary', medium: 'default', low: 'default' }
+
+function CommandSurfaceFallback({ label }) {
+    return (
+        <div aria-live="polite" className="transaction-command-surface-loading">
+            {label}
+        </div>
+    )
+}
 
 export default function TransactionCommandCenter({
     data,
@@ -15,14 +33,11 @@ export default function TransactionCommandCenter({
     const enabled = (lifecycle.actions || []).filter((item) => item.enabled)
     const blocked = (lifecycle.actions || []).filter((item) => !item.enabled)
     const checklist = center.workflow_checklist || []
-    const completed = checklist.filter(
-        (item) => item.status === 'completed',
-    ).length
     const pendingPayments = center.pending_payments || []
     const guidance = lifecycle.guidance || []
 
     return (
-        <div className="transaction-command-center">
+        <div className="transaction-command-center" aria-busy={loading}>
             <Typography.Title level={4}>
                 Trung tâm xử lý giao dịch
             </Typography.Title>
@@ -41,149 +56,34 @@ export default function TransactionCommandCenter({
                             : undefined
                     }
                 />
-                {!!guidance.length && (
-                    <List
-                        size="small"
-                        header={
-                            <Typography.Text strong>
-                                Thông tin vận hành cần theo dõi
-                            </Typography.Text>
+                {guidance.length ? (
+                    <Suspense
+                        fallback={
+                            <CommandSurfaceFallback label="Đang tải hướng dẫn vận hành…" />
                         }
-                        dataSource={guidance}
-                        renderItem={(item) => (
-                            <List.Item>
-                                <div>
-                                    <Typography.Text strong>
-                                        {item.label}
-                                    </Typography.Text>
-                                    {item.message ? (
-                                        <Typography.Paragraph
-                                            type="secondary"
-                                            style={{ marginBottom: 4 }}
-                                        >
-                                            {item.message}
-                                        </Typography.Paragraph>
-                                    ) : null}
-                                    <Space wrap>
-                                        {item.value != null ? (
-                                            <Tag color="blue">
-                                                Cần trả:{' '}
-                                                {formatCurrency(item.value)}
-                                            </Tag>
-                                        ) : null}
-                                        {item.rental_amount != null ? (
-                                            <Tag>
-                                                Tiền thuê:{' '}
-                                                {formatCurrency(
-                                                    item.rental_amount,
-                                                )}
-                                            </Tag>
-                                        ) : null}
-                                        {item.deposit_amount != null ? (
-                                            <Tag>
-                                                Tiền cọc:{' '}
-                                                {formatCurrency(
-                                                    item.deposit_amount,
-                                                )}
-                                            </Tag>
-                                        ) : null}
-                                        {item.deduction_amount != null ? (
-                                            <Tag color="orange">
-                                                Khấu trừ:{' '}
-                                                {formatCurrency(
-                                                    item.deduction_amount,
-                                                )}
-                                            </Tag>
-                                        ) : null}
-                                        {item.refundable_amount != null ? (
-                                            <Tag color="green">
-                                                Hoàn lại:{' '}
-                                                {formatCurrency(
-                                                    item.refundable_amount,
-                                                )}
-                                            </Tag>
-                                        ) : null}
-                                        {item.due_at ? (
-                                            <Tag color="purple">
-                                                Hạn: {item.due_at}
-                                            </Tag>
-                                        ) : null}
-                                    </Space>
-                                </div>
-                            </List.Item>
-                        )}
-                    />
-                )}
-                <div>
-                    <Typography.Text strong>Tiến độ hồ sơ</Typography.Text>
-                    <Progress
-                        percent={
-                            checklist.length
-                                ? Math.round(
-                                      (completed / checklist.length) * 100,
-                                  )
-                                : 0
+                    >
+                        <TransactionCommandGuidance guidance={guidance} />
+                    </Suspense>
+                ) : null}
+                <Suspense
+                    fallback={
+                        <CommandSurfaceFallback label="Đang tải tiến độ hồ sơ…" />
+                    }
+                >
+                    <TransactionCommandWorkflow checklist={checklist} />
+                </Suspense>
+                {pendingPayments.length ? (
+                    <Suspense
+                        fallback={
+                            <CommandSurfaceFallback label="Đang tải thanh toán cần xử lý…" />
                         }
-                        size="small"
-                    />
-                    <Space wrap>
-                        {checklist.map((item) => (
-                            <Tag
-                                key={item.key}
-                                color={
-                                    item.status === 'completed'
-                                        ? 'green'
-                                        : item.status === 'attention'
-                                          ? 'red'
-                                          : 'default'
-                                }
-                            >
-                                {item.label}: {item.detail}
-                            </Tag>
-                        ))}
-                    </Space>
-                </div>
-                {!!pendingPayments.length && (
-                    <List
-                        size="small"
-                        header={
-                            <Typography.Text strong>
-                                Thanh toán cần xử lý
-                            </Typography.Text>
-                        }
-                        dataSource={pendingPayments}
-                        renderItem={(payment) => (
-                            <List.Item
-                                actions={
-                                    payment.status === 'submitted'
-                                        ? [
-                                              <BaseConfirmActionButton
-                                                  key="confirm"
-                                                  size="small"
-                                                  title="Xác nhận thanh toán"
-                                                  content="Chỉ xác nhận khi đã đối soát chứng từ và số tiền thực nhận."
-                                                  okText="Xác nhận"
-                                                  onConfirm={() =>
-                                                      onConfirmPayment(
-                                                          payment.id,
-                                                      )
-                                                  }
-                                              >
-                                                  Xác nhận
-                                              </BaseConfirmActionButton>,
-                                          ]
-                                        : []
-                                }
-                            >
-                                <span>
-                                    {payment.code} ·{' '}
-                                    {formatCurrency(payment.amount)} ·{' '}
-                                    {payment.status}
-                                </span>
-                            </List.Item>
-                        )}
-                    />
-                )}
+                    >
+                        <TransactionPendingPayments
+                            payments={pendingPayments}
+                            onConfirmPayment={onConfirmPayment}
+                        />
+                    </Suspense>
+                ) : null}
                 <Space wrap>
                     {enabled
                         .filter((item) => item.key !== 'confirm_payment')
@@ -197,7 +97,7 @@ export default function TransactionCommandCenter({
                             </BaseButton>
                         ))}
                 </Space>
-                {!!blocked.length && (
+                {blocked.length ? (
                     <List
                         size="small"
                         header={
@@ -214,7 +114,7 @@ export default function TransactionCommandCenter({
                             </List.Item>
                         )}
                     />
-                )}
+                ) : null}
             </Space>
         </div>
     )

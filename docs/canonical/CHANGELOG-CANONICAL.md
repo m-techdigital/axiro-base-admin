@@ -51,3 +51,9 @@ Các file canonical có ngày trong tên được giữ làm evidence lịch s�
 - MBN global `app.css` no longer imports modal sub-owners twice. Account, purchase-detail and content-route styles remain owned by their route shells/pages. `check:global-style-boundary` prevents route-only styles from leaking back into the global manifest.
 - No API schema, route, transaction, payout, document, customer-isolation or marketplace contract changed in this follow-up.
 - All prior bundle sizes, browser screenshots, transactional E2E and release evidence are historical after this source change. Fresh build, visual regression and `release:all` are required from clean committed/pushed Git HEADs.
+## 2026-08-05 route closure and CSS ownership continuation
+
+- Admin: Transaction Command Center presentation was split into lazy guidance, workflow, and pending-payment owners with visible loading fallbacks.
+- MBN: modal and purchase-modal styles moved from global manifests to the components that consume them.
+- API runtime and marketplace behavior are unchanged.
+- Previous bundle/browser evidence is historical after this source change; rerun build, visual regression, transactional E2E, and `release:all` on clean pushed Git HEADs.

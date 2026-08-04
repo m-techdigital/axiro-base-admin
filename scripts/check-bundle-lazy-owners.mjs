@@ -13,6 +13,9 @@ const transactionSections = read(
 const notificationList = read('src/modules/notifications/pages/List.jsx')
 const operationsControl = read('src/modules/operations-control/pages/Index.jsx')
 const transactionDetail = read('src/modules/transactions/pages/Detail.jsx')
+const transactionCommandCenter = read(
+    'src/modules/transactions/components/TransactionCommandCenter.jsx',
+)
 const reconciliationTab = read(
     'src/modules/operations-control/components/tabs/ReconciliationTab.jsx',
 )
@@ -123,6 +126,13 @@ const checks = [
             ) &&
             operationsControl.includes('hasOpenModal'),
         'operations tabs and modals must stay lazy and demand-loaded',
+    ],
+    [
+        transactionCommandCenter.includes('TransactionCommandGuidance') &&
+            transactionCommandCenter.includes('TransactionCommandWorkflow') &&
+            transactionCommandCenter.includes('TransactionPendingPayments') &&
+            transactionCommandCenter.includes('Đang tải tiến độ hồ sơ'),
+        'transaction command center heavy presentation owners must stay lazy with visible fallbacks',
     ],
     [
         transactionDetail.includes(
