@@ -74,6 +74,67 @@ if (!detail.includes('TransactionDetailSections')) {
     )
 }
 
+const loginPage = fs.readFileSync(
+    path.join(root, 'src/modules/auth/pages/Login.jsx'),
+    'utf8',
+)
+const loginForm = fs.readFileSync(
+    path.join(root, 'src/modules/auth/components/AuthLoginForm.jsx'),
+    'utf8',
+)
+if (loginPage.includes('BaseForm') || !loginPage.includes('AuthLoginForm')) {
+    failures.push('auth login: lightweight form owner must replace BaseForm.')
+}
+for (const owner of ['antd/es/form', 'antd/es/input', 'BaseButton']) {
+    if (!loginForm.includes(owner)) {
+        failures.push(`auth login: missing direct lightweight owner ${owner}.`)
+    }
+}
+
+const detailSections = fs.readFileSync(
+    path.join(
+        root,
+        'src/modules/transactions/components/TransactionDetailSections.jsx',
+    ),
+    'utf8',
+)
+for (const owner of [
+    'TransactionPaymentPanel',
+    'TransactionDocumentPanel',
+    'TransactionTimelinePanel',
+    'TransactionAdminActionsPanel',
+]) {
+    if (!detailSections.includes(`lazy(`) || !detailSections.includes(owner)) {
+        failures.push(`transaction detail: ${owner} must stay lazy.`)
+    }
+}
+
+const notificationList = fs.readFileSync(
+    path.join(root, 'src/modules/notifications/pages/List.jsx'),
+    'utf8',
+)
+if (
+    !notificationList.includes('lazy(') ||
+    !notificationList.includes('NotificationDetailDrawer')
+) {
+    failures.push('notifications: detail drawer must remain lazy.')
+}
+
+const operationsPage = fs.readFileSync(
+    path.join(root, 'src/modules/operations-control/pages/Index.jsx'),
+    'utf8',
+)
+for (const owner of [
+    'HoldsTab',
+    'QueuesTab',
+    'ReconciliationTab',
+    'OperationsModals',
+]) {
+    if (!operationsPage.includes(owner) || !operationsPage.includes('lazy(')) {
+        failures.push(`operations control: ${owner} must remain lazy.`)
+    }
+}
+
 const documentForm = fs.readFileSync(
     path.join(root, 'src/modules/document-templates/formConfig.jsx'),
     'utf8',
@@ -109,6 +170,18 @@ for (const marker of [
 ]) {
     if (!crudSmoke.includes(marker))
         failures.push(`admin CRUD smoke: missing ${marker}.`)
+}
+
+for (const marker of [
+    'ADMIN_E2E_REQUIRE_DOCUMENT_VERSION_MUTATION',
+    'clickRowAction(',
+    'supersedes_template_id',
+    'Document template immutable version mutation thiếu issued template fixture',
+]) {
+    if (!crudSmoke.includes(marker))
+        failures.push(
+            `admin CRUD smoke: missing strict document version marker ${marker}.`,
+        )
 }
 
 const viteConfig = fs.readFileSync(path.join(root, 'vite.config.js'), 'utf8')

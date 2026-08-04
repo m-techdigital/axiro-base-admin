@@ -1,21 +1,31 @@
 import { ReloadOutlined } from '@ant-design/icons'
 import { Tabs, message } from 'antd'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+    lazy,
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { BaseButton, BasePageHeader } from '@/components/base'
 
-import OperationsModals from '../components/OperationsModals'
 import {
     createHoldColumns,
     createQueueColumns,
 } from '../components/operationsColumns'
-import HoldsTab from '../components/tabs/HoldsTab'
-import OverviewTab from '../components/tabs/OverviewTab'
-import QueuesTab from '../components/tabs/QueuesTab'
-import ReconciliationTab from '../components/tabs/ReconciliationTab'
 import useSettlementExport from '../hooks/useSettlementExport'
 import service from '../service'
+
+const OperationsModals = lazy(() => import('../components/OperationsModals'))
+const HoldsTab = lazy(() => import('../components/tabs/HoldsTab'))
+const OverviewTab = lazy(() => import('../components/tabs/OverviewTab'))
+const QueuesTab = lazy(() => import('../components/tabs/QueuesTab'))
+const ReconciliationTab = lazy(
+    () => import('../components/tabs/ReconciliationTab'),
+)
 
 const unwrap = (response) => response?.data?.data || response?.data || {}
 const rowsOf = (response) => {
@@ -121,6 +131,8 @@ export default function OperationsControlPage() {
         }
     }
 
+    const hasOpenModal = Boolean(releaseRecord || timeline || checklist)
+
     return (
         <div className="page">
             <BasePageHeader
@@ -145,45 +157,53 @@ export default function OperationsControlPage() {
                     { key: 'reconciliation', label: 'Đối soát' },
                 ]}
             />
-            {tab === 'overview' ? <OverviewTab overview={overview} /> : null}
-            {tab === 'holds' ? (
-                <HoldsTab
-                    columns={holdColumns}
-                    loading={loading}
-                    params={holdParams}
-                    rows={rows}
-                    onParamsChange={setHoldParams}
-                />
+            <Suspense fallback={null}>
+                {tab === 'overview' ? (
+                    <OverviewTab overview={overview} />
+                ) : null}
+                {tab === 'holds' ? (
+                    <HoldsTab
+                        columns={holdColumns}
+                        loading={loading}
+                        params={holdParams}
+                        rows={rows}
+                        onParamsChange={setHoldParams}
+                    />
+                ) : null}
+                {tab === 'queues' ? (
+                    <QueuesTab
+                        columns={queueColumns}
+                        loading={loading}
+                        params={queueParams}
+                        rows={rows}
+                        onParamsChange={setQueueParams}
+                    />
+                ) : null}
+                {tab === 'reconciliation' ? (
+                    <ReconciliationTab
+                        exportState={exportState}
+                        loading={loading}
+                        params={settlementParams}
+                        reconciliation={reconciliation}
+                        onParamsChange={setSettlementParams}
+                    />
+                ) : null}
+            </Suspense>
+            {hasOpenModal ? (
+                <Suspense fallback={null}>
+                    <OperationsModals
+                        checklist={checklist}
+                        releaseNote={releaseNote}
+                        releaseRecord={releaseRecord}
+                        timeline={timeline}
+                        onChecklistClose={() => setChecklist(null)}
+                        onRelease={release}
+                        onReleaseClose={() => setReleaseRecord(null)}
+                        onReleaseNoteChange={setReleaseNote}
+                        onTimelineClose={() => setTimeline(null)}
+                    />
+                </Suspense>
             ) : null}
-            {tab === 'queues' ? (
-                <QueuesTab
-                    columns={queueColumns}
-                    loading={loading}
-                    params={queueParams}
-                    rows={rows}
-                    onParamsChange={setQueueParams}
-                />
-            ) : null}
-            {tab === 'reconciliation' ? (
-                <ReconciliationTab
-                    exportState={exportState}
-                    loading={loading}
-                    params={settlementParams}
-                    reconciliation={reconciliation}
-                    onParamsChange={setSettlementParams}
-                />
-            ) : null}
-            <OperationsModals
-                checklist={checklist}
-                releaseNote={releaseNote}
-                releaseRecord={releaseRecord}
-                timeline={timeline}
-                onChecklistClose={() => setChecklist(null)}
-                onRelease={release}
-                onReleaseClose={() => setReleaseRecord(null)}
-                onReleaseNoteChange={setReleaseNote}
-                onTimelineClose={() => setTimeline(null)}
-            />
         </div>
     )
 }

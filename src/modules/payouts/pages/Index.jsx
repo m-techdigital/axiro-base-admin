@@ -1,7 +1,6 @@
-import { BaseTable } from '@/components/base'
+import { BasePageHeader, BaseTable } from '@/components/base'
 import { Card, Tabs } from 'antd'
 import { lazy, Suspense } from 'react'
-import PageHeader from '@/components/base/PageHeader'
 import { payoutTabs } from '../config/options'
 import { usePayoutCenter } from '../hooks/usePayoutCenter'
 
@@ -14,7 +13,7 @@ export default function PayoutCenter() {
 
     return (
         <div className="page">
-            <PageHeader title="Xác minh và chi trả người bán" />
+            <BasePageHeader title="Xác minh và chi trả người bán" />
             <Card>
                 <Tabs
                     activeKey={center.active}

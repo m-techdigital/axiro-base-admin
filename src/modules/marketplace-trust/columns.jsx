@@ -78,7 +78,11 @@ export const createRiskColumns = ({ onSelect }) => [
         render: (_, row) =>
             `${valueLabel(row.subject_type)} #${row.subject_id}`,
     },
-    { title: 'Rule', dataIndex: 'rule_code' },
+    {
+        title: 'Quy tắc',
+        dataIndex: 'rule_code',
+        render: (value) => valueLabel(value),
+    },
     {
         title: 'Mức',
         dataIndex: 'level',

@@ -35,3 +35,29 @@
 .transaction-command-center {
     margin-block: 16px;
 }
+
+.base-statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+}
+
+.base-statistics-grid > .ant-card {
+    height: 100%;
+}
+
+.audit-log-statistics {
+    margin-bottom: 16px;
+}
+
+.action-center-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+}
+
+.action-center-stats > .ant-col {
+    max-width: none;
+    padding: 0 !important;
+    width: auto;
+}

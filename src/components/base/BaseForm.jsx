@@ -5,7 +5,6 @@ import {
     Form,
     Input,
     InputNumber,
-    Row,
     Select,
     Switch,
     Tabs,
@@ -129,6 +128,20 @@ const buildItemProps = (field) => {
                 : undefined),
         ...itemProps,
     }
+}
+
+const resolveGridSpan = (field = {}) => {
+    if (field.gridSpan) {
+        return Math.max(1, Math.min(12, Number(field.gridSpan)))
+    }
+
+    const legacySpan = Number(field.span || 24)
+    if (legacySpan >= 24) return 12
+    if (legacySpan >= 12) return 12
+    if (legacySpan >= 8) return 8
+    if (legacySpan >= 6) return 6
+    if (legacySpan >= 4) return 4
+    return 4
 }
 
 const normalizeDateFormValues = (values = {}, fields = []) => {
@@ -391,8 +404,10 @@ function BaseForm({
                 setServerErrors(errors)
                 form.setFields(mapLaravelErrorsToFields(errors))
                 focusFirstError(Object.keys(errors))
+                const firstMessage = Object.values(errors).flat().find(Boolean)
                 message.error(
-                    'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra các trường được đánh dấu.',
+                    firstMessage ||
+                        'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra các trường được đánh dấu.',
                 )
                 return
             }
@@ -413,8 +428,12 @@ function BaseForm({
         setServerErrors(errors)
         focusFirstError(errorInfo.errorFields?.map((field) => field.name))
         onFinishFailed?.(errorInfo)
+        const firstMessage = errorInfo.errorFields
+            ?.flatMap((field) => field.errors || [])
+            .find(Boolean)
         message.error(
-            'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra các trường được đánh dấu.',
+            firstMessage ||
+                'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra các trường được đánh dấu.',
         )
     }
 
@@ -440,7 +459,7 @@ function BaseForm({
                         <div
                             className="base-form-field"
                             key={field.key}
-                            style={{ width: '100%' }}
+                            style={{ gridColumn: '1 / -1', width: '100%' }}
                         >
                             {field.render(field, {
                                 context,
@@ -471,22 +490,18 @@ function BaseForm({
 
             if (resolveHidden(field, record, values, form)) return null
 
-            const span = field.span || 24
+            const span = Number(field.span || 24)
+            const gridSpan = resolveGridSpan(field)
 
             return (
                 <div
-                    className="base-form-field"
+                    className={`base-form-field span-${span}`}
                     key={
                         Array.isArray(field.name)
                             ? field.name.join('.')
                             : field.name
                     }
-                    style={{
-                        width:
-                            span >= 24
-                                ? '100%'
-                                : `calc(${(span / 24) * 100}% - 12px)`,
-                    }}
+                    style={{ gridColumn: `span ${gridSpan}` }}
                 >
                     <Form.Item {...buildItemProps(field)}>
                         {renderInputByType(field, {
@@ -506,9 +521,9 @@ function BaseForm({
 
     const renderGroup = useCallback(
         (group) => (
-            <Row className="base-form-grid" gutter={[16, 0]}>
+            <div className="base-form-grid">
                 {(group.fields || []).map(renderField)}
-            </Row>
+            </div>
         ),
         [renderField],
     )

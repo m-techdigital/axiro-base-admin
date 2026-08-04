@@ -1,109 +1,126 @@
-import { BaseActionGroup, BaseIconAction, BaseModal } from '@/components/base'
 import { DownloadOutlined, EyeOutlined } from '@ant-design/icons'
 import { Tag } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
+
+import {
+    BaseActionGroup,
+    BaseIconAction,
+    BaseListView,
+    BaseModal,
+} from '@/components/base'
+import { valueLabel } from '@/contracts/marketplaceLabels'
+import { useList } from '@/hooks/useList'
 import {
     loadMarketplaceOptions,
     optionMap,
 } from '@/services/marketplaceOptions'
-import BaseTable from '../../../components/base/BaseTable'
-import PageHeader from '../../../components/base/PageHeader'
-import { useList } from '../../../hooks/useList'
+
 import service from '../service'
+
 export default function GeneratedDocumentList() {
     const [documentTypes, setDocumentTypes] = useState([])
+    const [preview, setPreview] = useState(null)
+    const list = useList(service.list)
     const documentLabels = useMemo(
         () => optionMap(documentTypes),
         [documentTypes],
     )
+
     useEffect(() => {
         loadMarketplaceOptions().then((options) =>
             setDocumentTypes(options.document_types || []),
         )
     }, [])
-    const list = useList(service.list),
-        [preview, setPreview] = useState(null)
+
     const show = async (id) => setPreview((await service.preview(id)).data)
+
     const download = async (row) => {
         const blob = await service.download(row.id)
         const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${row.code}.pdf`
-        a.click()
+        const anchor = document.createElement('a')
+        anchor.href = url
+        anchor.download = `${row.code}.pdf`
+        anchor.click()
         URL.revokeObjectURL(url)
     }
-    const cols = [
+
+    const columns = [
         { title: 'Mã', dataIndex: 'code' },
         { title: 'Tài liệu', dataIndex: 'title' },
-        { title: 'Giao dịch', render: (_, r) => r.transaction?.code },
+        { title: 'Giao dịch', render: (_, row) => row.transaction?.code },
         {
             title: 'Loại',
             dataIndex: 'document_type',
-            render: (v) => documentLabels[v] || v,
+            render: (value) => documentLabels[value] || valueLabel(value),
         },
         { title: 'Phiên bản', dataIndex: 'version' },
         {
             title: 'Xác nhận',
-            render: (_, r) => (
+            render: (_, row) => (
                 <Tag
-                    color={(r.acceptances || []).length >= 2 ? 'green' : 'gold'}
+                    color={
+                        (row.acceptances || []).length >= 2 ? 'green' : 'gold'
+                    }
                 >
-                    {(r.acceptances || []).length}/2 bên
+                    {(row.acceptances || []).length}/2 bên
                 </Tag>
             ),
         },
         {
             title: 'Thao tác',
             key: 'actions',
-            render: (_, r) => (
+            render: (_, row) => (
                 <BaseActionGroup>
                     <BaseIconAction
                         icon={<EyeOutlined />}
                         label="Xem tài liệu"
-                        onClick={() => show(r.id)}
+                        onClick={() => show(row.id)}
                     />
                     <BaseIconAction
                         icon={<DownloadOutlined />}
                         label="Tải PDF"
-                        onClick={() => download(r)}
+                        onClick={() => download(row)}
                     />
                 </BaseActionGroup>
             ),
         },
     ]
+
     return (
-        <div className="page">
-            <PageHeader title="Tài liệu đã phát hành" />
-            <BaseTable
-                columns={cols}
+        <>
+            <BaseListView
+                columns={columns}
                 data={list.data}
+                description="Tra cứu tài liệu đã phát hành theo giao dịch, phiên bản và trạng thái xác nhận của các bên."
                 loading={list.loading}
+                onChange={(pagination) =>
+                    list.setParams((current) => ({
+                        ...current,
+                        page: pagination.current,
+                        per_page: pagination.pageSize,
+                    }))
+                }
                 pagination={{
                     total: list.meta.pagination?.total,
                     current: list.meta.pagination?.current_page,
                     pageSize: list.meta.pagination?.per_page,
+                    showSizeChanger: true,
                 }}
-                onChange={(p) =>
-                    list.setParams((v) => ({
-                        ...v,
-                        page: p.current,
-                        per_page: p.pageSize,
-                    }))
-                }
+                scroll={{ x: 'max-content' }}
+                title="Tài liệu đã phát hành"
             />
             <BaseModal
-                open={!!preview}
-                onCancel={() => setPreview(null)}
                 footer={null}
-                width={900}
+                onCancel={() => setPreview(null)}
+                open={Boolean(preview)}
                 title={preview?.title}
+                width={900}
             >
                 <div
                     className="document-preview"
                     dangerouslySetInnerHTML={{ __html: preview?.html || '' }}
                 />
             </BaseModal>
-        </div>
+        </>
     )
 }

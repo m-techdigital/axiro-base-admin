@@ -1,7 +1,12 @@
-import { BaseButton, BaseForm, BaseModal, BaseTable } from '@/components/base'
+import {
+    BasePageHeader,
+    BaseButton,
+    BaseForm,
+    BaseModal,
+    BaseTable,
+} from '@/components/base'
 import { Card, Tabs, message } from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import PageHeader from '../../../components/base/PageHeader'
 import {
     createTrustModerationFields,
     createTrustModerationInitialValues,
@@ -111,9 +116,9 @@ export default function MarketplaceTrustPage() {
 
     return (
         <div className="page">
-            <PageHeader
+            <BasePageHeader
                 title="Niềm tin, nội dung và rủi ro"
-                subtitle="Kiểm duyệt đánh giá, phát hành nội dung và xử lý cảnh báo rủi ro."
+                description="Kiểm duyệt đánh giá, phát hành nội dung và xử lý cảnh báo rủi ro."
             />
             <Card>
                 <Tabs

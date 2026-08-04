@@ -3,6 +3,7 @@ import {
     BaseConfirmActionButton,
     BaseForm,
     BaseStatusSummaryBar,
+    BasePageHeader,
     BaseTable,
     BaseTabs,
 } from '@/components/base'
@@ -10,7 +11,6 @@ import { CheckCircleOutlined, ReloadOutlined } from '@ant-design/icons'
 import { Card, Col, Image, Row, Space, Tag, Typography, message } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import PageHeader from '../../../components/base/PageHeader'
 import { paymentConfigFields, QR_TEMPLATE_OPTIONS } from '../formConfig'
 import service from '../service'
 
@@ -207,9 +207,9 @@ export default function PaymentSettings() {
 
     return (
         <div className="page">
-            <PageHeader
+            <BasePageHeader
                 title="Cấu hình nhận thanh toán"
-                subtitle="Quản lý tài khoản nhận tiền, mẫu QR và lịch sử thay đổi để có thể khôi phục khi cấu hình sai."
+                description="Quản lý tài khoản nhận tiền, mẫu QR và lịch sử thay đổi để có thể khôi phục khi cấu hình sai."
                 actions={
                     <BaseButton
                         icon={<ReloadOutlined />}

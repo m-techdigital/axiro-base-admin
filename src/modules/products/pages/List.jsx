@@ -1,23 +1,24 @@
-import {
-    CheckOutlined,
-    CloseOutlined,
-    EditOutlined,
-    PlusOutlined,
-} from '@ant-design/icons'
+import { CheckOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { Tag, message } from 'antd'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import {
     BaseActionGroup,
     BaseButton,
     BaseDeleteButton,
-    BaseIconAction,
     BaseFilter,
+    BaseIconAction,
     BaseListView,
     BasePageHeader,
+    BaseReviewActionModal,
     Money,
 } from '@/components/base'
-import { statusColor, statusLabel } from '@/contracts/marketplaceLabels'
+import {
+    statusColor,
+    statusLabel,
+    valueLabel,
+} from '@/contracts/marketplaceLabels'
 import { useBaseFilters, useList } from '@/hooks'
 
 import service from '../service'
@@ -94,9 +95,36 @@ export default function ProductList() {
     const list = useList(service, { page: 1, per_page: 20 })
     const filters = useBaseFilters({
         defaultParams: { page: 1, per_page: 20 },
-        onSearch: list.setParams,
         onReset: list.setParams,
+        onSearch: list.setParams,
     })
+    const [reviewRecord, setReviewRecord] = useState(null)
+    const [reviewLoading, setReviewLoading] = useState(false)
+
+    const review = async (action, reason) => {
+        if (!reviewRecord) return
+
+        setReviewLoading(true)
+        try {
+            if (action === 'approve') {
+                await service.approve(reviewRecord.id)
+            } else {
+                await service.reject(reviewRecord.id, reason)
+            }
+
+            message.success(
+                action === 'approve'
+                    ? 'Đã duyệt sản phẩm'
+                    : 'Đã từ chối sản phẩm',
+            )
+            setReviewRecord(null)
+            await list.reload()
+        } catch (error) {
+            message.error(error.message)
+        } finally {
+            setReviewLoading(false)
+        }
+    }
 
     const remove = async (record) => {
         try {
@@ -111,17 +139,23 @@ export default function ProductList() {
     const columns = [
         { title: 'Mã', dataIndex: 'code' },
         { title: 'Tên sản phẩm', dataIndex: 'name' },
-        { title: 'Trò chơi', dataIndex: 'game_code' },
-        { title: 'Loại sản phẩm', dataIndex: 'product_type' },
+        {
+            title: 'Trò chơi',
+            dataIndex: 'game_code',
+            render: (value) => valueLabel(value),
+        },
+        {
+            title: 'Loại sản phẩm',
+            dataIndex: 'product_type',
+            render: (value) => valueLabel(value),
+        },
         {
             title: 'Mục đích',
             dataIndex: 'offer_modes',
             render: (values = [], record) => (
                 <>
                     {values.map((value) => (
-                        <Tag key={value}>
-                            {value === 'sell' ? 'Bán' : 'Cho thuê'}
-                        </Tag>
+                        <Tag key={value}>{valueLabel(value)}</Tag>
                     ))}
                     {record.installment_enabled ? <Tag>Trả góp</Tag> : null}
                 </>
@@ -133,7 +167,7 @@ export default function ProductList() {
             render: (value, record) => (
                 <>
                     <Tag color={statusColor(value)}>
-                        {statusLabel(value, value || '—')}
+                        {statusLabel(value, valueLabel(value))}
                     </Tag>
                     <small>v{record.availability_version || 1}</small>
                 </>
@@ -144,24 +178,24 @@ export default function ProductList() {
             dataIndex: 'approval_status',
             render: (value) => (
                 <Tag color={statusColor(value)}>
-                    {statusLabel(value, value || '—')}
+                    {statusLabel(value, valueLabel(value))}
                 </Tag>
             ),
         },
         {
             title: 'Giá bán / thuê',
             key: 'prices',
-            render: (_, r) => (
+            render: (_, record) => (
                 <>
-                    {(r.offer_modes || []).includes('sell') ? (
-                        <Money value={r.sale_price} />
+                    {(record.offer_modes || []).includes('sell') ? (
+                        <Money value={record.sale_price} />
                     ) : null}
-                    {(r.offer_modes || []).includes('sell') &&
-                    (r.offer_modes || []).includes('rent')
+                    {(record.offer_modes || []).includes('sell') &&
+                    (record.offer_modes || []).includes('rent')
                         ? ' / '
                         : null}
-                    {(r.offer_modes || []).includes('rent') ? (
-                        <Money value={r.rental_price} />
+                    {(record.offer_modes || []).includes('rent') ? (
+                        <Money value={record.rental_price} />
                     ) : null}
                 </>
             ),
@@ -178,29 +212,11 @@ export default function ProductList() {
                         onClick={() => navigate(`/products/${record.id}/edit`)}
                     />
                     {record.approval_status === 'pending' ? (
-                        <>
-                            <BaseIconAction
-                                icon={<CheckOutlined />}
-                                label="Duyệt"
-                                onClick={async () => {
-                                    await service.approve(record.id)
-                                    await list.reload()
-                                }}
-                            />
-                            <BaseIconAction
-                                danger
-                                icon={<CloseOutlined />}
-                                label="Từ chối"
-                                onClick={async () => {
-                                    const reason =
-                                        window.prompt('Lý do từ chối')
-                                    if (reason) {
-                                        await service.reject(record.id, reason)
-                                        await list.reload()
-                                    }
-                                }}
-                            />
-                        </>
+                        <BaseIconAction
+                            icon={<CheckOutlined />}
+                            label="Xử lý duyệt sản phẩm"
+                            onClick={() => setReviewRecord(record)}
+                        />
                     ) : null}
                     <BaseDeleteButton
                         entityLabel="sản phẩm"
@@ -213,43 +229,78 @@ export default function ProductList() {
     ]
 
     return (
-        <BaseListView
-            columns={columns}
-            data={list.data}
-            filters={
-                <BaseFilter
-                    fields={filterFields}
-                    loading={list.loading}
-                    onReset={filters.reset}
-                    onSearch={filters.search}
-                    values={filters.filters}
-                />
-            }
-            header={
-                <BasePageHeader
-                    actions={
-                        <BaseButton
-                            icon={<PlusOutlined />}
-                            onClick={() => navigate('/products/new')}
-                            type="primary"
-                        >
-                            Tạo sản phẩm
-                        </BaseButton>
-                    }
-                    description="Quản lý sản phẩm theo Trò chơi, Loại sản phẩm và các loại giao dịch được hỗ trợ."
-                    title="Sản phẩm"
-                />
-            }
-            loading={list.loading}
-            onChange={(pagination) =>
-                filters.paginate(pagination.current, pagination.pageSize)
-            }
-            pagination={{
-                total: list.meta.pagination?.total,
-                current: list.meta.pagination?.current_page,
-                pageSize: list.meta.pagination?.per_page,
-                showSizeChanger: true,
-            }}
-        />
+        <>
+            <BaseListView
+                columns={columns}
+                data={list.data}
+                filters={
+                    <BaseFilter
+                        fields={filterFields}
+                        loading={list.loading}
+                        onReset={filters.reset}
+                        onSearch={filters.search}
+                        values={filters.filters}
+                    />
+                }
+                header={
+                    <BasePageHeader
+                        actions={
+                            <BaseButton
+                                icon={<PlusOutlined />}
+                                onClick={() => navigate('/products/new')}
+                                type="primary"
+                            >
+                                Tạo sản phẩm
+                            </BaseButton>
+                        }
+                        description="Quản lý sản phẩm theo trò chơi, loại sản phẩm và loại giao dịch được hỗ trợ."
+                        title="Sản phẩm"
+                    />
+                }
+                loading={list.loading}
+                onChange={(pagination) =>
+                    filters.paginate(pagination.current, pagination.pageSize)
+                }
+                pagination={{
+                    total: list.meta.pagination?.total,
+                    current: list.meta.pagination?.current_page,
+                    pageSize: list.meta.pagination?.per_page,
+                    showSizeChanger: true,
+                }}
+            />
+            <BaseReviewActionModal
+                description="Duyệt để sản phẩm được phép hiển thị; từ chối phải nêu rõ nội dung khách hàng cần chỉnh sửa."
+                loading={reviewLoading}
+                onApprove={() => review('approve')}
+                onCancel={() => setReviewRecord(null)}
+                onReject={(reason) => review('reject', reason)}
+                open={Boolean(reviewRecord)}
+                record={reviewRecord}
+                summary={
+                    reviewRecord
+                        ? [
+                              {
+                                  label: 'Mã sản phẩm',
+                                  value: reviewRecord.code,
+                              },
+                              {
+                                  label: 'Tên sản phẩm',
+                                  value: reviewRecord.name,
+                              },
+                              {
+                                  label: 'Trò chơi',
+                                  value: valueLabel(reviewRecord.game_code),
+                              },
+                              {
+                                  label: 'Trạng thái',
+                                  value: reviewRecord.approval_status,
+                                  type: 'status',
+                              },
+                          ]
+                        : []
+                }
+                title="Duyệt sản phẩm"
+            />
+        </>
     )
 }

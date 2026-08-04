@@ -1,10 +1,16 @@
 import { CheckOutlined, EyeOutlined } from '@ant-design/icons'
 import { BaseActionGroup, BaseIconAction } from '@/components/base'
+import { valueLabel } from '@/contracts/marketplaceLabels'
 import { Tag } from 'antd'
 
 export const createNotificationColumns = ({ onRead, onShow, onNavigate }) => [
     { title: 'Thời gian', dataIndex: 'created_at', width: 180 },
-    { title: 'Loại', dataIndex: 'type', width: 170 },
+    {
+        title: 'Loại',
+        dataIndex: 'type',
+        width: 190,
+        render: (value) => valueLabel(value),
+    },
     { title: 'Tiêu đề', dataIndex: 'title' },
     { title: 'Khách hàng', render: (_, row) => row.customer?.name || '—' },
     {

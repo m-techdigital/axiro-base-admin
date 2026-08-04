@@ -1,13 +1,14 @@
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
+import { CheckOutlined } from '@ant-design/icons'
 import { Tag, message } from 'antd'
+import { useState } from 'react'
 
 import {
     BaseActionGroup,
-    BaseConfirmActionButton,
     BaseFilter,
     BaseIconAction,
     BaseListView,
     BasePageHeader,
+    BaseReviewActionModal,
     Money,
 } from '@/components/base'
 import { useBaseFilters, useList } from '@/hooks'
@@ -54,17 +55,41 @@ export default function PaymentList() {
     const list = useList(service, { page: 1, per_page: 20 })
     const filters = useBaseFilters({
         defaultParams: { page: 1, per_page: 20 },
-        onSearch: list.setParams,
         onReset: list.setParams,
+        onSearch: list.setParams,
     })
+    const [reviewRecord, setReviewRecord] = useState(null)
+    const [reviewLoading, setReviewLoading] = useState(false)
 
-    const act = async (fn, successMessage) => {
+    const review = async (action, reason) => {
+        if (!reviewRecord) return
+
+        setReviewLoading(true)
         try {
-            await fn()
-            message.success(successMessage)
+            if (action === 'confirm') {
+                await service.confirm(reviewRecord.id)
+            } else {
+                await service.reject(reviewRecord.id, reason)
+            }
+
+            message.success(
+                action === 'confirm'
+                    ? 'Đã xác nhận thanh toán'
+                    : 'Đã từ chối thanh toán',
+            )
+            setReviewRecord(null)
             await list.reload()
         } catch (error) {
-            message.error(error.message)
+            const details = error?.errors
+                ? Object.values(error.errors).flat().join(' ')
+                : error.message
+
+            message.error(
+                details ||
+                    'Không thể xử lý thanh toán. Hãy kiểm tra trạng thái giao dịch, số tiền và chứng từ.',
+            )
+        } finally {
+            setReviewLoading(false)
         }
     }
 
@@ -96,68 +121,87 @@ export default function PaymentList() {
             fixed: 'right',
             render: (_, record) => (
                 <BaseActionGroup>
-                    {record.status !== 'confirmed' ? (
-                        <BaseConfirmActionButton
+                    {['submitted', 'pending'].includes(record.status) ? (
+                        <BaseIconAction
                             icon={<CheckOutlined />}
-                            onConfirm={() =>
-                                act(
-                                    () => service.confirm(record.id),
-                                    'Đã xác nhận thanh toán',
-                                )
-                            }
-                            title="Xác nhận thanh toán?"
-                            tooltip="Xác nhận"
+                            label="Đối soát thanh toán"
+                            onClick={() => setReviewRecord(record)}
                         />
                     ) : null}
-                    <BaseIconAction
-                        danger
-                        icon={<CloseOutlined />}
-                        label="Từ chối"
-                        onClick={() =>
-                            act(
-                                () =>
-                                    service.reject(
-                                        record.id,
-                                        'Thông tin thanh toán chưa hợp lệ.',
-                                    ),
-                                'Đã từ chối thanh toán',
-                            )
-                        }
-                    />
                 </BaseActionGroup>
             ),
         },
     ]
 
     return (
-        <BaseListView
-            columns={columns}
-            data={list.data}
-            filters={
-                <BaseFilter
-                    fields={filterFields}
-                    loading={list.loading}
-                    onReset={filters.reset}
-                    onSearch={filters.search}
-                    values={filters.filters}
-                />
-            }
-            header={
-                <BasePageHeader
-                    description="Đối soát và xác nhận các khoản thanh toán theo giao dịch."
-                    title="Thanh toán giao dịch"
-                />
-            }
-            loading={list.loading}
-            onChange={(pagination) =>
-                filters.paginate(pagination.current, pagination.pageSize)
-            }
-            pagination={{
-                total: list.meta.pagination?.total,
-                current: list.meta.pagination?.current_page,
-                pageSize: list.meta.pagination?.per_page,
-                showSizeChanger: true,
-            }}
-        />
+        <>
+            <BaseListView
+                columns={columns}
+                data={list.data}
+                filters={
+                    <BaseFilter
+                        fields={filterFields}
+                        loading={list.loading}
+                        onReset={filters.reset}
+                        onSearch={filters.search}
+                        values={filters.filters}
+                    />
+                }
+                header={
+                    <BasePageHeader
+                        description="Đối soát và xác nhận các khoản thanh toán theo giao dịch."
+                        title="Thanh toán giao dịch"
+                    />
+                }
+                loading={list.loading}
+                onChange={(pagination) =>
+                    filters.paginate(pagination.current, pagination.pageSize)
+                }
+                pagination={{
+                    total: list.meta.pagination?.total,
+                    current: list.meta.pagination?.current_page,
+                    pageSize: list.meta.pagination?.per_page,
+                    showSizeChanger: true,
+                }}
+            />
+            <BaseReviewActionModal
+                approveText="Xác nhận thanh toán"
+                description="Chỉ xác nhận khi số tiền, phương thức và chứng từ đã khớp. Nếu từ chối, lý do là bắt buộc."
+                loading={reviewLoading}
+                onApprove={() => review('confirm')}
+                onCancel={() => setReviewRecord(null)}
+                onReject={(reason) => review('reject', reason)}
+                open={Boolean(reviewRecord)}
+                record={reviewRecord}
+                summary={
+                    reviewRecord
+                        ? [
+                              {
+                                  label: 'Mã thanh toán',
+                                  value: reviewRecord.code,
+                              },
+                              {
+                                  label: 'Giao dịch',
+                                  value: reviewRecord.transaction?.code,
+                              },
+                              {
+                                  label: 'Khách hàng',
+                                  value: reviewRecord.customer?.name,
+                              },
+                              {
+                                  label: 'Loại thanh toán',
+                                  value: valueLabel(reviewRecord.payment_type),
+                              },
+                              {
+                                  label: 'Trạng thái',
+                                  value: reviewRecord.status,
+                                  type: 'status',
+                              },
+                          ]
+                        : []
+                }
+                title="Đối soát thanh toán"
+            />
+        </>
     )
 }

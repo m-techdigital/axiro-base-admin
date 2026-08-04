@@ -1,7 +1,6 @@
-import { BaseButton, BaseTable } from '@/components/base'
+import { BasePageHeader, BaseButton, BaseTable } from '@/components/base'
 import { PlusOutlined } from '@ant-design/icons'
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
-import PageHeader from '../../../components/base/PageHeader'
 import { useList } from '../../../hooks/useList'
 import {
     loadMarketplaceOptions,
@@ -42,7 +41,7 @@ export default function DocumentTemplateList() {
 
     return (
         <div className="page">
-            <PageHeader
+            <BasePageHeader
                 title="Mẫu tài liệu"
                 actions={
                     <BaseButton

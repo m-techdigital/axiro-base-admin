@@ -4,7 +4,11 @@ import {
     BaseListView,
     BasePageHeader,
 } from '@/components/base'
-import NotificationDetailDrawer from '../components/NotificationDetailDrawer'
+import { lazy, Suspense } from 'react'
+
+const NotificationDetailDrawer = lazy(
+    () => import('../components/NotificationDetailDrawer'),
+)
 import { notificationFilterFields } from '../config/filters'
 import { useNotificationCenter } from '../hooks/useNotificationCenter'
 import service from '../service'
@@ -56,15 +60,19 @@ export default function NotificationList() {
                     showSizeChanger: true,
                 }}
             />
-            <NotificationDetailDrawer
-                detail={center.detail}
-                loading={center.detailLoading}
-                handlingNote={center.handlingNote}
-                onHandlingNoteChange={center.setHandlingNote}
-                onHandle={center.handle}
-                onClose={() => center.setDetail(null)}
-                onNavigate={center.navigate}
-            />
+            {center.detail || center.detailLoading ? (
+                <Suspense fallback={null}>
+                    <NotificationDetailDrawer
+                        detail={center.detail}
+                        loading={center.detailLoading}
+                        handlingNote={center.handlingNote}
+                        onHandlingNoteChange={center.setHandlingNote}
+                        onHandle={center.handle}
+                        onClose={() => center.setDetail(null)}
+                        onNavigate={center.navigate}
+                    />
+                </Suspense>
+            ) : null}
         </>
     )
 }

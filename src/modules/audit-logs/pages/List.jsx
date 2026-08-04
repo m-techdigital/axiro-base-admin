@@ -1,64 +1,63 @@
 import { AUDIT_RISK_OPTIONS } from '@/constants/options'
-import { EyeOutlined, ReloadOutlined } from '@ant-design/icons'
+import { EyeOutlined } from '@ant-design/icons'
 import {
-    BaseButton,
     BaseDrawer,
     BaseFilter,
     BaseIconAction,
-    BaseTable,
+    BaseListView,
 } from '@/components/base'
 import { statusLabel, valueLabel } from '@/contracts/marketplaceLabels'
-import { Card, Col, Descriptions, Row, Statistic, Tag, Typography } from 'antd'
+import { Card, Descriptions, Statistic, Tag, Typography } from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import PageHeader from '../../../components/base/PageHeader'
+
 import service from '../service'
 
-const typeLabels = {
-    business_trail: 'Lịch sử nghiệp vụ',
-    system_operation: 'Thao tác hệ thống',
-    validation: 'Lỗi xác thực dữ liệu',
-    security: 'Sự kiện bảo mật',
-}
-const eventLabels = {
-    created: 'Tạo mới',
-    updated: 'Cập nhật',
-    deleted: 'Xóa',
-    restored: 'Khôi phục',
-    http_mutation: 'Yêu cầu thay đổi',
-    validation_failed: 'Dữ liệu không hợp lệ',
-}
 const riskColors = {
     normal: 'green',
     warning: 'gold',
     high: 'red',
     critical: 'magenta',
 }
+
 const pretty = (value) => (value ? JSON.stringify(value, null, 2) : '—')
+
 const filterFields = [
     {
         name: 'keyword',
         placeholder: 'Tìm nội dung, đường dẫn',
         type: 'search',
-        span: { xs: 24, md: 8 },
     },
     {
         name: 'audit_type',
         placeholder: 'Nhóm nhật ký',
         type: 'select',
-        options: Object.entries(typeLabels).map(([value, label]) => ({
+        options: [
+            'business_trail',
+            'system_operation',
+            'validation',
+            'security',
+        ].map((value) => ({
             value,
-            label,
+            label: valueLabel(value),
         })),
-        span: { xs: 12, md: 6 },
     },
     {
         name: 'risk_level',
         placeholder: 'Mức độ',
         type: 'select',
         options: AUDIT_RISK_OPTIONS,
-        span: { xs: 12, md: 4 },
     },
 ]
+
+const actorText = (row) =>
+    row.actor_type
+        ? `${valueLabel(row.actor_type)} #${row.actor_id || '—'}`
+        : 'Hệ thống'
+
+const entityText = (row) =>
+    row.entity_type
+        ? `${valueLabel(row.entity_type)} #${row.entity_id || '—'}`
+        : '—'
 
 export default function AuditLogList() {
     const [rows, setRows] = useState([])
@@ -82,6 +81,7 @@ export default function AuditLogList() {
             setLoading(false)
         }
     }, [params])
+
     useEffect(() => {
         load()
     }, [load])
@@ -98,39 +98,33 @@ export default function AuditLogList() {
                 title: 'Nhóm',
                 dataIndex: 'audit_type',
                 width: 160,
-                render: (value) => typeLabels[value] || value,
+                render: (value) => valueLabel(value),
             },
             {
                 title: 'Sự kiện',
                 dataIndex: 'event_type',
-                width: 145,
-                render: (value) => eventLabels[value] || value,
+                width: 170,
+                render: (value) => valueLabel(value),
             },
             {
                 title: 'Mức độ',
                 dataIndex: 'risk_level',
-                width: 100,
+                width: 110,
                 render: (value) => (
                     <Tag color={riskColors[value] || 'default'}>
-                        {statusLabel(value, valueLabel(value, value || '—'))}
+                        {statusLabel(value, valueLabel(value))}
                     </Tag>
                 ),
             },
             {
                 title: 'Tác nhân',
-                width: 120,
-                render: (_, row) =>
-                    row.actor_type
-                        ? `${row.actor_type} #${row.actor_id || '—'}`
-                        : 'Hệ thống',
+                width: 170,
+                render: (_, row) => actorText(row),
             },
             {
                 title: 'Đối tượng',
-                width: 180,
-                render: (_, row) =>
-                    row.entity_type
-                        ? `${row.entity_type} #${row.entity_id || '—'}`
-                        : '—',
+                width: 190,
+                render: (_, row) => entityText(row),
             },
             { title: 'Nội dung', dataIndex: 'title', ellipsis: true },
             {
@@ -148,9 +142,8 @@ export default function AuditLogList() {
                     ),
             },
             {
-                title: '',
-                width: 80,
-                fixed: 'right',
+                title: 'Thao tác',
+                width: 90,
                 render: (_, row) => (
                     <BaseIconAction
                         icon={<EyeOutlined />}
@@ -163,92 +156,74 @@ export default function AuditLogList() {
         [],
     )
 
-    return (
-        <div className="page">
-            <PageHeader
-                title="Nhật ký và lịch sử hệ thống"
-                actions={
-                    <BaseButton icon={<ReloadOutlined />} onClick={load}>
-                        Tải lại
-                    </BaseButton>
-                }
-            />
-            <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-                <Col xs={12} md={6}>
-                    <Card>
-                        <Statistic
-                            title="Tổng nhật ký"
-                            value={stats.total || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} md={6}>
-                    <Card>
-                        <Statistic
-                            title="Trong hôm nay"
-                            value={stats.today || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} md={6}>
-                    <Card>
-                        <Statistic
-                            title="Lỗi xác thực"
-                            value={stats.validation_failures || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} md={6}>
-                    <Card>
-                        <Statistic
-                            title="Rủi ro cao"
-                            value={stats.high_risk || 0}
-                        />
-                    </Card>
-                </Col>
-            </Row>
+    const statistics = (
+        <div className="base-statistics-grid audit-log-statistics">
             <Card>
-                <BaseFilter
-                    fields={filterFields}
-                    loading={loading}
-                    onReset={() => setParams({ page: 1, per_page: 30 })}
-                    onSearch={(values) =>
-                        setParams((current) => ({
-                            ...current,
-                            ...values,
-                            page: 1,
-                        }))
-                    }
-                    values={params}
-                />
-                <BaseTable
-                    rowKey="id"
-                    loading={loading}
-                    dataSource={rows}
-                    columns={columns}
-                    scroll={{ x: 1250 }}
-                    pagination={{
-                        current: meta.pagination?.current_page || 1,
-                        pageSize: meta.pagination?.per_page || 30,
-                        total: meta.pagination?.total || 0,
-                        showSizeChanger: true,
-                    }}
-                    onChange={(pagination) =>
-                        setParams((p) => ({
-                            ...p,
-                            page: pagination.current,
-                            per_page: pagination.pageSize,
-                        }))
-                    }
+                <Statistic title="Tổng nhật ký" value={stats.total || 0} />
+            </Card>
+            <Card>
+                <Statistic title="Trong hôm nay" value={stats.today || 0} />
+            </Card>
+            <Card>
+                <Statistic
+                    title="Lỗi xác thực"
+                    value={stats.validation_failures || 0}
                 />
             </Card>
+            <Card>
+                <Statistic title="Rủi ro cao" value={stats.high_risk || 0} />
+            </Card>
+        </div>
+    )
+
+    return (
+        <>
+            <BaseListView
+                columns={columns}
+                dataSource={rows}
+                description="Theo dõi lịch sử nghiệp vụ, thao tác hệ thống, lỗi xác thực và sự kiện rủi ro."
+                filters={
+                    <BaseFilter
+                        fields={filterFields}
+                        loading={loading}
+                        onReset={() => setParams({ page: 1, per_page: 30 })}
+                        onSearch={(values) =>
+                            setParams((current) => ({
+                                ...current,
+                                ...values,
+                                page: 1,
+                            }))
+                        }
+                        values={params}
+                    />
+                }
+                loading={loading}
+                onChange={(pagination) =>
+                    setParams((current) => ({
+                        ...current,
+                        page: pagination.current,
+                        per_page: pagination.pageSize,
+                    }))
+                }
+                onReload={load}
+                pagination={{
+                    current: meta.pagination?.current_page || 1,
+                    pageSize: meta.pagination?.per_page || 30,
+                    total: meta.pagination?.total || 0,
+                    showSizeChanger: true,
+                }}
+                scroll={{ x: 'max-content' }}
+                showReload
+                statistics={statistics}
+                title="Nhật ký và lịch sử hệ thống"
+            />
             <BaseDrawer
-                open={!!selected}
                 onClose={() => setSelected(null)}
-                width={760}
+                open={Boolean(selected)}
                 title="Chi tiết nhật ký"
+                width={760}
             >
-                {selected && (
+                {selected ? (
                     <>
                         <Descriptions bordered column={2} size="small">
                             <Descriptions.Item label="Thời gian">
@@ -258,24 +233,23 @@ export default function AuditLogList() {
                             </Descriptions.Item>
                             <Descriptions.Item label="Mức độ">
                                 <Tag color={riskColors[selected.risk_level]}>
-                                    {selected.risk_level}
+                                    {statusLabel(
+                                        selected.risk_level,
+                                        valueLabel(selected.risk_level),
+                                    )}
                                 </Tag>
                             </Descriptions.Item>
                             <Descriptions.Item label="Nhóm">
-                                {typeLabels[selected.audit_type] ||
-                                    selected.audit_type}
+                                {valueLabel(selected.audit_type)}
                             </Descriptions.Item>
                             <Descriptions.Item label="Sự kiện">
-                                {eventLabels[selected.event_type] ||
-                                    selected.event_type}
+                                {valueLabel(selected.event_type)}
                             </Descriptions.Item>
                             <Descriptions.Item label="Tác nhân">
-                                {selected.actor_type || 'system'} #
-                                {selected.actor_id || '—'}
+                                {actorText(selected)}
                             </Descriptions.Item>
                             <Descriptions.Item label="Đối tượng">
-                                {selected.entity_type || '—'} #
-                                {selected.entity_id || '—'}
+                                {entityText(selected)}
                             </Descriptions.Item>
                             <Descriptions.Item label="Đường dẫn" span={2}>
                                 {selected.method} {selected.path}
@@ -301,13 +275,13 @@ export default function AuditLogList() {
                             <Card
                                 key={title}
                                 size="small"
-                                title={title}
                                 style={{ marginTop: 16 }}
+                                title={title}
                             >
                                 <pre
                                     style={{
-                                        whiteSpace: 'pre-wrap',
                                         margin: 0,
+                                        whiteSpace: 'pre-wrap',
                                     }}
                                 >
                                     {pretty(value)}
@@ -315,8 +289,8 @@ export default function AuditLogList() {
                             </Card>
                         ))}
                     </>
-                )}
+                ) : null}
             </BaseDrawer>
-        </div>
+        </>
     )
 }

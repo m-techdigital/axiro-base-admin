@@ -1,5 +1,5 @@
 import { EyeOutlined } from '@ant-design/icons'
-import { Image, Input, Space, Tag, message } from 'antd'
+import { Image, Tag, message } from 'antd'
 import { useState } from 'react'
 
 import {
@@ -7,10 +7,9 @@ import {
     BaseFilter,
     BaseIconAction,
     BaseListView,
-    BaseModal,
     BasePageHeader,
+    BaseReviewActionModal,
     Money,
-    BaseButton,
 } from '@/components/base'
 import { useBaseFilters, useList } from '@/hooks'
 
@@ -41,21 +40,34 @@ export default function WalletDepositList() {
     const list = useList(service, { page: 1, per_page: 20 })
     const filters = useBaseFilters({
         defaultParams: { page: 1, per_page: 20 },
-        onSearch: list.setParams,
         onReset: list.setParams,
+        onSearch: list.setParams,
     })
     const [selected, setSelected] = useState(null)
-    const [note, setNote] = useState('')
+    const [reviewLoading, setReviewLoading] = useState(false)
 
-    const act = async (fn, successMessage) => {
+    const review = async (action, reason) => {
+        if (!selected) return
+
+        setReviewLoading(true)
         try {
-            await fn()
-            message.success(successMessage)
+            if (action === 'confirm') {
+                await service.confirm(selected.id)
+            } else {
+                await service.reject(selected.id, reason)
+            }
+
+            message.success(
+                action === 'confirm'
+                    ? 'Đã xác nhận và cộng số dư'
+                    : 'Đã từ chối yêu cầu nạp tiền',
+            )
             setSelected(null)
-            setNote('')
             await list.reload()
         } catch (error) {
             message.error(error.message)
+        } finally {
+            setReviewLoading(false)
         }
     }
 
@@ -131,78 +143,55 @@ export default function WalletDepositList() {
                     showSizeChanger: true,
                 }}
             />
-            <BaseModal
-                footer={null}
+            <BaseReviewActionModal
+                approveText="Xác nhận tiền đã về"
+                description="Đối chiếu chứng từ với giao dịch ngân hàng. Từ chối bắt buộc nêu rõ lý do để khách hàng bổ sung."
+                loading={reviewLoading}
+                onApprove={() => review('confirm')}
                 onCancel={() => setSelected(null)}
+                onReject={(reason) => review('reject', reason)}
                 open={Boolean(selected)}
+                record={selected}
+                summary={
+                    selected
+                        ? [
+                              {
+                                  label: 'Mã yêu cầu',
+                                  value: selected.code,
+                              },
+                              {
+                                  label: 'Khách hàng',
+                                  value: selected.customer?.name,
+                              },
+                              {
+                                  label: 'Mã ngân hàng',
+                                  value: selected.external_reference,
+                              },
+                              {
+                                  label: 'Trạng thái',
+                                  value: selected.status,
+                                  type: 'status',
+                              },
+                          ]
+                        : []
+                }
                 title="Đối soát yêu cầu nạp tiền"
             >
-                {selected ? (
-                    <Space
-                        orientation="vertical"
-                        size={14}
-                        style={{ width: '100%' }}
-                    >
-                        <div>
-                            <b>{selected.customer?.name}</b>
-                            <br />
-                            <span>
-                                {selected.code} ·{' '}
-                                <Money value={selected.amount} />
-                            </span>
-                        </div>
-                        {selected.proof_image_url ? (
-                            <Image
-                                src={selected.proof_image_url}
-                                style={{ maxHeight: 420, objectFit: 'contain' }}
-                            />
-                        ) : (
-                            <Tag>Khách hàng chưa gửi chứng từ</Tag>
-                        )}
-                        <Input.TextArea
-                            onChange={(event) => setNote(event.target.value)}
-                            placeholder="Ghi chú khi từ chối"
-                            rows={3}
-                            value={note}
-                        />
-                        <Space wrap>
-                            {selected.status === 'submitted' ? (
-                                <BaseButton
-                                    onClick={() =>
-                                        act(
-                                            () => service.confirm(selected.id),
-                                            'Đã xác nhận và cộng số dư',
-                                        )
-                                    }
-                                    type="primary"
-                                >
-                                    Xác nhận tiền đã về
-                                </BaseButton>
-                            ) : null}
-                            {['submitted', 'draft'].includes(
-                                selected.status,
-                            ) ? (
-                                <BaseButton
-                                    danger
-                                    onClick={() =>
-                                        act(
-                                            () =>
-                                                service.reject(
-                                                    selected.id,
-                                                    note ||
-                                                        'Chứng từ chưa hợp lệ hoặc chưa nhận được tiền.',
-                                                ),
-                                            'Đã từ chối yêu cầu',
-                                        )
-                                    }
-                                >
-                                    Từ chối
-                                </BaseButton>
-                            ) : null}
-                        </Space>
-                    </Space>
-                ) : null}
-            </BaseModal>
+                {selected?.proof_image_url ? (
+                    <Image
+                        src={selected.proof_image_url}
+                        style={{
+                            marginTop: 16,
+                            maxHeight: 360,
+                            objectFit: 'contain',
+                        }}
+                    />
+                ) : (
+                    <Tag style={{ marginTop: 16 }}>
+                        Khách hàng chưa gửi chứng từ
+                    </Tag>
+                )}
+            </BaseReviewActionModal>
         </>
     )
 }

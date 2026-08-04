@@ -1,10 +1,25 @@
 import { BaseView } from '@/components/base'
-import { Card, Col, Row } from 'antd'
+import { Card, Col, Row, Skeleton } from 'antd'
+import { lazy, Suspense } from 'react'
+
 import { buildTransactionDetailFields } from '../config/detailPresentation'
-import TransactionAdminActionsPanel from './detail/TransactionAdminActionsPanel'
-import TransactionDocumentPanel from './detail/TransactionDocumentPanel'
-import TransactionPaymentPanel from './detail/TransactionPaymentPanel'
-import TransactionTimelinePanel from './detail/TransactionTimelinePanel'
+
+const TransactionAdminActionsPanel = lazy(
+    () => import('./detail/TransactionAdminActionsPanel'),
+)
+const TransactionDocumentPanel = lazy(
+    () => import('./detail/TransactionDocumentPanel'),
+)
+const TransactionPaymentPanel = lazy(
+    () => import('./detail/TransactionPaymentPanel'),
+)
+const TransactionTimelinePanel = lazy(
+    () => import('./detail/TransactionTimelinePanel'),
+)
+
+function PanelFallback() {
+    return <Skeleton active paragraph={{ rows: 3 }} />
+}
 
 export default function TransactionDetailSections(props) {
     const { data, loading } = props
@@ -18,12 +33,20 @@ export default function TransactionDetailSections(props) {
                         fields={buildTransactionDetailFields(data)}
                     />
                 </Card>
-                <TransactionPaymentPanel {...props} />
-                <TransactionDocumentPanel {...props} />
+                <Suspense fallback={<PanelFallback />}>
+                    <TransactionPaymentPanel {...props} />
+                </Suspense>
+                <Suspense fallback={<PanelFallback />}>
+                    <TransactionDocumentPanel {...props} />
+                </Suspense>
             </Col>
             <Col xs={24} xl={9}>
-                <TransactionTimelinePanel {...props} />
-                <TransactionAdminActionsPanel {...props} />
+                <Suspense fallback={<PanelFallback />}>
+                    <TransactionTimelinePanel {...props} />
+                </Suspense>
+                <Suspense fallback={<PanelFallback />}>
+                    <TransactionAdminActionsPanel {...props} />
+                </Suspense>
             </Col>
         </Row>
     )

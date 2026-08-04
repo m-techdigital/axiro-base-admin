@@ -1,4 +1,3 @@
-import { BaseForm } from '@/components/base'
 import { Card, Typography, message } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -6,7 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import AdminThemeProvider from '../../../app/providers/AdminThemeProvider'
 import { useAuth } from '../../../hooks/useAuth'
 import { setAuth } from '../../../utils/auth'
-import { loginDefaultValues, loginFormFields } from '../formConfig'
+import AuthLoginForm from '../components/AuthLoginForm'
+import { loginDefaultValues } from '../formConfig'
 import service from '../service'
 
 export default function Login() {
@@ -41,14 +41,10 @@ export default function Login() {
                     <Typography.Paragraph>
                         <b>Tài khoản mẫu:</b> admin / change-me
                     </Typography.Paragraph>
-                    <BaseForm
-                        fields={loginFormFields}
+                    <AuthLoginForm
                         initialValues={loginDefaultValues}
-                        isCancel={false}
                         loading={loading}
                         onFinish={submit}
-                        showFooter
-                        submitText="Đăng nhập"
                     />
                 </Card>
             </div>

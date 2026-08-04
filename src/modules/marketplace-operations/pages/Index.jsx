@@ -1,7 +1,11 @@
-import { BaseButton, BaseForm, BaseTable } from '@/components/base'
+import {
+    BasePageHeader,
+    BaseButton,
+    BaseForm,
+    BaseTable,
+} from '@/components/base'
 import { Card, Tabs, message } from 'antd'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import PageHeader from '../../../components/base/PageHeader'
 import OperationsModals from '../components/OperationsModals'
 import {
     createCaseColumns,
@@ -98,9 +102,9 @@ export default function MarketplaceOperationsPage() {
 
     return (
         <div className="page">
-            <PageHeader
+            <BasePageHeader
                 title="Vận hành Marketplace"
-                subtitle="Chính sách phí, trung tâm yêu cầu và biên bản hiện trạng."
+                description="Chính sách phí, trung tâm yêu cầu và biên bản hiện trạng."
             />
             <Card>
                 <Tabs

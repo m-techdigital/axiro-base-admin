@@ -4,9 +4,9 @@ import {
     SortAscendingOutlined,
     SortDescendingOutlined,
 } from '@ant-design/icons'
-import { Col, DatePicker, Dropdown, Form, Input, Row, Select } from 'antd'
+import { DatePicker, Dropdown, Form, Input, Select } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import { useRelationOptions } from '@/hooks/useRelationOptions'
 import { extractRelationConfigs } from '@/utils/extractRelationConfigs'
@@ -129,6 +129,8 @@ function normalizeSortItems(sortFields = []) {
 }
 
 export default function BaseFilter({
+    autoSearch = true,
+    autoSearchDelay = 350,
     className = '',
     fields = [],
     filters = [],
@@ -144,6 +146,7 @@ export default function BaseFilter({
     values = {},
 }) {
     const [form] = Form.useForm()
+    const searchTimerRef = useRef(null)
     const allFields = useMemo(
         () => flattenFields(fields, filters),
         [fields, filters],
@@ -200,7 +203,30 @@ export default function BaseFilter({
         onChange?.(normalized)
         onSearch?.(normalized)
     }
-    const changed = (_, rawValues) => onChange?.(normalizeValues(rawValues))
+    const changed = (changedValues, rawValues) => {
+        const normalized = normalizeValues(rawValues)
+        onChange?.(normalized)
+
+        if (!autoSearch || !onSearch) return
+
+        if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+        const changedName = Object.keys(changedValues || {})[0]
+        const changedField = allFields.find(
+            (field) => field.name === changedName,
+        )
+        const delay = ['search', 'text'].includes(changedField?.type)
+            ? autoSearchDelay
+            : 0
+
+        searchTimerRef.current = setTimeout(() => onSearch(normalized), delay)
+    }
+    useEffect(
+        () => () => {
+            if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+        },
+        [],
+    )
+
     const reset = () => {
         form.resetFields()
         const defaults = initialValues || {}
@@ -208,10 +234,11 @@ export default function BaseFilter({
         const normalized = normalizeValues(defaults)
         onChange?.(normalized)
         onReset?.(normalized)
+        onSearch?.(normalized)
     }
 
     const renderActions = () => (
-        <Col className="base-filter-actions-col" flex="none">
+        <div className="base-filter-actions-col">
             <div className="base-filter-actions">
                 {sortItems.length ? (
                     <Dropdown
@@ -253,7 +280,7 @@ export default function BaseFilter({
                     type="primary"
                 />
             </div>
-        </Col>
+        </div>
     )
 
     return (
@@ -268,17 +295,19 @@ export default function BaseFilter({
                 onValuesChange={changed}
             >
                 {groups.map((group) => (
-                    <Row
+                    <div
                         className="base-filter-row"
-                        gutter={[12, 12]}
                         key={group.key || group.label || 'default'}
                     >
                         {(group.fields || [])
                             .filter((field) => !field.hidden)
                             .map((field) => (
-                                <Col
-                                    flex={field.flex || '1 1 180px'}
+                                <div
+                                    className="base-filter-field-col"
                                     key={field.name}
+                                    style={{
+                                        minWidth: field.minWidth || 180,
+                                    }}
                                 >
                                     <Form.Item
                                         className="base-filter-field"
@@ -294,10 +323,10 @@ export default function BaseFilter({
                                             relationOptions,
                                         })}
                                     </Form.Item>
-                                </Col>
+                                </div>
                             ))}
                         {renderActions()}
-                    </Row>
+                    </div>
                 ))}
             </Form>
         </div>

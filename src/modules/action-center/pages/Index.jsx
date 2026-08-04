@@ -1,21 +1,17 @@
-import { BaseButton, BaseIconAction, BaseTable } from '@/components/base'
+import {
+    BaseButton,
+    BaseIconAction,
+    BasePageHeader,
+    BaseTable,
+    Money,
+} from '@/components/base'
 import { ReloadOutlined, RightOutlined, ToolOutlined } from '@ant-design/icons'
-import { Alert, Card, Col, Empty, Row, Space, Statistic, Tag } from 'antd'
+import { Alert, Card, Col, Empty, Row, Statistic, Tag } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import PageHeader from '../../../components/base/PageHeader'
+import { statusColor, statusLabel } from '@/contracts/marketplaceLabels'
 import service from '../service'
 
-const statusLabel = {
-    pending_review: 'Chờ duyệt',
-    submitted: 'Chờ đối soát',
-    pending: 'Chờ xử lý',
-    open: 'Đang mở',
-    handover_pending: 'Chờ xác nhận nhận',
-    return_pending: 'Chờ xác nhận hoàn trả',
-    returned: 'Chờ đối soát cọc',
-    approved: 'Đã duyệt',
-}
 export default function ActionCenter() {
     const navigate = useNavigate()
     const [data, setData] = useState(null)
@@ -57,7 +53,7 @@ export default function ActionCenter() {
     )
     return (
         <div className="page">
-            <PageHeader
+            <BasePageHeader
                 title="Trung tâm xử lý"
                 description="Các việc phát sinh từ MBN cần quản trị viên duyệt, đối soát hoặc can thiệp."
                 actions={
@@ -67,72 +63,22 @@ export default function ActionCenter() {
                 }
             />
             {error && <Alert type="error" title={error} showIcon />}
-            <Row gutter={[16, 16]} className="action-center-stats">
-                <Col xs={12} lg={4}>
-                    <Card>
-                        <Statistic
-                            title="Tin chờ duyệt"
-                            value={counts.pending_products || 0}
-                        />
+            <div className="action-center-stats">
+                {[
+                    ['Sản phẩm chờ duyệt', counts.pending_products],
+                    ['Thanh toán chờ xác nhận', counts.submitted_payments],
+                    ['Nạp tiền chờ xác nhận', counts.pending_deposits],
+                    ['Tranh chấp đang mở', counts.open_disputes],
+                    ['Bàn giao cần theo dõi', counts.handover_pending],
+                    ['Đối soát cọc thuê', counts.rental_deposit_review],
+                    ['Payout chờ xử lý', counts.pending_payouts],
+                    ['Giữ chỗ quá hạn', counts.expired_holds],
+                ].map(([title, value]) => (
+                    <Card key={title}>
+                        <Statistic title={title} value={value || 0} />
                     </Card>
-                </Col>
-                <Col xs={12} lg={5}>
-                    <Card>
-                        <Statistic
-                            title="Thanh toán chờ xác nhận"
-                            value={counts.submitted_payments || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} lg={5}>
-                    <Card>
-                        <Statistic
-                            title="Nạp tiền chờ xác nhận"
-                            value={counts.pending_deposits || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} lg={5}>
-                    <Card>
-                        <Statistic
-                            title="Tranh chấp đang mở"
-                            value={counts.open_disputes || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} lg={5}>
-                    <Card>
-                        <Statistic
-                            title="Bàn giao cần theo dõi"
-                            value={counts.handover_pending || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} lg={4}>
-                    <Card>
-                        <Statistic
-                            title="Đối soát cọc thuê"
-                            value={counts.rental_deposit_review || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} lg={4}>
-                    <Card>
-                        <Statistic
-                            title="Payout chờ xử lý"
-                            value={counts.pending_payouts || 0}
-                        />
-                    </Card>
-                </Col>
-                <Col xs={12} lg={4}>
-                    <Card>
-                        <Statistic
-                            title="Giữ chỗ quá hạn"
-                            value={counts.expired_holds || 0}
-                        />
-                    </Card>
-                </Col>
-            </Row>
+                ))}
+            </div>
             <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
                 <Col xs={24} xl={12}>
                     <Card
@@ -155,7 +101,7 @@ export default function ActionCenter() {
                             },
                             {
                                 title: 'Tài khoản',
-                                render: (_, r) => r.product?.name,
+                                render: (_, r) => r.name || r.product?.name,
                             },
                             {
                                 title: '',
@@ -258,9 +204,7 @@ export default function ActionCenter() {
                                 title: 'Trạng thái',
                                 dataIndex: 'status',
                                 render: (v) => (
-                                    <Tag color="blue">
-                                        {statusLabel[v] || v}
-                                    </Tag>
+                                    <Tag color="blue">{statusLabel(v)}</Tag>
                                 ),
                             },
                             {
@@ -286,7 +230,11 @@ export default function ActionCenter() {
                                 title: 'Sản phẩm',
                                 render: (_, r) => r.product?.name,
                             },
-                            { title: 'Tiền cọc', dataIndex: 'deposit_amount' },
+                            {
+                                title: 'Tiền cọc',
+                                dataIndex: 'deposit_amount',
+                                render: (value) => <Money value={value} />,
+                            },
                             {
                                 title: '',
                                 render: (_, r) => (
@@ -311,17 +259,17 @@ export default function ActionCenter() {
                                 title: 'Khách hàng',
                                 render: (_, r) => r.customer?.name,
                             },
-                            { title: 'Số tiền', dataIndex: 'amount' },
+                            {
+                                title: 'Số tiền',
+                                dataIndex: 'amount',
+                                render: (value) => <Money value={value} />,
+                            },
                             {
                                 title: 'Trạng thái',
                                 dataIndex: 'status',
                                 render: (v) => (
-                                    <Tag
-                                        color={
-                                            v === 'approved' ? 'blue' : 'gold'
-                                        }
-                                    >
-                                        {statusLabel[v] || v}
+                                    <Tag color={statusColor(v)}>
+                                        {statusLabel(v)}
                                     </Tag>
                                 ),
                             },

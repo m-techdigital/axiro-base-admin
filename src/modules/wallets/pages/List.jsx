@@ -1,6 +1,10 @@
-import { BaseButton, BaseFilter, BaseTable } from '@/components/base'
+import {
+    BasePageHeader,
+    BaseButton,
+    BaseFilter,
+    BaseTable,
+} from '@/components/base'
 import { Card, Space } from 'antd'
-import PageHeader from '@/components/base/PageHeader'
 import WalletDrawer from '../components/WalletDrawer'
 import { walletFilterFields } from '../config/options'
 import { useWalletCenter } from '../hooks/useWalletCenter'
@@ -10,7 +14,7 @@ export default function WalletList() {
 
     return (
         <div className="page">
-            <PageHeader
+            <BasePageHeader
                 title="Ví và dòng tiền khách hàng"
                 actions={
                     <Space>
