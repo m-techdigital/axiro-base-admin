@@ -1,34 +1,25 @@
-# AXIRO Mini Canonical Architecture
+# AXIRO Mini Admin — Canonical Index
 
-AXIRO cha là chuẩn kiến trúc cho Mini. Mini chỉ rút gọn phạm vi nghiệp vụ, không tạo một kiến trúc UI/API thứ hai.
+AXIRO Mini giữ mô hình **một Admin, nhiều khách hàng**, dùng pattern `mini_bounded` từ AXIRO cha nhưng không port runtime company/RBAC/HR/accounting/report/project.
 
-## Frontend Admin
+## Tài liệu canonical đang có hiệu lực
 
-- Layout owner: `src/layouts/AdminLayout.jsx` và `src/layouts/components/*`.
-- Menu owner: `src/config/adminMenu.jsx`.
-- UI dùng chung: `src/components/base/index.js`.
-- Danh sách dùng `BaseListView` và `BaseTable`; modal/drawer/form/header dùng base tương ứng.
-- Token và primitive nằm dưới `src/styles/tokens` và `src/styles/primitives`.
-- Không nhập trực tiếp `Table`, `Modal`, `Drawer` hoặc `Form` của Ant Design trong module khi base tương ứng đáp ứng được nhu cầu.
+1. `ARCHITECTURE-CANONICAL.md` — boundary runtime, owner và nguyên tắc Mini bounded.
+2. `OPERATOR-GUIDE.md` — cách vận hành customer/product/transaction/payment/payout/document/support/trust.
+3. `PARENT_FIRST_DEVELOPMENT_POLICY.md` — quy tắc chọn lọc pattern từ AXIRO cha.
+4. `NEXT-BACKLOG.md` — chỉ chứa việc còn mở sau baseline 2026-08-04.
+5. `CHANGELOG-CANONICAL.md` — hợp nhất kết quả các vòng closure trước.
+6. `docs/release/BASELINE-RELEASE-CHECKLIST.md` — gate release bắt buộc.
 
-## Backend API
+## UI ownership hiện hành
 
-Xem tài liệu canonical tương ứng trong repo API. Mini giữ response envelope, FormRequest, Resource/presenter, service lifecycle và audit conventions của AXIRO cha, nhưng không kéo RBAC/company/project vào.
+- Layout: `src/layouts/AdminLayout.jsx` và `src/layouts/components/*`.
+- Menu: `src/config/adminMenu.jsx`.
+- Form/list/filter/table/modal/drawer/header: `src/components/base/*`.
+- Relation: config canonical + `useRelationOptions`, resolver/cache/normalizer riêng.
+- Review actions: duyệt dùng confirm; từ chối dùng `BaseReviewActionModal` và lý do bắt buộc.
+- Enum labels: `src/contracts/marketplaceLabels.js` và marketplace options contract.
 
-- `TRANSACTION_DOCUMENT_DISPUTE_CLOSURE_20260802.md`: chuẩn hóa key hồ sơ giao dịch và outcome tranh chấp cuối.
-- `TRANSACTION_OPTIONS_DISPUTE_OUTCOME_E2E_20260802.md`
+## Tài liệu lịch sử
 
-- `MARKETPLACE_OPTIONS_RENTAL_E2E_20260802.md`: options cache/version, dispute timeline và rental E2E.
-- `MARKETPLACE_OPTIONS_RENTAL_DEDUCTION_CLOSURE_20260802.md`
-- `ADMIN_NOTIFICATION_RENTAL_SETTLEMENT_CLOSURE_20260803.md`: admin notification center, rental operation queues và settlement audit/export.
-- `ADMIN_NOTIFICATION_SETTLEMENT_FILTER_BUNDLE_CLOSURE_20260803.md`: notification detail drawer, settlement filters/export và route bundle splitting.
-- `OPERATIONS_PRESETS_EXPORT_QUEUE_20260803.md`: saved filter presets, unread notification counter và queued rental settlement export.
-- `ADMIN_BASE_CRUD_ACTION_ALIGNMENT_20260803.md`: chuẩn hóa Admin CRUD form/detail action theo base owner và parent pattern.
-- `ARCHITECTURE-CANONICAL.md`: transaction là lifecycle owner, document chỉ là hồ sơ giao dịch.
-- `OPERATOR-GUIDE.md`: hướng dẫn admin/customer dùng command center, next action và checklist.
-- `NEXT-BACKLOG.md`: backlog tiếp theo để khép vòng vận hành mà không phình module.
-- `NOTIFICATION-PAYOUT-JOURNEY-CLOSURE-20260803.md`
-- `OPERATIONAL-AUDIT-TODAY-QUEUE-CLOSURE-20260803.md`
-- [Large file domain ownership closure](./LARGE_FILE_DOMAIN_OWNERSHIP_20260803.md)
-
-- [Lifecycle, relation, UI and lightweight E2E closure](./LIFECYCLE_RELATION_UI_E2E_CLOSURE_20260803.md)
+Các file closure có ngày trong tên được giữ làm audit trail. Khi có mâu thuẫn, bộ canonical phía trên và release evidence mới nhất là nguồn sự thật.
