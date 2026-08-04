@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { matchRouteMeta } from '@/routes/match'
 
 export function useBreadcrumb({ title } = {}) {

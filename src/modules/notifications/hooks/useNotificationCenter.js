@@ -1,7 +1,7 @@
 import { useBaseFilters, useList } from '@/hooks'
 import { message } from 'antd'
 import { useCallback, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { createNotificationColumns } from '../components/notificationColumns'
 import service from '../service'
 

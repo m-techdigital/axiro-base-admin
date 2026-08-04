@@ -1,5 +1,5 @@
 import { Breadcrumb } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 function normalizeItem(item, index) {
     if (typeof item === 'string') {

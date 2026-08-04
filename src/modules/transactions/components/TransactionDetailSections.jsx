@@ -1,6 +1,6 @@
 import { BaseView } from '@/components/base'
-import { Card, Col, Row, Skeleton } from 'antd'
-import { lazy, Suspense } from 'react'
+import { Card, Col, Row, Skeleton, Tabs } from 'antd'
+import { lazy, Suspense, useMemo, useState } from 'react'
 
 import { buildTransactionDetailFields } from '../config/detailPresentation'
 
@@ -23,9 +23,52 @@ function PanelFallback() {
 
 export default function TransactionDetailSections(props) {
     const { data, loading } = props
+    const [activePanel, setActivePanel] = useState('payment')
+    const items = useMemo(
+        () => [
+            {
+                key: 'payment',
+                label: 'Thanh toán',
+                children: (
+                    <Suspense fallback={<PanelFallback />}>
+                        <TransactionPaymentPanel {...props} />
+                    </Suspense>
+                ),
+            },
+            {
+                key: 'documents',
+                label: 'Tài liệu',
+                children: (
+                    <Suspense fallback={<PanelFallback />}>
+                        <TransactionDocumentPanel {...props} />
+                    </Suspense>
+                ),
+            },
+            {
+                key: 'timeline',
+                label: 'Dòng thời gian',
+                children: (
+                    <Suspense fallback={<PanelFallback />}>
+                        <TransactionTimelinePanel {...props} />
+                    </Suspense>
+                ),
+            },
+            {
+                key: 'admin',
+                label: 'Xử lý quản trị',
+                children: (
+                    <Suspense fallback={<PanelFallback />}>
+                        <TransactionAdminActionsPanel {...props} />
+                    </Suspense>
+                ),
+            },
+        ],
+        [props],
+    )
+
     return (
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-            <Col xs={24} xl={15}>
+            <Col span={24}>
                 <Card loading={loading} title="Thông tin giao dịch">
                     <BaseView
                         record={data}
@@ -33,20 +76,14 @@ export default function TransactionDetailSections(props) {
                         fields={buildTransactionDetailFields(data)}
                     />
                 </Card>
-                <Suspense fallback={<PanelFallback />}>
-                    <TransactionPaymentPanel {...props} />
-                </Suspense>
-                <Suspense fallback={<PanelFallback />}>
-                    <TransactionDocumentPanel {...props} />
-                </Suspense>
-            </Col>
-            <Col xs={24} xl={9}>
-                <Suspense fallback={<PanelFallback />}>
-                    <TransactionTimelinePanel {...props} />
-                </Suspense>
-                <Suspense fallback={<PanelFallback />}>
-                    <TransactionAdminActionsPanel {...props} />
-                </Suspense>
+                <Card style={{ marginTop: 16 }}>
+                    <Tabs
+                        activeKey={activePanel}
+                        destroyOnHidden
+                        items={items}
+                        onChange={setActivePanel}
+                    />
+                </Card>
             </Col>
         </Row>
     )

@@ -1,6 +1,6 @@
 import { BaseButton } from '@/components/base'
 import { Card, Space, Typography } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 export default function TransactionAdminActionsPanel({
     data,

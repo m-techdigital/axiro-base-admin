@@ -1,6 +1,6 @@
 import { Layout } from 'antd'
 import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router'
 
 import AdminThemeProvider from '../app/providers/AdminThemeProvider'
 import { useIsMobile } from '../hooks/useIsMobile'

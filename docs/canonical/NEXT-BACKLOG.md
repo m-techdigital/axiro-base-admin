@@ -1,20 +1,14 @@
 # Next Backlog
 
-## Bắt buộc trước tag baseline mới
+- Visual smoke bằng browser cho Admin command center và Customer journey.
+- E2E notification deep-link và payout verification.
+- Additive migration khi baseline chuyển sang DB giữ dữ liệu.
+- Đo first-load thực tế trước khi tách thêm AntD/shared chunks.
 
-1. Chạy `composer release:all` trên fresh test DB với browser credentials và LibreOffice.
-2. Bắt buộc document-template mutation non-skip: issued template -> successor version -> `supersedes_template_id` đúng.
-3. Chạy `composer release:finalize-evidence` từ ba HEAD sạch, đã push và khớp release summary.
-4. Commit/push evidence final bằng hash thật; không dùng trạng thái workspace hoặc log cũ.
+## Post-closure verification
 
-## Tối ưu có số đo
-
-1. Đo lại Admin route closures sau lightweight Login, lazy transaction panels, notification drawer và operations tabs.
-2. Chỉ tối ưu route vượt budget dựa trên `dist/bundle-report.json`; không gom lại AntD/rc vào vendor chung.
-3. Chạy browser visual QA cho BaseForm/BaseFilter/review modal/table tại desktop, tablet và mobile.
-
-## Nghiệp vụ tiếp theo
-
-1. Bổ sung fixture browser ổn định cho mọi lifecycle action cần test lặp lại.
-2. Mở rộng customer isolation cho endpoint mới khi phát sinh.
-3. Giữ scope runtime ở customer/product/transaction/payment/wallet/payout/document/support/trust.
+1. Run a fresh production build and record Admin route closures plus MBN initial JS/CSS after active-panel and route-style ownership changes.
+2. Continue owner-level Admin route closure reduction; the initial graph is under budget, but heavy route closures still exceed 650 KB.
+3. Reduce the MBN initial CSS payload after the route-owned CSS split; JS initial is measured under 650 KB, CSS remains heavy.
+4. Run Admin and MBN multi-viewport visual regression gates and retain screenshots as release artifacts.
+5. Run `composer release:all`, finalize hash-matched evidence, then regenerate release artifacts from the finalized HEAD.

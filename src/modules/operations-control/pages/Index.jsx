@@ -8,7 +8,7 @@ import {
     useMemo,
     useState,
 } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import { BaseButton, BasePageHeader } from '@/components/base'
 

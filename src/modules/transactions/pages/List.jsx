@@ -1,6 +1,6 @@
 import { EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons'
 import { Tag, message } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import {
     BaseActionGroup,

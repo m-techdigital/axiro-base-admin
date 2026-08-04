@@ -1,7 +1,7 @@
 import { BaseForm, BaseFormPage } from '@/components/base'
 import { message } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 import { createCustomerFormFields, customerDefaultValues } from '../formConfig'
 import service from '../service'
 

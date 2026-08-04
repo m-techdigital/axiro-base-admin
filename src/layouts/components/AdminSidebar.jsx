@@ -1,7 +1,7 @@
 import { Badge, Layout, Menu } from 'antd'
 import { ADMIN_MENU_ITEMS, selectedAdminMenuKey } from '../../configs/adminMenu'
 import { useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import api from '../../services/axios'
 const { Sider } = Layout
 

@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import { ROUTE_META } from '../routes/meta'
 
 export function useRouteMeta() {

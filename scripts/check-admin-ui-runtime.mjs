@@ -1,15 +1,19 @@
 import fs from 'node:fs'
 
 const read = (file) => fs.readFileSync(file, 'utf8')
-const fail = (message) => {
-    throw new Error(message)
-}
 const walk = (dir) =>
     fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
         const next = `${dir}/${entry.name}`
-        if (entry.isDirectory()) return walk(next)
+
+        if (entry.isDirectory()) {
+            return walk(next)
+        }
+
         return next
     })
+const fail = (message) => {
+    throw new Error(message)
+}
 
 const baseForm = read('src/components/base/BaseForm.jsx')
 const baseFilter = read('src/components/base/BaseFilter.jsx')
@@ -90,7 +94,7 @@ const invalidUseListConsumers = walk('src')
     .filter((file) => /\.(jsx?|tsx?)$/.test(file))
     .filter((file) => /useList\([^)]*\.list/.test(read(file)))
 
-if (invalidUseListConsumers.length) {
+if (invalidUseListConsumers.length > 0) {
     fail(
         `useList phải nhận service object, không truyền service.list: ${invalidUseListConsumers.join(', ')}`,
     )

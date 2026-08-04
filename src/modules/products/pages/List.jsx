@@ -1,7 +1,7 @@
 import { CheckOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { Tag, message } from 'antd'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import {
     BaseActionGroup,

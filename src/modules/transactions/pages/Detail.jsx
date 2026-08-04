@@ -1,7 +1,7 @@
 import { BaseButton, BasePageHeader } from '@/components/base'
 import { Alert, Space } from 'antd'
 import { lazy, Suspense } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 import TransactionCommandCenter from '../components/TransactionCommandCenter'
 import TransactionDetailSections from '../components/TransactionDetailSections'
 import { transactionLabels } from '../config/detailPresentation'

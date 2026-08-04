@@ -22,20 +22,6 @@ export default function BaseButton({
         module && requiredActions.length
             ? requiredActions.every((item) => can(module, item))
             : true
-    const accessibleLabel =
-        props['aria-label'] ||
-        tooltip ||
-        (typeof children === 'string' || typeof children === 'number'
-            ? String(children)
-            : null) ||
-        (props.icon ? 'Thao tác' : null)
-    const accessibilityProps =
-        accessibleLabel && !props['aria-label']
-            ? {
-                  'aria-label': accessibleLabel,
-                  title: props.title || accessibleLabel,
-              }
-            : {}
 
     if (!allowed) {
         return hidden ? null : (
@@ -43,7 +29,6 @@ export default function BaseButton({
                 <Button
                     className="base-button"
                     disabled
-                    {...accessibilityProps}
                     {...props}
                     style={{
                         pointerEvents: 'none',
@@ -58,7 +43,7 @@ export default function BaseButton({
 
     return (
         <Tooltip title={tooltip}>
-            <Button className="base-button" {...accessibilityProps} {...props}>
+            <Button className="base-button" {...props}>
                 {children}
             </Button>
         </Tooltip>

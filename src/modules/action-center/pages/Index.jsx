@@ -8,7 +8,7 @@ import {
 import { ReloadOutlined, RightOutlined, ToolOutlined } from '@ant-design/icons'
 import { Alert, Card, Col, Empty, Row, Statistic, Tag } from 'antd'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { statusColor, statusLabel } from '@/contracts/marketplaceLabels'
 import service from '../service'
 

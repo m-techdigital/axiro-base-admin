@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router'
 import RequireAuth from '../../middleware/RequireAuth'
 import GuestOnly from '../../middleware/GuestOnly'
 import { ADMIN_ROUTES } from '../../routes/adminRoutes'
