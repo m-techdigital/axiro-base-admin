@@ -50,7 +50,13 @@ for (const file of trackedFiles()) {
     }
 }
 
-for (const required of ['package.json', 'src', 'docs/canonical']) {
+for (const required of [
+    'package.json',
+    'src',
+    'docs/canonical',
+    '.env.example',
+    '.env.production.example',
+]) {
     if (!fs.existsSync(path.join(root, required)))
         failures.push(`${required}: thiếu release root contract.`)
 }

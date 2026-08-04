@@ -1,0 +1,39 @@
+{
+  "audit_date": "2026-08-04",
+  "audit_window": "from approximately 18:56 local time through the 23:19 baseline",
+  "repository": "admin",
+  "result": "no_missing_functional_capabilities_detected",
+  "contract_sha256": "69a52564e59efe3fa259385dabb26015ea25163d8b31a1c1ef8d20727a98401a",
+  "compared_artifacts": [
+    "axiro-base-admin-final-canonical-closure-20260804-clean.zip",
+    "axiro-base-admin-bundle-security-visual-closure-20260804-clean.zip",
+    "axiro-base-admin-20260804-2217-clean.zip",
+    "axiro-base-admin-20260804-2232-clean.zip",
+    "axiro-base-admin-route-css-release-20260804-clean.zip"
+  ],
+  "critical_files": [
+    "src/components/base/BaseForm.jsx",
+    "src/components/base/BaseFilter.jsx",
+    "src/components/base/BaseReviewActionModal.jsx",
+    "src/hooks/relation/relationConfigResolver.js",
+    "src/hooks/relation/relationOptionCache.js",
+    "src/hooks/relation/relationOptionNormalizer.js",
+    "src/modules/auth/components/AuthLoginForm.jsx",
+    "src/app/providers/AdminThemeProvider.jsx",
+    "src/modules/transactions/components/TransactionDetailSections.jsx",
+    "src/modules/operations-control/components/tabs/ReconciliationSummary.jsx",
+    "src/modules/notifications/components/NotificationDetailDrawer.jsx",
+    "scripts/e2e-browser-crud.mjs",
+    "scripts/e2e-visual-regression.mjs",
+    ".env.example",
+    ".env.production.example"
+  ],
+  "recovered_files": [
+    ".env.example",
+    ".env.production.example"
+  ],
+  "cleanup": [
+    "removed_empty_backend_directories_from_admin_package"
+  ],
+  "policy": "A newly supplied ZIP is not automatically newer. Compare it with this manifest and the finalized Git hashes before applying changes."
+}
