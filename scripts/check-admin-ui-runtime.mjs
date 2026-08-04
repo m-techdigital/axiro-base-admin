@@ -4,6 +4,12 @@ const read = (file) => fs.readFileSync(file, 'utf8')
 const fail = (message) => {
     throw new Error(message)
 }
+const walk = (dir) =>
+    fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+        const next = `${dir}/${entry.name}`
+        if (entry.isDirectory()) return walk(next)
+        return next
+    })
 
 const baseForm = read('src/components/base/BaseForm.jsx')
 const baseFilter = read('src/components/base/BaseFilter.jsx')
@@ -78,6 +84,16 @@ if (
 }
 if (!styles.includes('.base-statistics-grid')) {
     fail('Statistics dashboard phải có responsive grid owner.')
+}
+
+const invalidUseListConsumers = walk('src')
+    .filter((file) => /\.(jsx?|tsx?)$/.test(file))
+    .filter((file) => /useList\([^)]*\.list/.test(read(file)))
+
+if (invalidUseListConsumers.length) {
+    fail(
+        `useList phải nhận service object, không truyền service.list: ${invalidUseListConsumers.join(', ')}`,
+    )
 }
 
 console.log('Admin UI runtime closure passed.')

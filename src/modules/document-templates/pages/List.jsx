@@ -14,7 +14,7 @@ const DocumentTemplateEditorModal = lazy(
 )
 
 export default function DocumentTemplateList() {
-    const list = useList(service.list)
+    const list = useList(service, { per_page: 100 })
     const [documentTypes, setDocumentTypes] = useState([])
     const [open, setOpen] = useState(false)
     const [editing, setEditing] = useState(null)

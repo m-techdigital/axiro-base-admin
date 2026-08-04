@@ -14,8 +14,9 @@
         {
             "mini_path": "src/components/base/BaseButton.jsx",
             "parent_path": "src/components/base/BaseButton.jsx",
-            "mode": "exact_source",
-            "sha256": "7c1e950d40b280629f1e8afcea7dd7d93d26c42a68cc305cb27e21852b669aa4"
+            "mode": "mechanical_conversion",
+            "sha256": "8b5e73d4dad53585300710d63ac5df4c4a8d8734193dd45eda9524e712bb9aae",
+            "note": "Synced from AXIRO parent BaseButton accessible-label behavior; formatted by Mini Prettier toolchain only."
         },
         {
             "mini_path": "src/components/base/BaseConfirmActionButton.jsx",
@@ -260,8 +261,8 @@
         },
         {
             "parent_path": "src/components/base/BaseButton.jsx",
-            "mode": "exact_source",
-            "reason": "Copied and hash-locked."
+            "mode": "mechanical_conversion",
+            "reason": "Parent behavior copied and hash-locked after Mini Prettier formatting."
         },
         {
             "parent_path": "src/components/base/BaseCalendarTab.jsx",

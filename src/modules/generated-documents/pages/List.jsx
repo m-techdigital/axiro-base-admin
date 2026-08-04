@@ -20,7 +20,7 @@ import service from '../service'
 export default function GeneratedDocumentList() {
     const [documentTypes, setDocumentTypes] = useState([])
     const [preview, setPreview] = useState(null)
-    const list = useList(service.list)
+    const list = useList(service)
     const documentLabels = useMemo(
         () => optionMap(documentTypes),
         [documentTypes],

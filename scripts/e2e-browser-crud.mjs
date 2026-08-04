@@ -141,12 +141,44 @@ const clickText = async (text) => {
 }
 
 const clickRowAction = async (rowText, actionText) => {
-    const ok = await evaluate(
-        `(() => { const rows=[...document.querySelectorAll('tr')]; const row=rows.find((item)=>item.innerText?.includes(${JSON.stringify(rowText)})); if(!row)return false; const action=[...row.querySelectorAll('button,a')].find((el)=>[el.textContent, el.getAttribute('aria-label'), el.getAttribute('title')].filter(Boolean).some((value)=>value.trim().includes(${JSON.stringify(actionText)}))); if(!action)return false; action.click(); return true })()`,
+    const result = await evaluate(
+        `(() => {
+            const rowNeedle=${JSON.stringify(rowText)}
+            const actionNeedle=${JSON.stringify(actionText)}
+            const textOf=(el)=>String(el?.innerText || el?.textContent || '')
+            const rows=[...document.querySelectorAll('tr,[role="row"],.ant-table-row')]
+                .filter((item)=>textOf(item).trim())
+            const row=rows.find((item)=>textOf(item).includes(rowNeedle))
+            if(!row) {
+                return {
+                    ok:false,
+                    reason:'missing-row',
+                    rows:rows.slice(0,8).map((item)=>textOf(item).replace(/\\s+/g,' ').trim()).filter(Boolean),
+                }
+            }
+            const actions=[...row.querySelectorAll('button,a,[role="button"],.base-icon-action')]
+            const labelOf=(el)=>[textOf(el), el.getAttribute?.('aria-label'), el.getAttribute?.('title')]
+                .filter(Boolean)
+                .map((value)=>String(value).trim())
+            const action=actions.find((el)=>labelOf(el).some((value)=>value.includes(actionNeedle)))
+                || row.querySelector('.base-table__actions .base-icon-action')
+                || row.querySelector('.base-icon-action')
+                || actions.at(-1)
+            if(!action) {
+                return {
+                    ok:false,
+                    reason:'missing-action',
+                    row:textOf(row).replace(/\\s+/g,' ').trim(),
+                    actions:actions.map((item)=>labelOf(item).join('|')).filter(Boolean),
+                }
+            }
+            action.click()
+            return { ok:true }
+        })()`,
     )
-    if (!ok)
+    if (!result?.ok)
         throw new Error(
-            `Không tìm thấy action ${actionText} trong dòng ${rowText}.`,
+            `Không tìm thấy action ${actionText} trong dòng ${rowText}: ${JSON.stringify(result)}`,
         )
 }
 
@@ -263,8 +295,11 @@ try {
     await clickText('Tạo mẫu')
     await assertText('Tạo mẫu tài liệu')
     await assertText('Bản nháp')
-    await evaluate(
-        `document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`,
+    await clickText('Hủy')
+    await wait(
+        () =>
+            evaluate('!document.body?.innerText?.includes("Tạo mẫu tài liệu")'),
+        'document template create modal closed',
     )
     const templates = await api('/document-templates?per_page=100')
     const issuedTemplate = (Array.isArray(templates) ? templates : []).find(
@@ -276,31 +311,21 @@ try {
         if (requireDocumentVersionMutation) throw new Error(message)
         console.log(`SKIP ${message}`)
     } else {
-        const hasEditAction = await evaluate(
-            `[...document.querySelectorAll('button,a')].some((el)=>[el.textContent, el.getAttribute('aria-label'), el.getAttribute('title')].filter(Boolean).some((value)=>value.trim().includes('Chỉnh sửa')))`,
+        await clickRowAction(
+            issuedTemplate.code || issuedTemplate.name,
+            'Chỉnh sửa',
         )
-        if (hasEditAction) {
-            await clickRowAction(
-                issuedTemplate.code || issuedTemplate.name,
-                'Chỉnh sửa',
-            )
-            await assertText(
-                'Mẫu đã phát sinh tài liệu là bất biến',
-                'used template immutable note',
-            )
-            await assertText(
-                'Tạo phiên bản mới từ v',
-                'document versioning modal title',
-            )
-            await evaluate(
-                `document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`,
-            )
-        } else {
-            const message =
-                'Document template list không có action chỉnh sửa cho issued fixture.'
-            if (requireDocumentVersionMutation) throw new Error(message)
-            console.log(`SKIP ${message}`)
-        }
+        await assertText(
+            'Mẫu đã phát sinh tài liệu là bất biến',
+            'used template immutable note',
+        )
+        await assertText(
+            'Tạo phiên bản mới từ v',
+            'document versioning modal title',
+        )
+        await evaluate(
+            `document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`,
+        )
     }
     if (issuedTemplate) {
         const currentTemplate = await api(
