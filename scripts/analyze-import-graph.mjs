@@ -3,6 +3,9 @@ import path from 'node:path'
 
 const root = path.resolve('src')
 const focus = [
+    'main.jsx',
+    'App.jsx',
+    'app/router/index.jsx',
     'components/base/BaseForm.jsx',
     'components/base/BaseTable.jsx',
     'components/base/BaseFilter.jsx',
@@ -52,4 +55,18 @@ if (
     )
     process.exit(1)
 }
-console.log('\nPASS: AntD is no longer forced into one shared core chunk.')
+const bootstrapFiles = ['main.jsx', 'App.jsx', 'app/router/index.jsx']
+const bootstrapRootAntd = bootstrapFiles.flatMap((relative) =>
+    importsOf(path.join(root, relative))
+        .filter((value) => value === 'antd')
+        .map(() => relative),
+)
+if (bootstrapRootAntd.length) {
+    console.error(
+        `\nFAIL: bootstrap imports the AntD barrel: ${bootstrapRootAntd.join(', ')}`,
+    )
+    process.exit(1)
+}
+console.log(
+    '\nPASS: AntD is not forced into one shared core chunk and bootstrap avoids the AntD barrel.',
+)

@@ -2,6 +2,7 @@ import fs from 'node:fs'
 
 const read = (file) => fs.readFileSync(file, 'utf8')
 const vite = read('vite.config.js')
+const main = read('src/main.jsx')
 const transactionDetail = read('src/modules/transactions/pages/Detail.jsx')
 const payout = read('src/modules/payouts/pages/Index.jsx')
 const documentTemplates = read('src/modules/document-templates/pages/List.jsx')
@@ -10,6 +11,15 @@ const editor = read(
 )
 
 const checks = [
+    [
+        main.includes("from 'antd/es/config-provider'") &&
+            !/from\s+['"]antd['"]/.test(main),
+        'application bootstrap must import ConfigProvider directly, not the AntD barrel',
+    ],
+    [
+        !main.includes('AntApp') && !main.includes('App as AntApp'),
+        'application bootstrap must not eagerly mount unused AntD App context',
+    ],
     [
         !/return\s+['"]antd-core['"]/.test(vite),
         'vite config must not force every AntD module into antd-core',

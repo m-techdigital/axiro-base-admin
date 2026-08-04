@@ -31,15 +31,8 @@ export default defineConfig(({ mode }) => {
                             id.includes('/react-router')
                         )
                             return 'react-vendor'
-                        if (id.includes('@ant-design/icons'))
-                            return 'antd-icons'
-                        if (
-                            id.includes('/rc-') ||
-                            id.includes('/@rc-component/')
-                        )
-                            return 'antd-rc'
-                        // Keep route-only AntD modules inside their lazy route chunks.
-                        // Forcing all antd/** modules into one shared chunk made lazy routes ineffective.
+                        // Do not force AntD, icon or rc-* packages into shared chunks.
+                        // Rollup can then keep route-only UI dependencies with their lazy owners.
                         if (id.includes('/axios/')) return 'http-vendor'
                         if (id.includes('/dayjs/')) return 'date-vendor'
                         return 'vendor'

@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ConfigProvider, App as AntApp } from 'antd'
+import ConfigProvider from 'antd/es/config-provider'
 import viVN from 'antd/locale/vi_VN'
 import 'antd/dist/reset.css'
 import './index.css'
@@ -39,11 +39,9 @@ ConfigProvider.config({
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <ConfigProvider locale={viVN} theme={theme}>
-            <AntApp>
-                <AuthProvider>
-                    <App />
-                </AuthProvider>
-            </AntApp>
+            <AuthProvider>
+                <App />
+            </AuthProvider>
         </ConfigProvider>
     </React.StrictMode>,
 )

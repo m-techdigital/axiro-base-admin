@@ -114,10 +114,24 @@ for (const marker of [
 const viteConfig = fs.readFileSync(path.join(root, 'vite.config.js'), 'utf8')
 if (viteConfig.includes("return 'antd-vendor'"))
     failures.push('bundle ownership: monolithic antd-vendor must not return.')
-for (const chunk of ['antd-icons', 'antd-rc']) {
-    if (!viteConfig.includes(`return '${chunk}'`))
-        failures.push(`bundle ownership: missing ${chunk}.`)
+for (const chunk of ['antd-vendor', 'antd-core', 'antd-icons', 'antd-rc']) {
+    if (viteConfig.includes(`return '${chunk}'`))
+        failures.push(
+            `bundle ownership: forced ${chunk} prevents route-local tree splitting.`,
+        )
 }
+const routerSource = fs.readFileSync(
+    path.join(root, 'src/app/router/index.jsx'),
+    'utf8',
+)
+if (!routerSource.includes("lazy(() => import('../../layouts/AdminLayout'))"))
+    failures.push('bundle ownership: AdminLayout must be lazy-loaded.')
+if (
+    !routerSource.includes(
+        "lazy(() => import('../../modules/auth/pages/Login'))",
+    )
+)
+    failures.push('bundle ownership: Login must be lazy-loaded.')
 if (viteConfig.includes("return 'antd-core'"))
     failures.push(
         'bundle ownership: monolithic antd-core prevents lazy-route splitting.',
