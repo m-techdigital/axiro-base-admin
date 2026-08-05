@@ -3,7 +3,7 @@ import path from 'node:path'
 import { execSync } from 'node:child_process'
 
 const allowedEnvTemplates = new Set(['.env.example', '.env.production.example'])
-const forbiddenSegments = new Set(['node_modules', 'vendor', 'dist', 'build'])
+const forbiddenSegments = new Set(['node_modules', 'vendor', 'dist', 'build', 'coverage', 'artifacts'])
 const failures = []
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 

@@ -196,3 +196,49 @@ The route/CSS ownership changes in the next source package invalidate the 0040 b
 - API source-clean package guard now fails on runtime files under `storage/logs`, `storage/app/public`, `storage/framework/testing` and `storage/app/backups`, except `.gitignore` placeholders.
 - Existing runtime logs, uploaded marketplace media and generated test files were removed from source-clean state before repackaging.
 - API release-package, recovery-baseline and maintainability guards pass after the storage cleanup.
+
+## 2026-08-05 — Digital asset escrow source update
+
+- Marketplace contract: `2026-08-05.2`; SHA-256 `2122980399c96282949650ec10d6bb4c7ded1f2f22184b0769dcc05cfbe0f8ac`.
+- Added Mini-bounded handover policy for `game_account` and `item`.
+- Source/static guards may be rerun immediately; browser visual, transactional E2E, `release:all` and hash-finalized evidence are pending after this source change.
+
+
+### Digital asset escrow document/demo closure
+
+- Transaction documents now merge the immutable delivery method, inspection window/deadline, pre-handover snapshot requirement, and seller/buyer handover notes. Templates never request or persist passwords, OTPs, recovery codes, cookies, or other credentials.
+- Fresh demo data includes a published in-game item (`ITEM-0901`) using `in_game_trade`, while transaction fixtures snapshot their handover policy.
+- Transactional E2E source now records a `before_handover` snapshot, verifies the inspection deadline, exercises rental handover, and exercises a complete in-game item handover. Execution remains pending until clean pushed Git HEADs are available to `composer release:all`.
+
+## 2026-08-05 — Digital asset escrow source-package closure
+
+- Removed browser evidence directories from Admin/MBN source trees and removed API `public/storage` runtime content from the source package.
+- Release-package guards now fail closed on `artifacts`, coverage/build output and API public runtime storage; regression probes confirmed the guards reject these paths before packaging.
+- Digital asset escrow source/static guards pass across API, Admin and MBN. Runtime browser, transactional E2E, `release:all` and hash-finalized evidence remain pending until the source is committed and pushed in the three Git repositories.
+
+## 2026-08-05 digital-asset escrow build closure
+
+- Corrected the MBN escrow panel to consume the canonical named `DefinitionGrid` export from `PageSection`; the prior nonexistent module path is now guarded against.
+- Applied canonical Pint formatting to the two API files reported by the runtime formatter.
+- Build, Pint, PHPUnit, browser, transactional E2E, `release:all`, and hash-finalized evidence must be rerun from the clean committed/pushed source after this correction.
+
+
+## 2026-08-05 — Escrow Box source implementation
+
+Source now contains the private Escrow Box module with one-time invite claim, versioned agreement, Admin fee/risk review, payment obligations, handover checkpoints and private optimized media. Previous bundle/browser/release evidence is historical after this source change. Required current gates remain pending: frontend lint/build, PHP Pint/PHPUnit, browser visual regression, transactional E2E, clean pushed `release:all`, and hash-finalized evidence.
+
+## 2026-08-05 — Escrow Box source closure
+
+- Escrow Box is the canonical private intermediary domain; the previous direct-escrow invitation flow and username targeting are removed.
+- Customer-facing resources expose only Bên A/B aliases. Invite tokens are stored as hashes, returned once and invalidated atomically after claim.
+- Agreement versions, fee snapshots, payment obligations, Admin review, ordered handover checkpoints and private optimized media are present across API/Admin/MBN.
+- API recovery/package/maintainability/PHP syntax guards, Admin source/owner/API-contract guards through the full static chain, and MBN ownership/style/package guards pass on the current source.
+- Pint/PHPUnit, frontend format/lint/build, browser visual regression, transactional E2E, clean pushed `release:all` and hash-finalized evidence remain pending and must be regenerated for this source.
+
+## 2026-08-05 184710 style-baseline carry-forward
+
+- The MBN 184710 deterministic stylesheet manifest, desktop/mobile shell owners, and style architecture guards are retained as the active UI baseline.
+- Escrow Box routes, hooks, repositories, privacy contract, and media/handover flows are carried forward onto that baseline.
+- Escrow Box CSS is registered once in `src/index.css`; route components do not side-effect import CSS.
+- API/Admin Escrow Box owners remain `mini_bounded`; no company, RBAC, HR, accounting, report, or project runtime is introduced.
+- Previous build/browser/release evidence is stale after this merge and must be regenerated from clean pushed Git HEADs.

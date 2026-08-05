@@ -37,3 +37,7 @@ Xem tài liệu canonical tương ứng trong repo API. Mini giữ response enve
 
 - [Recovery audit 2026-08-04](../release/RECOVERY-AUDIT-20260804.md)
 - `docs/release/recovery-baseline.json` là manifest carry-forward bắt buộc; ZIP mới không tự động được xem là mới hơn baseline đã finalize.
+
+- `MARKETPLACE_ESCROW_DIGITAL_ASSET_20260805.md`: luồng giao dịch trung gian Mini-bounded cho tài khoản và vật phẩm trong game, snapshot bàn giao, inspection window và ranh giới dữ liệu nhạy cảm.
+
+- [Escrow Box canonical](./ESCROW_BOX_CANONICAL_20260805.md) — private one-time invite, versioned terms, fee snapshot, Admin handover and optimized private media.

@@ -9,6 +9,10 @@ const manifest = JSON.parse(
     ),
 )
 const failures = []
+
+if (fs.existsSync(path.join(root, 'artifacts'))) {
+    failures.push('artifacts/: không được giữ browser evidence/runtime artifact trong source package.')
+}
 for (const file of manifest.critical_files) {
     if (!fs.existsSync(path.join(root, file)))
         failures.push(`Thiếu recovery owner: ${file}`)

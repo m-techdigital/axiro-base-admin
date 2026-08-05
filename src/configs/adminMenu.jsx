@@ -5,6 +5,7 @@ import {
     ShoppingOutlined,
     ShopOutlined,
     SwapOutlined,
+    SafetyCertificateOutlined,
     CreditCardOutlined,
     WarningOutlined,
     HistoryOutlined,
@@ -22,6 +23,8 @@ export const ADMIN_MENU_ITEMS = [
     { key: '/customers', icon: <TeamOutlined />, label: 'Khách hàng' },
     { key: '/products', icon: <ShoppingOutlined />, label: 'Sản phẩm' },
     { key: '/transactions', icon: <SwapOutlined />, label: 'Giao dịch' },
+    { key: '/escrow-boxes', icon: <SafetyCertificateOutlined />, label: 'Box trung gian' },
+    { key: '/escrow-fee-rules', icon: <CreditCardOutlined />, label: 'Phí Box' },
     { key: '/notifications', icon: <BellOutlined />, label: 'Thông báo' },
     {
         key: '/payments',

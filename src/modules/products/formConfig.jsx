@@ -5,10 +5,17 @@ import {
 } from '@/constants/options'
 import { OFFER_MODE_OPTIONS } from '@/modules/shared/enums/offer_modes.enum'
 import { Checkbox } from 'antd'
+import {
+    MARKETPLACE_GAME_ACCOUNT_DELIVERY_METHODS,
+    MARKETPLACE_ITEM_DELIVERY_METHODS,
+} from '@/generated/marketplaceOptions'
 
 export const productDefaultValues = {
     status: 'active',
     product_type: 'game_account',
+    delivery_method: 'account_credentials',
+    inspection_period_minutes: 30,
+    requires_pre_handover_snapshot: true,
     offer_modes: ['sell'],
     installment_enabled: false,
     sale_deposit_amount: 0,
@@ -60,7 +67,37 @@ export const productFormFields = [
         type: 'select',
         options: PRODUCT_TYPE_OPTIONS,
         rules: [{ required: true }],
+        onChange: (value, { setFieldValue }) =>
+            setFieldValue(
+                'delivery_method',
+                value === 'item' ? 'in_game_trade' : 'account_credentials',
+            ),
         span: 6,
+    },
+    {
+        name: 'delivery_method',
+        label: 'Phương thức bàn giao',
+        type: 'select',
+        options: (_, { values }) =>
+            values.product_type === 'item'
+                ? MARKETPLACE_ITEM_DELIVERY_METHODS
+                : MARKETPLACE_GAME_ACCOUNT_DELIVERY_METHODS,
+        rules: [{ required: true }],
+        span: 6,
+    },
+    {
+        name: 'inspection_period_minutes',
+        label: 'Thời gian kiểm tra (phút)',
+        type: 'number',
+        props: { min: 5, max: 1440 },
+        rules: [{ required: true }],
+        span: 3,
+    },
+    {
+        name: 'requires_pre_handover_snapshot',
+        text: 'Bắt buộc biên bản trước bàn giao',
+        type: 'checkbox',
+        span: 3,
     },
     { name: 'server_name', label: 'Máy chủ', span: 4 },
     {

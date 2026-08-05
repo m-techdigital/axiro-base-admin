@@ -4,6 +4,9 @@ import { lazy, Suspense, useMemo, useState } from 'react'
 
 import { buildTransactionDetailFields } from '../config/detailPresentation'
 
+const TransactionEscrowPanel = lazy(
+    () => import('./detail/TransactionEscrowPanel'),
+)
 const TransactionAdminActionsPanel = lazy(
     () => import('./detail/TransactionAdminActionsPanel'),
 )
@@ -31,6 +34,7 @@ export default function TransactionDetailSections(props) {
                 label: 'Thanh toán',
                 children: (
                     <Suspense fallback={<PanelFallback />}>
+                        <TransactionEscrowPanel transaction={data} />
                         <TransactionPaymentPanel {...props} />
                     </Suspense>
                 ),
@@ -63,7 +67,7 @@ export default function TransactionDetailSections(props) {
                 ),
             },
         ],
-        [props],
+        [data, props],
     )
 
     return (

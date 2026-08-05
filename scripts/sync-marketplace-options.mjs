@@ -29,6 +29,8 @@ export const MARKETPLACE_DOCUMENT_TYPES = ${options(catalog.document_types)}
 export const MARKETPLACE_DOCUMENT_TEMPLATE_STATUSES = ${options(catalog.document_template_statuses)}
 export const MARKETPLACE_DISPUTE_OUTCOMES = ${options(catalog.dispute_outcomes)}
 export const MARKETPLACE_TRANSACTION_STATUSES = ${options(catalog.transaction_statuses)}
+export const MARKETPLACE_GAME_ACCOUNT_DELIVERY_METHODS = ${options(catalog.game_account_delivery_methods)}
+export const MARKETPLACE_ITEM_DELIVERY_METHODS = ${options(catalog.item_delivery_methods)}
 `
 const target = path.join(root, 'src/generated/marketplaceOptions.js')
 if (process.argv.includes('--check')) {

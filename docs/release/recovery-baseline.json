@@ -3,7 +3,7 @@
   "audit_window": "from approximately 18:56 local time through the 23:19 baseline",
   "repository": "admin",
   "result": "no_missing_functional_capabilities_detected",
-  "contract_sha256": "69a52564e59efe3fa259385dabb26015ea25163d8b31a1c1ef8d20727a98401a",
+  "contract_sha256": "746a14c14aabda1e18c5707e4b2fe09fc2e79f26614d1f89f4449eb480d591df",
   "compared_artifacts": [
     "axiro-base-admin-final-canonical-closure-20260804-clean.zip",
     "axiro-base-admin-bundle-security-visual-closure-20260804-clean.zip",
@@ -33,14 +33,24 @@
     "src/modules/operations-control/components/tabs/ReconciliationExportProgress.jsx",
     "src/modules/transactions/components/TransactionCommandGuidance.jsx",
     "src/modules/transactions/components/TransactionCommandWorkflow.jsx",
-    "src/modules/transactions/components/TransactionPendingPayments.jsx"
+    "src/modules/transactions/components/TransactionPendingPayments.jsx",
+    "src/modules/transactions/components/detail/TransactionEscrowPanel.jsx",
+    "docs/canonical/MARKETPLACE_ESCROW_DIGITAL_ASSET_20260805.md",
+    "scripts/check-digital-asset-escrow.mjs",
+    "scripts/check-release-package.mjs",
+    "src/modules/escrow-boxes/service.js",
+    "src/modules/escrow-boxes/pages/List.jsx",
+    "src/modules/escrow-boxes/pages/Detail.jsx",
+    "src/modules/escrow-boxes/pages/FeeRules.jsx",
+    "docs/canonical/ESCROW_BOX_CANONICAL_20260805.md"
   ],
   "recovered_files": [
     ".env.example",
     ".env.production.example"
   ],
   "cleanup": [
-    "removed_empty_backend_directories_from_admin_package"
+    "removed_empty_backend_directories_from_admin_package",
+    "forbid_browser_artifacts_and_generated_output_in_admin_source_package"
   ],
   "policy": "A newly supplied ZIP is not automatically newer. Compare it with this manifest and the finalized Git hashes before applying changes."
 }

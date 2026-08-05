@@ -152,7 +152,7 @@ const clickRowAction = async (rowText, actionText) => {
 
 const api = async (route, options = {}) =>
     evaluate(
-        `(async()=>{ const token=localStorage.getItem('access_token'); const response=await fetch('/api/v1${route}', { method:${JSON.stringify(options.method || 'GET')}, headers:{'Accept':'application/json','Content-Type':'application/json','Authorization':'Bearer '+token,'X-Client-App':'axiro-base-admin','X-Marketplace-Contract-Version':'2026-08-04.1'}, body:${options.body ? JSON.stringify(JSON.stringify(options.body)) : 'undefined'} }); const payload=await response.json(); if(!response.ok) throw new Error(payload?.message||payload?.status?.message||('HTTP '+response.status)); return payload.data??payload })()`,
+        `(async()=>{ const token=localStorage.getItem('access_token'); const response=await fetch('/api/v1${route}', { method:${JSON.stringify(options.method || 'GET')}, headers:{'Accept':'application/json','Content-Type':'application/json','Authorization':'Bearer '+token,'X-Client-App':'axiro-base-admin','X-Marketplace-Contract-Version':'2026-08-05.2'}, body:${options.body ? JSON.stringify(JSON.stringify(options.body)) : 'undefined'} }); const payload=await response.json(); if(!response.ok) throw new Error(payload?.message||payload?.status?.message||('HTTP '+response.status)); return payload.data??payload })()`,
     )
 
 try {

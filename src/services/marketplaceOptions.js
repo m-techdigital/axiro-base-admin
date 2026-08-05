@@ -4,6 +4,8 @@ import {
     MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS,
     MARKETPLACE_OPTIONS_CONTRACT_VERSION,
     MARKETPLACE_TRANSACTION_STATUSES,
+    MARKETPLACE_GAME_ACCOUNT_DELIVERY_METHODS,
+    MARKETPLACE_ITEM_DELIVERY_METHODS,
 } from '@/generated/marketplaceOptions'
 
 import api from './axios'
@@ -16,6 +18,8 @@ const fallbackOptions = {
     document_types: MARKETPLACE_DOCUMENT_TYPES,
     dispute_outcomes: MARKETPLACE_DISPUTE_OUTCOMES,
     transaction_statuses: MARKETPLACE_TRANSACTION_STATUSES,
+    game_account_delivery_methods: MARKETPLACE_GAME_ACCOUNT_DELIVERY_METHODS,
+    item_delivery_methods: MARKETPLACE_ITEM_DELIVERY_METHODS,
 }
 const fallbackTtlMs = MARKETPLACE_OPTIONS_CACHE_TTL_SECONDS * 1000
 let cachedContractVersion = MARKETPLACE_OPTIONS_CONTRACT_VERSION
@@ -48,6 +52,12 @@ export const loadMarketplaceOptions = async ({ force = false } = {}) => {
                 transaction_statuses: payload.transaction_statuses?.length
                     ? payload.transaction_statuses
                     : fallbackOptions.transaction_statuses,
+                game_account_delivery_methods: payload.game_account_delivery_methods?.length
+                    ? payload.game_account_delivery_methods
+                    : fallbackOptions.game_account_delivery_methods,
+                item_delivery_methods: payload.item_delivery_methods?.length
+                    ? payload.item_delivery_methods
+                    : fallbackOptions.item_delivery_methods,
             }
             cachedContractVersion =
                 response?.meta?.contract_version ||

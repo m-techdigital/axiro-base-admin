@@ -7,6 +7,10 @@ export default function BaseFormControl({ field, context = {} }) {
     if (field.component) return field.component
 
     const commonProps = field.props || {}
+    const resolvedOptions =
+        typeof field.options === 'function'
+            ? field.options(field, context)
+            : field.options || []
 
     switch (field.type) {
         case 'textarea':
@@ -39,7 +43,7 @@ export default function BaseFormControl({ field, context = {} }) {
                             ? 'multiple'
                             : undefined
                     }
-                    options={field.options || []}
+                    options={resolvedOptions}
                     placeholder={field.placeholder}
                     showSearch={field.showSearch ?? true}
                     {...commonProps}
