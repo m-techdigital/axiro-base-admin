@@ -1,59 +1,76 @@
 import { useState } from 'react'
-
 import BaseForm from './BaseForm'
 import BaseModalForm from './BaseModalForm'
 
 export default function BaseFormModal({
-    context,
-    description,
-    fields = null,
-    form,
-    loading = false,
-    onCancel,
-    onFinish,
     open,
-    record,
-    sections = null,
-    submitText,
-    tabs = null,
-    title,
     width = 800,
+    onCancel,
+
+    form,
+    record,
+    context,
+    fields = null,
+    tabs = null,
+    sections = null,
+    service,
+
+    onFinish,
+    loading = false,
+    submitText,
+    title,
+    description,
+    children,
+    conflictHandledExternally = false,
+    submitDisabled = false,
     ...modalProps
 }) {
     const [resetKey, setResetKey] = useState(0)
 
+    // reset + close in one single flow
     const handleClose = () => {
+        if (onCancel?.() === false) return false
+
         form?.resetFields?.()
         form?.setFieldsValue?.({})
-        setResetKey((value) => value + 1)
-        onCancel?.()
+        setResetKey((prev) => prev + 1)
+        return true
+    }
+
+    // reset explicitly when switching mode (controlled from parent)
+    const handleAfterOpenChange = (visible) => {
+        if (!visible) return
     }
 
     return (
         <BaseModalForm
-            destroyOnHidden={false}
-            onCancel={handleClose}
-            open={open}
             title={title}
+            open={open}
             width={width}
+            onCancel={handleClose}
+            afterOpenChange={handleAfterOpenChange}
+            destroyOnHidden={false}
             {...modalProps}
         >
             {description ? (
                 <div className="base-form-modal-description">{description}</div>
             ) : null}
+            {children}
             <BaseForm
-                context={context}
-                fields={fields || []}
-                form={form}
                 key={resetKey}
-                loading={loading}
+                form={form}
+                record={record}
+                context={context}
+                fields={fields}
+                tabs={tabs}
+                sections={sections}
+                service={service}
                 onCancel={handleClose}
                 onFinish={onFinish}
-                record={record}
-                sections={sections}
-                showFooter
+                loading={loading}
                 submitText={submitText}
-                tabs={tabs}
+                conflictHandledExternally={conflictHandledExternally}
+                submitDisabled={submitDisabled}
             />
         </BaseModalForm>
     )

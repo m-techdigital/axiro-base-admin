@@ -1,6 +1,6 @@
 {
     "version": "parent-develop-neutral-sync",
-    "parent_snapshot": "mylands-admin-develop-20260801-d0af27d9.zip",
+    "parent_snapshot": "axiro-admin-develop-reviewed-source-clean-20260806-181500.zip",
     "mini_baseline": "axiro-base-admin-main-20260801.zip",
     "policy": "Only dependency-closed, domain-neutral parent sources are copied exactly. CSS may be mechanically extracted. Domain-heavy owners remain excluded.",
     "exact_source": [
@@ -28,11 +28,6 @@
             "target": "src/components/base/BaseWidgetGrid.jsx",
             "source": "src/components/base/BaseWidgetGrid.jsx",
             "sha256": "57b2dc499e163aae6af692538d85fb96da6a7e39a14c916870f6b76a31c0dc45"
-        },
-        {
-            "target": "src/components/base/FieldContainer.jsx",
-            "source": "src/components/base/FieldContainer.jsx",
-            "sha256": "58344fb9cbcaa69b602595a9985556e1b97607d6c122374e88cc8512f572a339"
         },
         {
             "target": "src/components/base/BaseCardStatistics.jsx",
@@ -72,7 +67,7 @@
         {
             "target": "src/utils/normalizeDynamicListErrors.js",
             "source": "src/utils/normalizeDynamicListErrors.js",
-            "sha256": "0249385dc3d0829759e6c0ba41fc4d6d904323706357e5af74d43238576bbdbe"
+            "sha256": "1bd4c39a28872c6d3fb2ab668cf9bd9c2b180b30476f17f604b8a5719a95c4e3"
         },
         {
             "target": "src/utils/formDefaults.js",
@@ -99,7 +94,11 @@
         {
             "target": "src/styles/primitives/parent-develop-neutral.css",
             "source": "src/index.css",
-            "source_ranges": ["228-260", "430-470", "673-819"],
+            "source_ranges": [
+                "228-260",
+                "430-470",
+                "673-819"
+            ],
             "sha256": "a8baa8e376067f62dec811da7934631a2a0e5deec25e41787d9e5f70dd28287e"
         }
     ],
@@ -123,6 +122,13 @@
         {
             "path": "src/hooks/useCapabilities.jsx",
             "reason": "Requires parent capability and permission graph."
+        }
+    ],
+    "bounded_adapter": [
+        {
+            "target": "src/components/base/FieldContainer.jsx",
+            "source": "src/components/base/FieldContainer.jsx",
+            "reason": "Keeps parent Form.Item/rule/error contract while adapting Mini 12-column field spans to AntD 24-column Col layout."
         }
     ]
 }

@@ -1,0 +1,45 @@
+import {
+    CheckOutlined,
+    CloseCircleOutlined,
+    EditOutlined,
+    LinkOutlined,
+    SafetyCertificateOutlined,
+    SwapOutlined,
+} from '@ant-design/icons'
+
+export const escrowBoxTimelineSchema = {
+    entity: 'escrow_box',
+    fields: {
+        deal_type: { label: 'Loại giao dịch' },
+        topup_amount: { label: 'Tiền bù', type: 'money' },
+        topup_payer_side: { label: 'Bên bù tiền' },
+        fee_payer_mode: { label: 'Bên chịu phí' },
+        inspection_period_minutes: { label: 'Thời gian kiểm tra' },
+        party_a_asset: { label: 'Tài sản Bên A' },
+        party_b_asset: { label: 'Tài sản Bên B' },
+        success_conditions: { label: 'Điều kiện thành công' },
+        cancellation_conditions: { label: 'Điều kiện hủy' },
+        additional_terms: { label: 'Điều khoản bổ sung' },
+        agreement_version: { label: 'Phiên bản điều khoản' },
+        note: { label: 'Ghi chú' },
+        reason: { label: 'Lý do' },
+    },
+    activity: {
+        terms_updated: { icon: EditOutlined, color: '#3b82f6' },
+        terms_confirmed: { icon: CheckOutlined, color: '#16a34a' },
+        party_confirmed: { icon: CheckOutlined, color: '#22c55e' },
+        invite_rotated: { icon: LinkOutlined, color: '#8b5cf6' },
+        counterparty_invited_by_phone: { icon: LinkOutlined, color: '#8b5cf6' },
+        counterparty_invite_cancelled: {
+            icon: CloseCircleOutlined,
+            color: '#ef4444',
+        },
+        admin_approved: { icon: SafetyCertificateOutlined, color: '#2563eb' },
+        changes_requested: { icon: EditOutlined, color: '#f59e0b' },
+        box_settled: { icon: SwapOutlined, color: '#16a34a' },
+        box_cancelled: { icon: CloseCircleOutlined, color: '#ef4444' },
+        box_cancelled_by_admin: { icon: CloseCircleOutlined, color: '#ef4444' },
+        admin_rejected: { icon: CloseCircleOutlined, color: '#ef4444' },
+    },
+    hiddenFields: ['transaction_id', 'step_id', 'invite_generation'],
+}

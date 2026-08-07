@@ -1,0 +1,100 @@
+.base-timeline {
+    display: grid;
+    gap: 1rem;
+}
+.base-timeline__rail {
+    position: relative;
+    display: grid;
+    gap: 1.75rem;
+    padding-left: 2rem;
+    border-left: 1px solid #e5e7eb;
+}
+.base-timeline__group {
+    position: relative;
+}
+.base-timeline__date {
+    margin: 0 0 0.75rem;
+    color: #6b7280;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.base-timeline__items {
+    display: grid;
+    gap: 1rem;
+}
+.base-timeline__item {
+    position: relative;
+}
+.base-timeline__icon {
+    position: absolute;
+    left: -3rem;
+    top: 0.75rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    color: #fff;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+}
+.base-timeline__card {
+    padding: 1rem;
+    border: 1px solid #eef0f3;
+    border-left-width: 4px;
+    border-radius: 0.8rem;
+    background: #fff;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+}
+.base-timeline__header,
+.base-timeline__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+.base-timeline__changes {
+    display: grid;
+    gap: 0.45rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid #eef0f3;
+    border-radius: 0.5rem;
+    background: #f9fafb;
+}
+.base-timeline__content {
+    margin-top: 0.75rem;
+    color: #4b5563;
+}
+.base-timeline__footer {
+    margin-top: 0.75rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid #eef0f3;
+    color: #9ca3af;
+    font-size: 0.75rem;
+}
+.base-timeline-change {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+}
+.base-timeline-change__label {
+    color: #6b7280;
+    font-weight: 600;
+}
+.base-timeline-change__old {
+    color: #9ca3af;
+    text-decoration: line-through;
+}
+.base-timeline-change__arrow {
+    color: #d1d5db;
+    font-size: 0.65rem;
+}
+.base-timeline__pagination {
+    display: flex;
+    justify-content: flex-end;
+}

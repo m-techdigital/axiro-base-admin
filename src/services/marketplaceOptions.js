@@ -52,7 +52,8 @@ export const loadMarketplaceOptions = async ({ force = false } = {}) => {
                 transaction_statuses: payload.transaction_statuses?.length
                     ? payload.transaction_statuses
                     : fallbackOptions.transaction_statuses,
-                game_account_delivery_methods: payload.game_account_delivery_methods?.length
+                game_account_delivery_methods: payload
+                    .game_account_delivery_methods?.length
                     ? payload.game_account_delivery_methods
                     : fallbackOptions.game_account_delivery_methods,
                 item_delivery_methods: payload.item_delivery_methods?.length

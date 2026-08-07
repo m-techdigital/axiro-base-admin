@@ -1,12 +1,35 @@
 import { Checkbox, DatePicker, Input, InputNumber, Select, Switch } from 'antd'
+import { cloneElement, isValidElement } from 'react'
 
 import RelationSelect from './RelationSelect'
 
-export default function BaseFormControl({ field, context = {} }) {
-    if (typeof field.render === 'function') return field.render(field, context)
-    if (field.component) return field.component
+export default function BaseFormControl({
+    field,
+    context = {},
+    ...injectedControlProps
+}) {
+    const controlProps = {
+        ...(field.props || {}),
+        ...injectedControlProps,
+    }
 
-    const commonProps = field.props || {}
+    if (typeof field.render === 'function') {
+        return field.render(field, {
+            ...context,
+            controlProps,
+        })
+    }
+
+    if (isValidElement(field.component)) {
+        return cloneElement(field.component, controlProps)
+    }
+
+    if (typeof field.component === 'function') {
+        const Component = field.component
+
+        return <Component {...controlProps} field={field} context={context} />
+    }
+
     const resolvedOptions =
         typeof field.options === 'function'
             ? field.options(field, context)
@@ -14,11 +37,11 @@ export default function BaseFormControl({ field, context = {} }) {
 
     switch (field.type) {
         case 'textarea':
-            return <Input.TextArea rows={field.rows || 4} {...commonProps} />
+            return <Input.TextArea rows={field.rows || 4} {...controlProps} />
         case 'number':
         case 'money':
         case 'number_formatter':
-            return <InputNumber className="w-full" {...commonProps} />
+            return <InputNumber className="w-full" {...controlProps} />
         case 'relation':
             return (
                 <RelationSelect
@@ -30,7 +53,7 @@ export default function BaseFormControl({ field, context = {} }) {
                     options={context.relationOptions?.[field.name] || []}
                     placeholder={field.placeholder}
                     showSearch={field.showSearch ?? true}
-                    {...commonProps}
+                    {...controlProps}
                 />
             )
         case 'select':
@@ -46,16 +69,16 @@ export default function BaseFormControl({ field, context = {} }) {
                     options={resolvedOptions}
                     placeholder={field.placeholder}
                     showSearch={field.showSearch ?? true}
-                    {...commonProps}
+                    {...controlProps}
                 />
             )
         case 'switch':
-            return <Switch {...commonProps} />
+            return <Switch {...controlProps} />
         case 'checkbox':
-            return <Checkbox {...commonProps}>{field.text}</Checkbox>
+            return <Checkbox {...controlProps}>{field.text}</Checkbox>
         case 'date':
-            return <DatePicker className="w-full" {...commonProps} />
+            return <DatePicker className="w-full" {...controlProps} />
         default:
-            return <Input placeholder={field.placeholder} {...commonProps} />
+            return <Input placeholder={field.placeholder} {...controlProps} />
     }
 }

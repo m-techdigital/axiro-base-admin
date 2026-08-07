@@ -1,178 +1,99 @@
-import { Alert, Form, Input, Tabs, message } from 'antd'
-import dayjs from 'dayjs'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useCallback, useEffect, useRef, useState } from 'react'
+import { Alert, Form, message, Tabs, Row } from 'antd'
+import { useForm } from 'antd/es/form/Form'
+import { Form as AntForm } from 'antd'
+import { createRenderField } from '@/utils/fields/fieldRegistry'
 
-import { buildDefaultValues, mergeFormValues } from '@/utils/formDefaults'
 import {
     getLaravelConflictError,
     getLaravelValidationError,
     mapLaravelErrorsToFields,
 } from '@/utils/formErrors'
 import { extractRelationConfigs } from '@/utils/extractRelationConfigs'
-import { useRelationOptions } from '@/hooks/useRelationOptions'
+import { buildDefaultValues, mergeFormValues } from '@/utils/formDefaults'
 
+import { usePermission } from '@/hooks/usePermission.jsx'
+import { useRelationOptions } from '@/hooks/useRelationOptions.jsx'
 import BaseFormFooter from './BaseFormFooter'
-import BaseFormControl from './BaseFormControl'
+import {
+    flattenFields,
+    normalizeGroups,
+    toNamePath,
+} from './BaseForm/formUtils'
+import { buildSubmitPayload } from './BaseForm/formSubmit'
+import {
+    isFormSubmitBlocked,
+    runFormSubmitIfAllowed,
+} from './BaseForm/formSubmitPolicy'
+import { buildFormErrorMessages } from './BaseForm/formErrors'
+import { useComputedFields } from './BaseForm/formComputed'
 import {
     buildDependentResetFields,
     clearChangedErrors,
     runFieldChangeHandlers,
 } from './BaseForm/formChange'
-import { useComputedFields } from './BaseForm/formComputed'
-import { buildFormErrorMessages } from './BaseForm/formErrors'
-import { buildSubmitPayload } from './BaseForm/formSubmit'
-import {
-    flattenFields,
-    getValueAtPath,
-    normalizeGroups,
-    resolveHidden,
-    setValueAtPath,
-    toNamePath,
-} from './BaseForm/formUtils'
 
-const normalizeServerErrors = (errors = {}) =>
-    mapLaravelErrorsToFields(errors || {})
-
-const buildItemProps = (field) => {
-    const itemProps = field.itemProps || {}
-
-    return {
-        name: field.name,
-        label: field.label,
-        rules: field.rules,
-        dependencies: field.dependencies,
-        tooltip: field.tooltip,
-        extra: field.extra,
-        valuePropName:
-            field.valuePropName ||
-            (['switch', 'checkbox'].includes(field.type)
-                ? 'checked'
-                : undefined),
-        ...itemProps,
-    }
-}
-
-const resolveGridSpan = (field = {}) => {
-    if (field.gridSpan) {
-        return Math.max(1, Math.min(12, Number(field.gridSpan)))
-    }
-
-    const legacySpan = Number(field.span || 24)
-    if (legacySpan >= 24) return 12
-    if (legacySpan >= 12) return 12
-    if (legacySpan >= 8) return 8
-    if (legacySpan >= 6) return 6
-    if (legacySpan >= 4) return 4
-    return 4
-}
-
-const normalizeDateFormValues = (values = {}, fields = []) => {
-    const next = { ...values }
-
-    fields.forEach((field) => {
-        if (field.type !== 'date' || !field.name) return
-
-        const value = getValueAtPath(next, field.name)
-        if (value === undefined || value === null || value === '') return
-        if (dayjs.isDayjs(value)) return
-
-        setValueAtPath(next, field.name, dayjs(value))
-    })
-
-    return next
-}
-
-function BaseForm({
-    autoComplete = 'off',
-    autoInitialize = true,
-    cancelText = 'Huỷ',
-    children,
-    className = '',
-    context,
-    destroyInactiveTabs = false,
-    embedded = false,
-    fields = [],
+export default function BaseForm({
     form: externalForm,
-    initialValues,
-    isCancel = true,
-    layout = 'vertical',
-    loading = false,
-    onCancel,
-    onFinish,
-    onFinishFailed,
-    onValuesChange,
-    record = null,
-    scrollToFirstError = { behavior: 'smooth', block: 'center' },
-    sections = null,
-    serverErrors: externalServerErrors,
-    showFooter = false,
-    submitText = 'Lưu',
+    fields = [],
     tabs = null,
-    ...props
+    sections = null,
+    record = null,
+    onFinish,
+    onValuesChange,
+    autoInitialize = true,
+    onCancel,
+    isCancel = true,
+    loading = false,
+    cancelText = 'Huỷ',
+    submitText = 'Lưu',
+    showFooter = true,
+    destroyInactiveTabs = false,
+    context,
+    embedded = false,
+    conflictHandledExternally = false,
+    submitDisabled = false,
 }) {
-    const [innerForm] = Form.useForm()
+    const { can } = usePermission()
+
+    /**
+     * session key (nếu cần tracking form instance)
+     */
+    const formSessionRef = useRef(null)
+    const [innerForm] = useForm()
+
     const form = useMemo(
         () => externalForm ?? innerForm,
         [externalForm, innerForm],
     )
+
     const [serverErrors, setServerErrors] = useState({})
     const [activeTabKey, setActiveTabKey] = useState(tabs?.[0]?.key)
-    const initializedSignatureRef = useRef('')
-    const cascadeSnapshotRef = useRef('')
-    const syncingFieldRef = useRef(null)
-    const hasSchema = Boolean(fields.length || tabs?.length || sections?.length)
-    const watchedValues = Form.useWatch([], form)
-    const values = useMemo(() => watchedValues || {}, [watchedValues])
 
+    const initRef = useRef(false)
+    const cascadeReadyRef = useRef(false)
+    const syncingFieldRef = useRef(null)
+    const dirtyRef = useRef(false)
+    const initializedSignatureRef = useRef('')
+    const runCascadeRef = useRef(null)
+
+    /**
+     * Watch toàn bộ form values
+     * => cực quan trọng: trigger rerender relation UI
+     */
+    const rawValues = AntForm.useWatch([], form)
+    const values = useMemo(() => rawValues || {}, [rawValues])
+
+    /**
+     * group fields (tabs hoặc single form)
+     */
     const groups = useMemo(
         () => normalizeGroups({ fields, tabs, sections }),
-        [fields, sections, tabs],
+        [fields, tabs, sections],
     )
-    const allFields = useMemo(
-        () => flattenFields(groups.flatMap((group) => group.fields || [])),
-        [groups],
-    )
-    const relationConfigs = useMemo(
-        () => extractRelationConfigs(allFields, 'name'),
-        [allFields],
-    )
-    const { relationOptions, loadOptions, runCascade } = useRelationOptions(
-        relationConfigs,
-        form,
-        record,
-        context,
-    )
-    const defaultValues = useMemo(
-        () => buildDefaultValues(allFields),
-        [allFields],
-    )
-    const initialFormValues = useMemo(() => {
-        const defaults = initialValues || defaultValues
-
-        return normalizeDateFormValues(
-            mergeFormValues({
-                defaults,
-                record,
-                fields: allFields,
-            }),
-            allFields,
-        )
-    }, [allFields, defaultValues, initialValues, record])
-
-    useComputedFields({ fields: allFields, values, form, record })
-
-    useEffect(() => {
-        if (
-            !externalServerErrors ||
-            !Object.keys(externalServerErrors).length
-        ) {
-            return
-        }
-
-        setServerErrors(externalServerErrors)
-        form.setFields(normalizeServerErrors(externalServerErrors))
-    }, [externalServerErrors, form])
-
+    /**
+     * flatten tất cả fields để extract relation configs
+     */
     useEffect(() => {
         if (!tabs?.length) return
 
@@ -181,44 +102,314 @@ function BaseForm({
         )
     }, [tabs])
 
-    useEffect(() => {
-        if (!autoInitialize || !hasSchema) return
+    const allFields = useMemo(() => {
+        const root = groups.flatMap((g) => g.fields || [])
+        return flattenFields(root)
+    }, [groups])
 
-        const signature = JSON.stringify({
-            recordId: record?.id ?? null,
-            values: initialFormValues || {},
+    /**
+     * =========================
+     * DEFAULT VALUES (ONLY CREATE)
+     * =========================
+     */
+    const defaultValues = useMemo(
+        () => buildDefaultValues(allFields),
+        [allFields],
+    )
+
+    /**
+     * =========================================================
+     * KẾ THỪA: Áp dụng hàm trộn và làm sạch dữ liệu số thực sự mergeFormValues
+     * giúp loại bỏ hoàn toàn các chuỗi số thập phân gây lỗi hiển thị trong Antd
+     * mà không ảnh hưởng tới luồng tìm dữ liệu liên kết.
+     * =========================================================
+     */
+    const initialFormValues = useMemo(() => {
+        return mergeFormValues({
+            defaults: defaultValues,
+            record,
+            fields: allFields,
         })
-        if (initializedSignatureRef.current === signature) return
+    }, [defaultValues, record, allFields])
 
-        form.resetFields()
-        form.setFieldsValue(initialFormValues)
-        initializedSignatureRef.current = signature
-        cascadeSnapshotRef.current = JSON.stringify(initialFormValues || {})
-        runCascade(initialFormValues)
-    }, [
-        autoInitialize,
+    /**
+     * lấy toàn bộ config relation (dynamic select)
+     */
+    const relationConfigs = useMemo(
+        () => extractRelationConfigs(allFields, 'name'),
+        [allFields],
+    )
+
+    /**
+     * hook xử lý toàn bộ relation:
+     * - cache
+     * - cascade
+     * - hydrate edit
+     */
+    const { relationOptions, loadOptions, runCascade } = useRelationOptions(
+        relationConfigs,
         form,
-        hasSchema,
-        initialFormValues,
-        record?.id,
-        runCascade,
-    ])
+        record,
+        context,
+    )
 
     useEffect(() => {
-        if (!hasSchema || !relationConfigs.length) return
+        runCascadeRef.current = runCascade
+    }, [runCascade])
+
+    /**
+     * tạo session id theo record
+     * (có thể dùng nếu muốn isolate cache theo record)
+     */
+    useEffect(() => {
+        formSessionRef.current = `${Date.now()}-${Math.random()}`
+    }, [record?.id])
+
+    /**
+     * =========================
+     * INIT FORM VALUES + RELATIONS
+     * =========================
+     * Initialise once per record/schema and execute one cascade after the
+     * values are committed. Older code ran three independent cascades plus
+     * one per watched render, which could create an endless request cycle.
+     */
+    const initializationSignature = useMemo(
+        () =>
+            JSON.stringify({
+                recordId: record?.id ?? null,
+                values: initialFormValues || {},
+            }),
+        [initialFormValues, record?.id],
+    )
+
+    useEffect(() => {
+        if (!autoInitialize) {
+            initRef.current = true
+            cascadeReadyRef.current = true
+            return undefined
+        }
+
+        // Không khởi tạo lại cùng một record/schema khi parent chỉ đổi loading,
+        // context hoặc callback. Re-initialize trong lúc người dùng đang sửa sẽ
+        // ghi đè draft và xoá validation message vừa được gắn vào field.
+        if (initializedSignatureRef.current === initializationSignature) {
+            return undefined
+        }
+
+        let mounted = true
+        const frameId = requestAnimationFrame(async () => {
+            if (!mounted) return
+
+            cascadeReadyRef.current = false
+            initRef.current = false
+            dirtyRef.current = false
+
+            form.resetFields()
+            form.setFieldsValue(initialFormValues)
+            initializedSignatureRef.current = initializationSignature
+
+            await Promise.resolve()
+            if (!mounted) return
+
+            cascadeSnapshotRef.current = JSON.stringify(initialFormValues || {})
+            await runCascadeRef.current?.(initialFormValues)
+            if (!mounted) return
+
+            initRef.current = true
+            cascadeReadyRef.current = true
+        })
+
+        return () => {
+            mounted = false
+            cancelAnimationFrame(frameId)
+        }
+    }, [autoInitialize, form, initialFormValues, initializationSignature])
+
+    const cascadeSnapshotRef = useRef('')
+
+    useEffect(() => {
+        if (!cascadeReadyRef.current || !initRef.current || !form) return
 
         const snapshot = JSON.stringify(values || {})
         if (snapshot === cascadeSnapshotRef.current) return
         cascadeSnapshotRef.current = snapshot
+
         runCascade(values || {})
-    }, [hasSchema, relationConfigs.length, runCascade, values])
+    }, [values, form, runCascade])
+
+    useComputedFields({ fields: allFields, values, form, record })
+
+    /**
+     * =========================================================
+     * ON CHANGE FORM
+     * =========================================================
+     * - reset field phụ thuộc
+     * - chạy cascade reload
+     */
+    const handleValuesChange = (changed, allValues) => {
+        if (initRef.current) {
+            dirtyRef.current = true
+        }
+        const changedKeys = Object.keys(changed)
+
+        clearChangedErrors({
+            changedKeys,
+            setServerErrors,
+            form,
+        })
+
+        runFieldChangeHandlers({
+            changed,
+            allValues,
+            fields: allFields,
+            form,
+            record,
+            syncingFieldRef,
+        })
+
+        const resetFields = buildDependentResetFields({
+            changedKeys,
+            relationConfigs,
+            fields: allFields,
+        })
+
+        if (Object.keys(resetFields).length) {
+            // Tránh race condition AntD internal state
+            requestAnimationFrame(() => {
+                form.setFieldsValue(resetFields)
+            })
+        }
+
+        requestAnimationFrame(() => {
+            runCascade({
+                ...allValues,
+                ...resetFields,
+            })
+        })
+
+        onValuesChange?.(changed, allValues)
+    }
+
+    // =========================
+    // 🔥 HANDLE CANCEL ADDED
+    // =========================
+    const handleCancel = () => {
+        if (onCancel?.() === false) return false
+
+        requestAnimationFrame(() => {
+            setServerErrors({})
+
+            form?.resetFields?.()
+
+            const values = form?.getFieldsValue?.(true) || {}
+
+            form?.setFields?.(
+                Object.keys(values).map((key) => ({
+                    name: key,
+                    errors: [],
+                })),
+            )
+        })
+
+        return true
+    }
+
+    const renderField = useMemo(
+        () =>
+            createRenderField({
+                values,
+                record,
+                form,
+                context,
+                relationOptions,
+                relationConfigs,
+                loadOptions,
+                serverErrors,
+                can,
+            }),
+        [
+            values,
+            record,
+            form,
+            context,
+            relationOptions,
+            relationConfigs,
+            loadOptions,
+            serverErrors,
+            can,
+        ],
+    )
+
+    /**
+     * render group (tab or normal form)
+     */
+    const renderGroup = useCallback(
+        (group) => <Row gutter={[16, 0]}>{group.fields.map(renderField)}</Row>,
+        [renderField],
+    )
+
+    /**
+     * tabs config
+     */
+    const tabItems = useMemo(
+        () =>
+            groups.map((g) => ({
+                key: String(g.key),
+                label: g.label,
+                children: <div key={g.key}>{renderGroup(g)}</div>,
+            })),
+        [groups, renderGroup],
+    )
+
+    const renderSections = useCallback(
+        () => (
+            <div className="base-form-sections">
+                {groups.map((group) => (
+                    <section className="base-form-section" key={group.key}>
+                        {group.label || group.description ? (
+                            <div className="base-form-section__head">
+                                {group.label ? <h3>{group.label}</h3> : null}
+                                {group.description ? (
+                                    <p>{group.description}</p>
+                                ) : null}
+                            </div>
+                        ) : null}
+                        {renderGroup(group)}
+                    </section>
+                ))}
+            </div>
+        ),
+        [groups, renderGroup],
+    )
+
+    const formErrorMessages = useMemo(() => {
+        return buildFormErrorMessages({
+            fields: allFields,
+            serverErrors,
+        })
+    }, [allFields, serverErrors])
+
+    const clearErrors = () => {
+        setServerErrors({})
+
+        requestAnimationFrame(() => {
+            form.setFields(
+                form.getFieldsError().map((f) => ({
+                    name: f.name,
+                    errors: [],
+                })),
+            )
+        })
+    }
 
     const focusFirstError = useCallback(
         (fieldNames = []) => {
             const firstName = fieldNames.find(Boolean)
             if (!firstName) return
 
-            const normalizedName = toNamePath(firstName)
+            const normalizedName = Array.isArray(firstName)
+                ? firstName
+                : String(firstName).split('.')
             const rootName = normalizedName[0]
             const errorGroup = groups.find((group) =>
                 (group.fields || []).some(
@@ -241,328 +432,166 @@ function BaseForm({
         [form, groups, tabs],
     )
 
-    const clearErrors = useCallback(() => {
-        setServerErrors({})
-        requestAnimationFrame(() => {
-            form.setFields(
-                form.getFieldsError().map((field) => ({
-                    name: field.name,
-                    errors: [],
-                })),
-            )
-        })
-    }, [form])
+    /**
+     * submit form
+     */
+    const handleFinish = async () =>
+        runFormSubmitIfAllowed({ submitDisabled, loading }, async () => {
+            clearErrors()
 
-    const handleValuesChange = (changed, allValues) => {
-        const changedKeys = Object.keys(changed)
+            try {
+                const vals = form.getFieldsValue(true)
+                const payload = buildSubmitPayload({
+                    fields: allFields,
+                    values: vals,
+                    record,
+                    form,
+                })
 
-        clearChangedErrors({ changedKeys, setServerErrors, form })
-        runFieldChangeHandlers({
-            changed,
-            allValues,
-            fields: allFields,
-            form,
-            record,
-            syncingFieldRef,
-        })
+                await onFinish(payload)
 
-        const resetFields = buildDependentResetFields({
-            changedKeys,
-            relationConfigs,
-            fields: allFields,
-        })
-        if (Object.keys(resetFields).length) {
-            requestAnimationFrame(() => form.setFieldsValue(resetFields))
-        }
-
-        requestAnimationFrame(() => {
-            runCascade({
-                ...allValues,
-                ...resetFields,
-            })
-        })
-
-        onValuesChange?.(changed, allValues, { form, record, context })
-    }
-
-    const handleFinish = async (submittedValues) => {
-        clearErrors()
-
-        try {
-            const rawValues = hasSchema
-                ? form.getFieldsValue(true)
-                : submittedValues
-            const payload = hasSchema
-                ? buildSubmitPayload({
-                      fields: allFields,
-                      values: rawValues,
-                      record,
-                      form,
-                  })
-                : rawValues
-
-            await onFinish?.(payload, { form, record, context })
-
-            if (hasSchema && !record?.id) {
-                form.resetFields()
-            }
-        } catch (err) {
-            const conflictError = getLaravelConflictError(err)
-            if (conflictError) {
-                const errors = conflictError.errors || {
-                    _form: [conflictError.message],
+                if (!record?.id) {
+                    form.resetFields()
                 }
-                setServerErrors(errors)
-                if (conflictError.errors) {
+            } catch (err) {
+                const conflictError = getLaravelConflictError(err)
+                if (conflictError) {
+                    if (conflictHandledExternally) return
+
+                    const errors = conflictError.errors || {
+                        _form: [conflictError.message],
+                    }
+                    setServerErrors(errors)
+                    if (conflictError.errors) {
+                        form.setFields(
+                            mapLaravelErrorsToFields(conflictError.errors),
+                        )
+                    }
+                    message.warning(conflictError.message)
+                    return
+                }
+
+                const validationError = getLaravelValidationError(err)
+
+                if (validationError) {
+                    const errors = validationError.errors || {}
+                    setServerErrors(errors)
                     form.setFields(mapLaravelErrorsToFields(errors))
-                }
-                message.warning(conflictError.message)
-                return
-            }
-
-            const validationError = getLaravelValidationError(err)
-            if (validationError) {
-                const errors = validationError.errors || {}
-                setServerErrors(errors)
-                form.setFields(mapLaravelErrorsToFields(errors))
-                focusFirstError(Object.keys(errors))
-                const firstMessage = Object.values(errors).flat().find(Boolean)
-                message.error(
-                    firstMessage ||
+                    focusFirstError(Object.keys(errors))
+                    message.error(
                         'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra các trường được đánh dấu.',
-                )
-                return
+                    )
+                    return
+                }
+
+                const errorMessage = err?.message || 'Có lỗi xảy ra'
+
+                setServerErrors({ _form: errorMessage })
+                message.error(errorMessage)
             }
+        })
 
-            const errorMessage = err?.message || 'Có lỗi xảy ra'
-            setServerErrors({ _form: [errorMessage] })
-            message.error(errorMessage)
-        }
-    }
+    const handleFinishFailed = ({ errorFields }) => {
+        if (isFormSubmitBlocked({ submitDisabled, loading })) return false
 
-    const handleFinishFailed = (errorInfo) => {
         const errors = {}
-        errorInfo.errorFields?.forEach((field) => {
-            const name = field.name?.join?.('.') || field.name?.[0]
-            if (name) errors[name] = field.errors
+
+        errorFields.forEach((field) => {
+            const name = field.name?.[0]
+            if (!name) return
+
+            errors[name] = field.errors?.[0]
         })
 
         setServerErrors(errors)
-        focusFirstError(errorInfo.errorFields?.map((field) => field.name))
-        onFinishFailed?.(errorInfo)
-        const firstMessage = errorInfo.errorFields
-            ?.flatMap((field) => field.errors || [])
-            .find(Boolean)
+
+        form.setFields(
+            errorFields.map((f) => ({
+                name: f.name,
+                errors: f.errors,
+            })),
+        )
+
+        focusFirstError(errorFields.map((field) => field.name))
         message.error(
-            firstMessage ||
-                'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra các trường được đánh dấu.',
+            'Dữ liệu chưa hợp lệ. Vui lòng kiểm tra các trường được đánh dấu.',
         )
     }
 
-    const handleCancel = () => {
-        onCancel?.()
-        requestAnimationFrame(() => {
-            setServerErrors({})
-            form.resetFields()
-            form.setFields(
-                form.getFieldsError().map((field) => ({
-                    name: field.name,
-                    errors: [],
-                })),
-            )
-        })
+    if (!form?.getFieldValue) {
+        return <Form form={innerForm} style={{ display: 'none' }} />
     }
 
-    const renderField = useCallback(
-        (field) => {
-            if (!field?.name) {
-                if (typeof field?.render === 'function') {
-                    return (
-                        <div
-                            className="base-form-field"
-                            key={field.key}
-                            style={{ gridColumn: '1 / -1', width: '100%' }}
-                        >
-                            {field.render(field, {
-                                context,
-                                form,
-                                loadOptions,
-                                record,
-                                relationOptions,
-                                values,
-                            })}
-                        </div>
-                    )
-                }
-
-                return null
-            }
-
-            if (field.type === 'hidden') {
-                return (
-                    <Form.Item
-                        hidden
-                        key={toNamePath(field.name).join('.')}
-                        name={field.name}
-                    >
-                        <Input />
-                    </Form.Item>
-                )
-            }
-
-            if (resolveHidden(field, record, values, form)) return null
-
-            const span = Number(field.span || 24)
-            const gridSpan = resolveGridSpan(field)
-
-            return (
-                <div
-                    className={`base-form-field span-${span}`}
-                    key={
-                        Array.isArray(field.name)
-                            ? field.name.join('.')
-                            : field.name
-                    }
-                    style={{ gridColumn: `span ${gridSpan}` }}
-                >
-                    <Form.Item {...buildItemProps(field)}>
-                        <BaseFormControl
-                            context={{
-                                context,
-                                form,
-                                loadOptions,
-                                record,
-                                relationOptions,
-                                values,
-                            }}
-                            field={field}
-                        />
-                    </Form.Item>
-                </div>
-            )
-        },
-        [context, form, loadOptions, record, relationOptions, values],
-    )
-
-    const renderGroup = useCallback(
-        (group) => (
-            <div className="base-form-grid">
-                {(group.fields || []).map(renderField)}
-            </div>
-        ),
-        [renderField],
-    )
-
-    const formErrorMessages = useMemo(
-        () => buildFormErrorMessages({ fields: allFields, serverErrors }),
-        [allFields, serverErrors],
-    )
-
-    const schemaContent = (
+    const formContent = (
         <>
-            {formErrorMessages.length ? (
-                <Alert
-                    className="base-form-server-errors"
-                    description={
-                        formErrorMessages.length === 1 ? (
-                            formErrorMessages[0].message
-                        ) : (
-                            <ul>
-                                {formErrorMessages.map((item) => (
-                                    <li key={item.key}>{item.message}</li>
-                                ))}
-                            </ul>
-                        )
-                    }
-                    showIcon
-                    title="Không thể lưu dữ liệu"
-                    type="error"
-                />
-            ) : null}
+            <div className="base-form-content">
+                {formErrorMessages.length ? (
+                    <Alert
+                        className="base-form-server-errors"
+                        type="error"
+                        showIcon
+                        title="Không thể lưu dữ liệu"
+                        description={
+                            formErrorMessages.length === 1 ? (
+                                formErrorMessages[0].message
+                            ) : (
+                                <ul>
+                                    {formErrorMessages.map((item) => (
+                                        <li key={item.key}>{item.message}</li>
+                                    ))}
+                                </ul>
+                            )
+                        }
+                    />
+                ) : null}
 
-            {tabs?.length ? (
-                <Tabs
-                    activeKey={activeTabKey}
-                    className="base-form-tabs"
-                    destroyOnHidden={destroyInactiveTabs}
-                    items={groups.map((group) => ({
-                        key: String(group.key),
-                        label: group.label,
-                        children: renderGroup(group),
-                    }))}
-                    onChange={setActiveTabKey}
-                />
-            ) : sections?.length ? (
-                <div className="base-form-sections">
-                    {groups.map((group) => (
-                        <section className="base-form-section" key={group.key}>
-                            {group.label || group.description ? (
-                                <div className="base-form-section__head">
-                                    {group.label ? (
-                                        <h3>{group.label}</h3>
-                                    ) : null}
-                                    {group.description ? (
-                                        <p>{group.description}</p>
-                                    ) : null}
-                                </div>
-                            ) : null}
-                            {renderGroup(group)}
-                        </section>
-                    ))}
-                </div>
-            ) : (
-                renderGroup(groups[0])
-            )}
+                {tabs ? (
+                    <Tabs
+                        activeKey={activeTabKey}
+                        onChange={setActiveTabKey}
+                        items={tabItems}
+                        destroyOnHidden={destroyInactiveTabs}
+                        className="base-form-tabs"
+                    />
+                ) : sections ? (
+                    renderSections()
+                ) : (
+                    renderGroup(groups[0])
+                )}
+            </div>
 
             {showFooter ? (
                 <BaseFormFooter
-                    cancelText={cancelText}
                     isCancel={isCancel}
-                    loading={loading}
                     onCancel={handleCancel}
+                    loading={loading}
+                    cancelText={cancelText}
                     submitText={submitText}
+                    submitDisabled={submitDisabled}
                 />
             ) : null}
         </>
     )
 
+    // Cho phép nhiều nhóm field dùng chung một Form instance nhưng chỉ có một
+    // <Form> owner ở component cha. Điều này tránh Ant Design unregister field
+    // hoặc kích hoạt nhiều onFinish khi cùng form instance bị gắn vào nhiều Form.
     if (embedded) {
         return (
-            <div
-                className={`base-form base-form--embedded ${className}`.trim()}
-            >
-                {hasSchema ? schemaContent : children}
-            </div>
+            <div className="base-form base-form--embedded">{formContent}</div>
         )
     }
 
     return (
         <Form
-            autoComplete={autoComplete}
-            className={`base-form ${className}`.trim()}
             form={form}
-            initialValues={hasSchema ? undefined : initialValues}
-            layout={layout}
+            layout="vertical"
+            className="base-form"
             onFinish={handleFinish}
             onFinishFailed={handleFinishFailed}
             onValuesChange={handleValuesChange}
-            scrollToFirstError={scrollToFirstError}
-            {...props}
         >
-            {hasSchema ? schemaContent : children}
+            {formContent}
         </Form>
     )
 }
-
-Object.assign(BaseForm, {
-    ErrorList: Form.ErrorList,
-    Item: Form.Item,
-    List: Form.List,
-    Provider: Form.Provider,
-    useForm: Form.useForm,
-    useFormInstance: Form.useFormInstance,
-    useWatch: Form.useWatch,
-    normalizeServerErrors,
-})
-
-export default BaseForm

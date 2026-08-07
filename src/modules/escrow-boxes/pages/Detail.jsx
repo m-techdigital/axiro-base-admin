@@ -10,6 +10,7 @@ import {
     BaseTable,
     Money,
 } from '@/components/base'
+import EscrowBoxHistoryTimeline from '../components/EscrowBoxHistoryTimeline'
 import service from '../service'
 
 const reviewFields = [
@@ -93,6 +94,14 @@ export default function EscrowBoxDetail() {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [open, setOpen] = useState(false)
+    const [inviteLinks, setInviteLinks] = useState(null)
+    const mbnOrigin = useMemo(
+        () =>
+            (
+                import.meta.env.VITE_MBN_APP_URL || window.location.origin
+            ).replace(/\/$/, ''),
+        [],
+    )
 
     const load = async () => {
         setLoading(true)
@@ -169,11 +178,51 @@ export default function EscrowBoxDetail() {
                 description="Không hiển thị danh tính này cho hai bên; chỉ Admin được sử dụng để thẩm định."
                 onBack={() => navigate('/escrow-boxes')}
                 actions={
-                    data?.status === 'admin_review' ? (
-                        <BaseButton type="primary" onClick={() => setOpen(true)}>
-                            Thẩm định box
+                    <Space>
+                        <BaseButton onClick={load} loading={loading}>
+                            Tải lại
                         </BaseButton>
-                    ) : null
+                        {data?.status === 'awaiting_party_acceptance' ? (
+                            <BaseButton
+                                onClick={async () => {
+                                    const response =
+                                        await service.rotateInvites(id)
+                                    setInviteLinks(response.data)
+                                    message.success(
+                                        'Đã tạo lại link cho bên chưa xác nhận',
+                                    )
+                                    load()
+                                }}
+                            >
+                                Tạo lại link chưa xác nhận
+                            </BaseButton>
+                        ) : null}
+                        {!['settled', 'cancelled'].includes(data?.status) ? (
+                            <BaseButton
+                                danger
+                                onClick={async () => {
+                                    await service.cancel(id, {
+                                        expected_version: data.expected_version,
+                                        reason: 'Admin hủy box theo yêu cầu vận hành.',
+                                    })
+                                    message.success(
+                                        'Đã hủy box và vô hiệu hóa toàn bộ link',
+                                    )
+                                    load()
+                                }}
+                            >
+                                Hủy box
+                            </BaseButton>
+                        ) : null}
+                        {data?.status === 'admin_review' ? (
+                            <BaseButton
+                                type="primary"
+                                onClick={() => setOpen(true)}
+                            >
+                                Thẩm định box
+                            </BaseButton>
+                        ) : null}
+                    </Space>
                 }
             />
             <Descriptions bordered column={2} size="small">
@@ -188,6 +237,41 @@ export default function EscrowBoxDetail() {
                 <Descriptions.Item label="Trạng thái">
                     <Tag>{data?.status}</Tag>
                 </Descriptions.Item>
+                <Descriptions.Item label="Nguồn tạo">
+                    {data?.initiation_source === 'admin_assigned'
+                        ? 'Admin chỉ định hai khách hàng'
+                        : 'Khách hàng tạo link mời'}
+                </Descriptions.Item>
+                {data?.initiation_source === 'admin_assigned' ? (
+                    <>
+                        <Descriptions.Item label="Xác nhận Bên A">
+                            <Tag
+                                color={
+                                    data?.party_a_invite_accepted
+                                        ? 'green'
+                                        : 'gold'
+                                }
+                            >
+                                {data?.party_a_invite_accepted
+                                    ? 'Đã xác nhận'
+                                    : 'Chưa xác nhận'}
+                            </Tag>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Xác nhận Bên B">
+                            <Tag
+                                color={
+                                    data?.party_b_invite_accepted
+                                        ? 'green'
+                                        : 'gold'
+                                }
+                            >
+                                {data?.party_b_invite_accepted
+                                    ? 'Đã xác nhận'
+                                    : 'Chưa xác nhận'}
+                            </Tag>
+                        </Descriptions.Item>
+                    </>
+                ) : null}
                 <Descriptions.Item label="Phiên bản">
                     {data?.agreement_version}
                 </Descriptions.Item>
@@ -214,11 +298,63 @@ export default function EscrowBoxDetail() {
                     {data?.admin_review_note || '—'}
                 </Descriptions.Item>
             </Descriptions>
+            {inviteLinks ? (
+                <Descriptions
+                    bordered
+                    column={1}
+                    size="small"
+                    title="Link mới chỉ hiển thị một lần"
+                >
+                    {inviteLinks.party_a_invite_path ? (
+                        <Descriptions.Item label="Link Bên A">
+                            <Space>
+                                <code>
+                                    {mbnOrigin}
+                                    {inviteLinks.party_a_invite_path}
+                                </code>
+                                <BaseButton
+                                    onClick={() =>
+                                        navigator.clipboard.writeText(
+                                            `${mbnOrigin}${inviteLinks.party_a_invite_path}`,
+                                        )
+                                    }
+                                >
+                                    Sao chép
+                                </BaseButton>
+                            </Space>
+                        </Descriptions.Item>
+                    ) : null}
+                    {inviteLinks.party_b_invite_path ? (
+                        <Descriptions.Item label="Link Bên B">
+                            <Space>
+                                <code>
+                                    {mbnOrigin}
+                                    {inviteLinks.party_b_invite_path}
+                                </code>
+                                <BaseButton
+                                    onClick={() =>
+                                        navigator.clipboard.writeText(
+                                            `${mbnOrigin}${inviteLinks.party_b_invite_path}`,
+                                        )
+                                    }
+                                >
+                                    Sao chép
+                                </BaseButton>
+                            </Space>
+                        </Descriptions.Item>
+                    ) : null}
+                </Descriptions>
+            ) : null}
             <BaseTable
                 rowKey="id"
                 columns={handoverColumns}
                 dataSource={data?.handover_steps || []}
                 pagination={false}
+            />
+            <EscrowBoxHistoryTimeline
+                boxId={id}
+                loading={loading}
+                refreshKey={data?.expected_version || 0}
             />
             <BaseFormModal
                 title="Thẩm định box"

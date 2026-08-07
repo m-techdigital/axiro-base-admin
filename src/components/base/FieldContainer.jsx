@@ -27,7 +27,13 @@ export default function FieldContainer({
     // =====================================================
     // GRID SPAN SUPPORT RESPONSIVE
     // =====================================================
-    const gridSpan = span ?? col ?? { xs: 24, md: 12, lg: 6 }
+    const rawGridSpan = span ?? col ?? { xs: 24, md: 12, lg: 6 }
+    const gridSpan =
+        typeof rawGridSpan === 'number'
+            ? rawGridSpan <= 12
+                ? rawGridSpan * 2
+                : 24
+            : rawGridSpan
 
     const isCardSwitch = type === 'card-switch'
 

@@ -41,8 +41,15 @@ const NotificationList = lazy(
     () => import('../modules/notifications/pages/List'),
 )
 const EscrowBoxList = lazy(() => import('../modules/escrow-boxes/pages/List'))
-const EscrowBoxDetail = lazy(() => import('../modules/escrow-boxes/pages/Detail'))
-const EscrowFeeRules = lazy(() => import('../modules/escrow-boxes/pages/FeeRules'))
+const EscrowBoxCreate = lazy(
+    () => import('../modules/escrow-boxes/pages/Create'),
+)
+const EscrowBoxDetail = lazy(
+    () => import('../modules/escrow-boxes/pages/Detail'),
+)
+const EscrowFeeRules = lazy(
+    () => import('../modules/escrow-boxes/pages/FeeRules'),
+)
 
 export const ADMIN_ROUTES = [
     { index: true, element: <Dashboard /> },
@@ -55,6 +62,7 @@ export const ADMIN_ROUTES = [
     { path: 'customers/:id/edit', element: <CustomerForm /> },
     { path: 'transactions', element: <TransactionList /> },
     { path: 'escrow-boxes', element: <EscrowBoxList /> },
+    { path: 'escrow-boxes/new', element: <EscrowBoxCreate /> },
     { path: 'escrow-boxes/:id', element: <EscrowBoxDetail /> },
     { path: 'escrow-fee-rules', element: <EscrowFeeRules /> },
     { path: 'transactions/:id', element: <TransactionDetail /> },

@@ -1,9 +1,9 @@
 {
-  "audit_date": "2026-08-05",
+  "audit_date": "2026-08-06",
   "audit_window": "from approximately 18:56 local time through the 23:19 baseline",
   "repository": "admin",
   "result": "no_missing_functional_capabilities_detected",
-  "contract_sha256": "746a14c14aabda1e18c5707e4b2fe09fc2e79f26614d1f89f4449eb480d591df",
+  "contract_sha256": "6692ffbd845cc89ebb9939f509ee677d14ec1a5f513275ddf662c2d7852848c7",
   "compared_artifacts": [
     "axiro-base-admin-final-canonical-closure-20260804-clean.zip",
     "axiro-base-admin-bundle-security-visual-closure-20260804-clean.zip",
@@ -42,7 +42,24 @@
     "src/modules/escrow-boxes/pages/List.jsx",
     "src/modules/escrow-boxes/pages/Detail.jsx",
     "src/modules/escrow-boxes/pages/FeeRules.jsx",
-    "docs/canonical/ESCROW_BOX_CANONICAL_20260805.md"
+    "docs/canonical/ESCROW_BOX_CANONICAL_20260805.md",
+    "src/modules/escrow-boxes/pages/Create.jsx",
+    "src/modules/escrow-boxes/components/EscrowBoxHistoryTimeline.jsx",
+    "src/components/base/BaseTimeline.jsx",
+    "src/components/timeline/TimelineChangeItem.jsx",
+    "src/utils/timeline.js",
+    "src/modules/escrow-boxes/timeline.js",
+    "scripts/check-parent-activity-timeline.mjs",
+    "src/hooks/useTimeline.js",
+    "scripts/check-base-form-controlled-bridge.mjs",
+    "src/utils/fields/fieldRegistry.jsx",
+    "src/utils/fields/adapters/fieldAdapterContext.jsx",
+    "src/utils/fields/adapters/basicFields.jsx",
+    "src/utils/fields/adapters/choiceFields.jsx",
+    "src/utils/fields/adapters/temporalFields.jsx",
+    "src/utils/fields/adapters/relationDynamicFields.jsx",
+    "scripts/check-parent-base-form.mjs",
+    "src/components/base/BaseForm/formSubmitPolicy.js"
   ],
   "recovered_files": [
     ".env.example",

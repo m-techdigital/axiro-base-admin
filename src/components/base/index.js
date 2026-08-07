@@ -33,3 +33,5 @@ export { default as BaseCardStatistics } from './BaseCardStatistics'
 export { default as BaseView } from './BaseView.jsx'
 
 export { default as BaseReviewActionModal } from './BaseReviewActionModal'
+
+export { default as BaseTimeline } from './BaseTimeline'

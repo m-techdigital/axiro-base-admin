@@ -13,6 +13,7 @@ export default function BaseFormFooter({
     loading = false,
     submitText = 'Lưu',
     cancelText = 'Huỷ',
+    submitDisabled = false,
     style = {},
 }) {
     return (
@@ -30,6 +31,7 @@ export default function BaseFormFooter({
                     type="primary"
                     htmlType="submit"
                     loading={loading}
+                    disabled={submitDisabled}
                     style={{
                         width: isCancel ? 'auto' : '100%',
                     }}

@@ -146,9 +146,7 @@ export default function EscrowFeeRulesPage() {
                 }
             />
             <BaseFormModal
-                title={
-                    editing ? 'Chỉnh sửa quy tắc phí' : 'Tạo quy tắc phí'
-                }
+                title={editing ? 'Chỉnh sửa quy tắc phí' : 'Tạo quy tắc phí'}
                 open={open}
                 fields={fields}
                 record={editing || createDefaults}

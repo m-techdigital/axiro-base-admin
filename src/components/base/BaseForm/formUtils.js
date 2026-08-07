@@ -1,22 +1,12 @@
-export const toNamePath = (name) =>
-    (Array.isArray(name) ? name : String(name || '').split('.')).filter(
-        (item) => item !== undefined && item !== null && item !== '',
-    )
-
 export const flattenFields = (fields = []) => {
     const result = []
 
     const walk = (items = []) => {
         items.forEach((field) => {
-            if (!field) return
-
             result.push(field)
 
-            if (
-                field.type === 'dynamic-form-list' ||
-                field.type === 'dynamic-list'
-            ) {
-                walk(field.props?.fields || field.fields || [])
+            if (field.type === 'dynamic-form-list') {
+                walk(field.props?.fields || [])
             }
 
             if (field.tabs) {
@@ -44,7 +34,6 @@ export const normalizeGroups = ({ fields, tabs, sections }) => {
         return tabs.map((tab) => ({
             key: tab.key,
             label: tab.label,
-            description: tab.description,
             fields: tab.fields || [],
         }))
     }
@@ -60,11 +49,20 @@ export const normalizeGroups = ({ fields, tabs, sections }) => {
 
 export const resolveHidden = (field, record, values, form) => {
     if (typeof field?.hidden === 'function') {
-        return field.hidden(record, { values, record, form })
+        return field.hidden(record, {
+            values,
+            record,
+            form,
+        })
     }
 
     return field?.hidden === true
 }
+
+export const toNamePath = (name) =>
+    (Array.isArray(name) ? name : [name]).filter(
+        (item) => item !== undefined && item !== null,
+    )
 
 export const hasValueAtPath = (source, name) => {
     const path = toNamePath(name)
@@ -96,7 +94,7 @@ export const getValueAtPath = (source, name) =>
 
 export const setValueAtPath = (target, name, value) => {
     const path = toNamePath(name)
-    if (!path.length) return target
+    if (!path.length) return
 
     let current = target
     path.forEach((part, index) => {
@@ -115,6 +113,4 @@ export const setValueAtPath = (target, name, value) => {
 
         current = current[part]
     })
-
-    return target
 }

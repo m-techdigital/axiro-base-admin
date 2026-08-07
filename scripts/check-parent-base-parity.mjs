@@ -56,24 +56,25 @@ expect(
 )
 expect(filter.includes('onValuesChange'), 'BaseFilter phải có change contract')
 expect(
-    form.includes('normalizeServerErrors'),
-    'BaseForm phải sở hữu mapping lỗi backend',
+    form.includes('mapLaravelErrorsToFields') &&
+        form.includes('getLaravelValidationError'),
+    'BaseForm phải sở hữu mapping lỗi backend theo AXIRO cha',
 )
 expect(
     form.includes('buildSubmitPayload') &&
         form.includes('useComputedFields') &&
         form.includes('extractRelationConfigs') &&
         form.includes('useRelationOptions') &&
-        form.includes('BaseFormControl') &&
-        formControl.includes('RelationSelect') &&
+        form.includes('createRenderField') &&
+        !form.includes('BaseFormControl') &&
         form.includes('buildDependentResetFields') &&
         form.includes('tabs') &&
         form.includes('sections') &&
-        form.includes('children'),
+        form.includes('runFormSubmitIfAllowed'),
     'BaseForm phải là bounded adapter theo lifecycle cha, không chỉ là Ant Form wrapper',
 )
 expect(
-    formModal.includes('fields={fields || []}') &&
+    formModal.includes('fields={fields}') &&
         formModal.includes('tabs={tabs}') &&
         formModal.includes('sections={sections}') &&
         !formModal.includes('BaseForm.Item') &&

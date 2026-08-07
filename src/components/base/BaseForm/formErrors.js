@@ -22,7 +22,9 @@ export const buildFormErrorMessages = ({ fields = [], serverErrors = {} }) => {
         )
     }
 
-    if (entries.some(([name]) => isRenderedFieldError(name))) return []
+    if (entries.some(([name]) => isRenderedFieldError(name))) {
+        return []
+    }
 
     return entries.flatMap(([field, error]) => {
         const messages = Array.isArray(error) ? error : [error]

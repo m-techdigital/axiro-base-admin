@@ -24,19 +24,19 @@ const disputeList = read('src/modules/disputes/pages/List.jsx')
 const auditList = read('src/modules/audit-logs/pages/List.jsx')
 const styles = read('src/index.css')
 
+const fieldContainer = read('src/components/base/FieldContainer.jsx')
 if (
-    !baseForm.includes('resolveGridSpan') ||
-    !baseForm.includes('gridColumn: `span ${gridSpan}`')
+    !baseForm.includes('<Row gutter={[16, 0]}>') ||
+    !baseForm.includes('createRenderField') ||
+    !fieldContainer.includes('rawGridSpan = span ?? col') ||
+    !fieldContainer.includes('<Col {...colProps}>')
 ) {
     fail(
-        'BaseForm phải sở hữu semantic grid span thật thay vì width calc làm vỡ form.',
+        'BaseForm phải dùng Row/Col + FieldContainer semantic span theo AXIRO cha.',
     )
 }
-if (!baseForm.includes('if (legacySpan >= 4) return 4')) {
-    fail('BaseForm phải bảo đảm field span 4 không bị bóp xuống cột quá hẹp.')
-}
 if (baseForm.includes('calc(${(span / 24) * 100}%')) {
-    fail('BaseForm không được quay lại width calc trong CSS grid.')
+    fail('BaseForm không được quay lại width calc làm vỡ layout.')
 }
 if (
     !baseFilter.includes('autoSearch = true') ||

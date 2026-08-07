@@ -28,6 +28,7 @@ const editor = read(
     'src/modules/document-templates/components/DocumentTemplateEditorModal.jsx',
 )
 const baseForm = read('src/components/base/BaseForm.jsx')
+const fieldRegistry = read('src/utils/fields/fieldRegistry.jsx')
 const baseFilter = read('src/components/base/BaseFilter.jsx')
 const baseTable = read('src/components/base/BaseTable.jsx')
 const reconciliationExport = read(
@@ -36,11 +37,13 @@ const reconciliationExport = read(
 
 const checks = [
     [
-        baseForm.includes('BaseFormControl') &&
+        baseForm.includes('createRenderField') &&
+            fieldRegistry.includes('FIELD_ADAPTERS') &&
+            !baseForm.includes('BaseFormControl') &&
             !baseForm.includes('InputNumber') &&
             !baseForm.includes('DatePicker') &&
             !baseForm.includes('RelationSelect'),
-        'BaseForm must delegate field controls to BaseFormControl',
+        'BaseForm must delegate field controls to the AXIRO parent field registry',
     ],
     [
         baseFilter.includes('BaseFilterControl') &&

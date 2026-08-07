@@ -1,6 +1,6 @@
 {
     "source": {
-        "admin_zip": "mylands-admin-develop-20260801-a4871708.zip"
+        "admin_zip": "axiro-admin-develop-reviewed-source-clean-20260806-181500.zip"
     },
     "policy": "AXIRO parent source first: exact copy when dependency-closed, mechanical conversion when toolchain-only, thin adapter when Mini bounded domain differs, explicit exclusion otherwise.",
     "entries": [
@@ -34,7 +34,7 @@
             "mini_path": "src/components/base/BaseFormFooter.jsx",
             "parent_path": "src/components/base/BaseFormFooter.jsx",
             "mode": "exact_source",
-            "sha256": "73dcae9aaf1f331a1a4ceca677db40d295952f2bb29f51cc7750f3ab35c3e9f8"
+            "sha256": "bc43d0def0f83fa863b3888ffdbe8a260b7224a47f9b60dfa4e8cdddbc29d8c2"
         },
         {
             "mini_path": "src/styles/tokens/breakpoints.css",
@@ -69,43 +69,49 @@
             "mini_path": "src/components/base/BaseForm.jsx",
             "mode": "bounded_adapter",
             "parent_path": "src/components/base/BaseForm.jsx",
-            "note": "Bounded adapter theo lifecycle BaseForm cha: fields/tabs/sections, default/record merge, submit payload, 409/422 mapping, focus tab lỗi, computed/change helpers, relation config extraction, relation cache/cascade/hydrate; giữ children legacy cho form thủ công Mini và không port RBAC."
+            "note": "Reviewed AXIRO parent BaseForm source with only the AntD Alert title compatibility adjustment; registry, validation, relation cascade, submit policy and error focus remain parent-owned."
         },
         {
             "mini_path": "src/components/base/BaseForm/formChange.js",
             "parent_path": "src/components/base/BaseForm/formChange.js",
-            "mode": "bounded_adapter",
-            "note": "Giữ contract change handler/dependent reset và relation watch reset của cha."
+            "mode": "exact_source",
+            "note": "Giữ contract change handler/dependent reset và relation watch reset của cha.",
+            "sha256": "2b244055365986f1ccbae286b049d183867b44fa12d1035bf3b12ac9d305b0eb"
         },
         {
             "mini_path": "src/components/base/BaseForm/formComputed.js",
             "parent_path": "src/components/base/BaseForm/formComputed.js",
-            "mode": "bounded_adapter",
-            "note": "Giữ computed field lifecycle của cha cho schema form Mini."
+            "mode": "exact_source",
+            "note": "Giữ computed field lifecycle của cha cho schema form Mini.",
+            "sha256": "ea24d7fe778ac6c101b529805890c71eacd2d5db11fb0d87b655b0c2ac8d4039"
         },
         {
             "mini_path": "src/components/base/BaseForm/formErrors.js",
             "parent_path": "src/components/base/BaseForm/formErrors.js",
-            "mode": "bounded_adapter",
-            "note": "Giữ server-error summary contract của cha."
+            "mode": "exact_source",
+            "note": "Giữ server-error summary contract của cha.",
+            "sha256": "cd95e0e403fb508bcbc3963f0049dfbaff00541931f4a0eb5b11ba619618689f"
         },
         {
             "mini_path": "src/components/base/BaseForm/formSubmit.js",
             "parent_path": "src/components/base/BaseForm/formSubmit.js",
-            "mode": "bounded_adapter",
-            "note": "Giữ submit payload owner của cha; Mini không tính lại nghiệp vụ ngoài scope."
+            "mode": "exact_source",
+            "note": "Giữ submit payload owner của cha; Mini không tính lại nghiệp vụ ngoài scope.",
+            "sha256": "a9a90756a7f188cf4a9ca5d6231f27e8cc5d7eafa530a4e2489ac5ef2b3c7441"
         },
         {
             "mini_path": "src/components/base/BaseForm/formUtils.js",
             "parent_path": "src/components/base/BaseForm/formUtils.js",
-            "mode": "bounded_adapter",
-            "note": "Giữ normalize/flatten/path helpers của cha cho schema form Mini."
+            "mode": "exact_source",
+            "note": "Giữ normalize/flatten/path helpers của cha cho schema form Mini.",
+            "sha256": "7264f8bf2c94c9f85de54bc7a406f0b6f4aaede71dccb4283df632da3b9c3c67"
         },
         {
             "mini_path": "src/components/base/BaseFormModal.jsx",
             "parent_path": "src/components/base/BaseFormModal.jsx",
-            "mode": "bounded_adapter",
-            "note": "Delegates schema rendering to BaseForm like AXIRO parent; Mini keeps modal prop compatibility and does not self-render form controls."
+            "mode": "exact_source",
+            "note": "Delegates schema rendering to BaseForm like AXIRO parent; Mini keeps modal prop compatibility and does not self-render form controls.",
+            "sha256": "8628f14b2a715549d9c9f2f9cfd8a7816f511f037ba6c140379b247cac473416"
         },
         {
             "mini_path": "src/components/base/BaseTable.jsx",
